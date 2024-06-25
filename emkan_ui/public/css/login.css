@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,900&display=swap');
+
+.page-content-wrapper {
+    display: flex;
+    margin: 0;
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.wrapper {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.content-container {
+    padding: 30px 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    height: 100vh;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.main {
+    width: 60%;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h3 {
+    font-size: 40px;
+    margin: 20px 0;
+    font-weight: normal !important;
+}
+
+h1 b {
+    font-weight: 60px !important;
+}
+
+input {
+    width: 100%;
+    padding: 25px 40px;
+    font-size: 18px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-left: 6px solid rgb(157, 31, 34);
+}
+
+.btn-primary {
+    background-color: rgb(157, 31, 34);
+    color: white;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 40%;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: rgba(157, 31, 33, 0.685);
+}
+
+.logo-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.logo {
+    width: 100%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo img {
+    width: auto;
+    height: auto;
+}
+
+.forgot-password {
+    font-size: 15px;
+    color: #000;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.remember-me {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.remember-me input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.rem {
+    display: flex;
+    justify-content: space-between;
+};
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 20px;
+}
+
+.footer .text {
+    margin-top: 0;
+    display: flex;
+    color: #999;
+    justify-content: space-between;
+}
+.image-container {
+    flex: 1;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(/assets/bsi_ui/images/banner.jpeg);
+}
+#back-to-login-link {
+    margin: 30px 136px;
+    font-weight: 900;
+    font-size: 18px;
+}
+@media (max-width: 768px) {
+    .image-container {
+        display: none;
+    }
+    
+    .main {
+        width: 100%;
+        padding: 55px;
+        text-align: center;
+    }
+
+    h1{
+        text-align: left;
+    }
+    
+    .content-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }       
+}
+
+
+
+@media (max-width: 425px) {
+    .main {
+        padding: 10px;
+    }       
+}   
+
+
+@media (max-width: 1024px) {
+    .main {
+        width: 90%;
+    }       
+}  

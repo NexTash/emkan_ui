@@ -1,0 +1,76 @@
+{% extends "templates/web.html" %}
+
+{%- block navbar -%}{%- endblock -%}
+{%- block footer -%}{%- endblock -%}
+{% block page_content %}
+    <div class="page-content-wrapper">
+    <div class="wrapper">
+        <div class="content-container">
+            <section class="main for-login">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="/assets/bsi_ui/images/logo2.png" alt="Emkan Engineering Logo">
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 style="color: rgb(157, 31, 34);">Sign<b>In</b></h3>
+                    <form class="form-login">
+                        <input placeholder="Email address" style="border-left: 4px solid rgb(157, 31, 34);" id="login_email">
+                        <input type="password" placeholder="Password" id="login_password">
+                        <div class="rem">
+                            <div class="remember-me">
+                                <input type="checkbox"> Remember me
+                            </div>
+                            <a href="#forgot" class="forgot-password">Forget password?</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Login</button>
+                        <br><br>
+                    </form>
+                </div>
+
+                <div class="footer">
+                    <div class="text">
+                        <img src="/assets/bsi_ui/images/logo3.png" width="70%" alt="ERPNext Logo">
+                        <img src="/assets/bsi_ui/images/logo4.png" alt="Synergy Logo">
+                    </div>
+                </div>
+            </section>
+
+
+
+            <section class="main for-forgot">
+                <div class="logo-container">
+                    <div class="logo">
+                        <img src="/assets/bsi_ui/images/logo2.png" alt="Emkan Engineering Logo">
+                    </div>
+                </div>
+                <h3 style="color: rgb(157, 31, 34);">Forgot <b>Password</b></h3>
+                <form class="form-login" action="/forgot_password_handler" method="POST">
+                    <input type="text" id="forgot_email" name="email" placeholder="Username or Email address" style="border-left: 4px solid rgb(157, 31, 34);" required>
+                    <button type="submit" class="btn-primary">Reset Password</button>
+                    <br><br>
+                    <a href="#" id="back-to-login-link" class="forgot-password">Back to Login</a>
+                </form>
+                <div class="footer">
+                    <div class="text">
+                        <img src="/assets/bsi_ui/images/logo3.png" width="70%" alt="ERPNext Logo">
+                        <img src="/assets/bsi_ui/images/logo4.png" alt="Synergy Logo">
+                    </div>
+                </div>
+            </section>
+
+
+        </div>
+        <div class="image-container"></div>
+    </div>
+</div>
+    {% endblock %}
+
+    {% block script %}
+    <script>{% include "templates/includes/login/login.js" %}</script>
+
+    {% endblock %}
+    
+    {% block sidebar %}{% endblock %}
