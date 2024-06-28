@@ -226,7 +226,71 @@ app_license = "mit"
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
+fixtures=[
+    {
+        "dt" : "Workflow State",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Approval 1",
+                    "Approval 2",
+                    "Approval 3",
+                    "Approval 4",
+                    "Approval 5",    
+                    "Approval 6",
+                    "Approval 7",
+                    "Approval 8",
+                    "Submit for Approval",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Role",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "No",
+                    "Yes",
+                    "Role 1",
+                    "Role 2",
+                    "Role 3",    
+                    "Role 4",
+                    "Role 5",
+                    "Role 6",
+                    "Role 7",
+                    "Role 8",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow Action Master",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Return for Update",
+                    "submit",
+                    "Submit for Approval",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Purchase Order",
+                ]
+            ]
+        ]
+    }
+]
 
 
 

@@ -1,0 +1,23 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-27 15:28:44.808230",
+  "name": "Submit for Approval",
+  "workflow_action_name": "Submit for Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-28 13:01:49.231581",
+  "name": "submit",
+  "workflow_action_name": "submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-28 15:32:39.373942",
+  "name": "Return for Update",
+  "workflow_action_name": "Return for Update"
+ }
+]
