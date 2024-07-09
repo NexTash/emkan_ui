@@ -241,6 +241,7 @@ fixtures=[
                     "Approval 6",
                     "Approval 7",
                     "Approval 8",
+                    "Draft",
                     "Submit for Approval",
                 ]
             ]
