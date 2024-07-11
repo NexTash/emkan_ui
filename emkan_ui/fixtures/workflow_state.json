@@ -79,5 +79,14 @@
   "name": "Approval 8",
   "style": "",
   "workflow_state_name": "Approval 8"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-08 17:42:13.290877",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
  }
 ]
