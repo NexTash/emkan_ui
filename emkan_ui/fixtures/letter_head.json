@@ -1,7 +1,7 @@
 [
  {
   "align": "Left",
-  "content": "<img src=\"/assets/emkan_ui/images/emkan-header.jpeg\">",
+  "content": "<img src=\"/assets/emkan_ui/images/emk-header.png\">",
   "disabled": 0,
   "docstatus": 0,
   "doctype": "Letter Head",
@@ -18,7 +18,7 @@
   "image_width": 0.0,
   "is_default": 1,
   "letter_head_name": "Emkan",
-  "modified": "2024-07-11 21:31:26.652284",
+  "modified": "2024-07-11 21:57:50.686539",
   "name": "Emkan",
   "source": "HTML"
  }
