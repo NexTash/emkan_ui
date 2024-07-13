@@ -297,7 +297,8 @@ fixtures=[
             [
                 "name","in",
                 [
-                    "Emkan"
+                    "Emkan",
+                    "Emkan Ui"
                 ]
             ]
         ]
