@@ -3,6 +3,15 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2024-06-27 15:28:04.613634",
+  "name": "Submit for Approval",
+  "style": "",
+  "workflow_state_name": "Submit for Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-06-27 15:22:16.171864",
   "name": "Approval 1",
   "style": "",
@@ -34,15 +43,6 @@
   "name": "Approval 4",
   "style": "",
   "workflow_state_name": "Approval 4"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2024-06-27 15:28:04.613634",
-  "name": "Submit for Approval",
-  "style": "",
-  "workflow_state_name": "Submit for Approval"
  },
  {
   "docstatus": 0,
