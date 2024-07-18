@@ -1,6 +1,6 @@
 {
  "actions": [],
- "autoname": "autoincrement",
+ "autoname": "field:name1",
  "creation": "2024-07-18 22:03:52.675949",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -12,7 +12,8 @@
   {
    "fieldname": "name1",
    "fieldtype": "Data",
-   "label": "Name"
+   "label": "Name",
+   "unique": 1
   },
   {
    "fieldname": "account",
@@ -27,7 +28,7 @@
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Material Issue Reason Code",
- "naming_rule": "Autoincrement",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
