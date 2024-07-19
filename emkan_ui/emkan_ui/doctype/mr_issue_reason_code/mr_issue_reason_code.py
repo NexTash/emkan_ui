@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class MaterialIssueReasonCode(Document):
+class MRIssueReasonCode(Document):
 	pass

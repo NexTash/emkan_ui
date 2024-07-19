@@ -24,10 +24,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-18 22:07:44.056316",
+ "modified": "2024-07-18 23:16:10.191022",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
- "name": "Material Issue Reason Code",
+ "name": "MR Issue Reason Code",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
