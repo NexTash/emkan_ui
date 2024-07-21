@@ -4,6 +4,7 @@ app_publisher = "NexTash"
 app_description = "emkan_ui"
 app_email = "support@emkan_ui.com"
 app_license = "mit"
+
 # required_apps = []
 
 # Includes in <head>
@@ -29,7 +30,8 @@ app_license = "mit"
 
 # include js in doctype views
 doctype_js = {"Stock Entry" : "public/js/stock_entry.js"}
-doctype_js = {"Payment Entry" : "public/js/payment_entery.js"}
+
+# doctype_js = {"Payment Entry" : "public/js/payment_entery.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -227,84 +229,8 @@ doctype_js = {"Payment Entry" : "public/js/payment_entery.js"}
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-fixtures=[
-    {
-        "dt" : "Workflow State",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Approval 1",
-                    "Approval 2",
-                    "Approval 3",
-                    "Approval 4",
-                    "Approval 5",    
-                    "Approval 6",
-                    "Approval 7",
-                    "Approval 8",
-                    "Draft",
-                    "Submit for Approval",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Role",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "No",
-                    "Yes",
-                    "Role 1",
-                    "Role 2",
-                    "Role 3",    
-                    "Role 4",
-                    "Role 5",
-                    "Role 6",
-                    "Role 7",
-                    "Role 8",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Workflow Action Master",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Return for Update",
-                    "submit",
-                    "Submit for Approval",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Workflow",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Purchase Order",
-                ]
-            ]
-        ]
-    },
-    # {
-    #     "dt" : "Letter Head",
-    #     "filters": [
-    #         [
-    #             "name","in",
-    #             [
-    #                 "Emkan",
-    #                 "Emkan Ui"
-    #             ]
-    #         ]
-    #     ]
-    # }
-]
+
+# fixtures=[]
 
 
 

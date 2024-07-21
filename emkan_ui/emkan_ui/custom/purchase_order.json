@@ -45,7 +45,7 @@
    "name": "Purchase Order-custom_department",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nEMKAN 5\nEMKAN SSSF",
+   "options": "\nEMKAN-5\nEMKAN SSSF",
    "owner": "Administrator",
    "permlevel": 0,
    "precision": "",
