@@ -245,6 +245,12 @@ fixtures=[
                     "Approval 8",
                     "Draft",
                     "Submit for Approval",
+                    "Approval reqd by Account Lead",
+                    "Approval reqd by Finance Director",
+                    "Approval reqd by Account User",
+                    "Approved by Finance Director",
+                    "Completed",
+                    "Rejected",
                 ]
             ]
         ]
@@ -265,6 +271,9 @@ fixtures=[
                     "Role 6",
                     "Role 7",
                     "Role 8",
+                    "Account user",
+                    "Account Lead",
+                    "Finance Director",
                 ]
             ]
         ]
@@ -278,6 +287,7 @@ fixtures=[
                     "Return for Update",
                     "submit",
                     "Submit for Approval",
+                    
                 ]
             ]
         ]
@@ -289,6 +299,7 @@ fixtures=[
                 "name","in",
                 [
                     "Purchase Order",
+                    "Payment Request",
                 ]
             ]
         ]

@@ -2,6 +2,15 @@
  {
   "docstatus": 0,
   "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2024-06-25 13:33:42.812848",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
   "icon": "",
   "modified": "2024-06-27 15:28:04.613634",
   "name": "Submit for Approval",
@@ -88,5 +97,50 @@
   "name": "Draft",
   "style": "",
   "workflow_state_name": "Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:56:21.503144",
+  "name": "Completed",
+  "style": "",
+  "workflow_state_name": "Completed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:57:07.575300",
+  "name": "Approval reqd by Account Lead",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Account Lead"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:57:47.288019",
+  "name": "Approval reqd by Finance Director",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Finance Director"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:58:30.060453",
+  "name": "Approval reqd by Account User",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Account User"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 17:01:34.021599",
+  "name": "Approved by Finance Director",
+  "style": "",
+  "workflow_state_name": "Approved by Finance Director"
  }
 ]
