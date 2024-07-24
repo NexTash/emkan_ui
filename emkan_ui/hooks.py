@@ -29,9 +29,11 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {"Stock Entry" : "public/js/stock_entry.js"}
+doctype_js = {
+    "Stock Entry" : "public/js/stock_entry.js",
+    "Purchase Order" : "public/js/purchase_order.js"
+}
 
-# doctype_js = {"Payment Entry" : "public/js/payment_entery.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -125,13 +127,11 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Purchase Order": {
+		"validate": "emkan_ui.events.po_naming.autoname",
+	}
+}
 
 # Scheduled Tasks
 # ---------------
@@ -229,8 +229,100 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js"}
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+<<<<<<< HEAD
 
 # fixtures=[]
+=======
+fixtures=[
+    {
+        "dt" : "Workflow State",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Approval 1",
+                    "Approval 2",
+                    "Approval 3",
+                    "Approval 4",
+                    "Approval 5",    
+                    "Approval 6",
+                    "Approval 7",
+                    "Approval 8",
+                    "Draft",
+                    "Submit for Approval",
+                    "Approval reqd by Account Lead",
+                    "Approval reqd by Finance Director",
+                    "Approval reqd by Account User",
+                    "Approved by Finance Director",
+                    "Completed",
+                    "Rejected",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Role",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "No",
+                    "Yes",
+                    "Role 1",
+                    "Role 2",
+                    "Role 3",    
+                    "Role 4",
+                    "Role 5",
+                    "Role 6",
+                    "Role 7",
+                    "Role 8",
+                    "Account user",
+                    "Account Lead",
+                    "Finance Director",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow Action Master",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Return for Update",
+                    "submit",
+                    "Submit for Approval",
+                    
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Purchase Order",
+                    "Payment Request",
+                ]
+            ]
+        ]
+    },
+    # {
+    #     "dt" : "Letter Head",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Emkan",
+    #                 "Emkan Ui"
+    #             ]
+    #         ]
+    #     ]
+    # }
+]
+>>>>>>> develop
 
 
 
