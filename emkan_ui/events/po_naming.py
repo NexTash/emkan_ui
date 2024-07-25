@@ -8,10 +8,8 @@ def autoname(doc, method=None):
     prefix = doc.custom_prefix
 
     settings = frappe.get_single("PO Series counter")
-    if not settings:
-        settings = frappe.new_doc("PO Series counter")
-        settings.lpo_series_counter = 2262
-        settings.save()
+    if not settings.lpo_series_counter:
+        frappe.throw("Please set counter in PO Series counter")
 
     current_number = settings.lpo_series_counter + 1
 

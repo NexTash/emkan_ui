@@ -128,9 +128,9 @@ doctype_js = {
 # Hook on document methods and events
 
 doc_events = {
-	"Purchase Order": {
-		"validate": "emkan_ui.events.po_naming.autoname",
-	}
+	# "Purchase Order": {
+	# 	"autoname": "emkan_ui.events.po_naming.autoname",
+	# }
 }
 
 # Scheduled Tasks
