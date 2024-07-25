@@ -31,7 +31,7 @@ app_license = "mit"
 # include js in doctype views
 doctype_js = {
     "Stock Entry" : "public/js/stock_entry.js",
-    # "Purchase Order" : "public/js/purchase_order.js"
+    "Purchase Order" : "public/js/purchase_order.js"
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -128,9 +128,9 @@ doctype_js = {
 # Hook on document methods and events
 
 doc_events = {
-	# "Purchase Order": {
-	# 	"autoname": "emkan_ui.events.po_naming.autoname",
-	# }
+	"Purchase Order": {
+		"autoname": "emkan_ui.events.po_naming.autoname",
+	}
 }
 
 # Scheduled Tasks

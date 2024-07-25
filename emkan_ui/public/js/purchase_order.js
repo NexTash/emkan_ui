@@ -33,23 +33,23 @@ frappe.ui.form.on("Purchase Order", {
 			__("Get Items From")
 		);
     },
-	validate: function(frm) {
-        // Check if there are any items in the Purchase Order
-        if (frm.doc.items && frm.doc.items.length > 0) {
-            let has_mr = false;
-            // Loop through the items to check if any of them has a linked Material Request
-            frm.doc.items.forEach(function(item) {
-                if (item.material_request) {
-                    has_mr = true;
-                }
-            });
+	// validate: function(frm) {
+    //     // Check if there are any items in the Purchase Order
+    //     if (frm.doc.items && frm.doc.items.length > 0) {
+    //         let has_mr = false;
+    //         // Loop through the items to check if any of them has a linked Material Request
+    //         frm.doc.items.forEach(function(item) {
+    //             if (item.material_request) {
+    //                 has_mr = true;
+    //             }
+    //         });
 
-            if (!has_mr) {
-                // Throw an error if no Material Request is linked
-                frappe.msgprint(__('You cannot create a Purchase Order without a linked Material Request.'));
-                frappe.validated = false;
-            }
-        }
-    }
+    //         if (!has_mr) {
+    //             // Throw an error if no Material Request is linked
+    //             frappe.msgprint(__('You cannot create a Purchase Order without a linked Material Request.'));
+    //             frappe.validated = false;
+    //         }
+    //     }
+    // }
 
 });
