@@ -250,6 +250,9 @@ fixtures=[
                     "Approved by Finance Director",
                     "Completed",
                     "Rejected",
+                    "Verified by Senior Accountant",
+                    "Approved by Lead Accountant",
+                    "Recommended by Finance Director",
                 ]
             ]
         ]
@@ -273,6 +276,8 @@ fixtures=[
                     "Account user",
                     "Account Lead",
                     "Finance Director",
+                    "Senior Accountant",
+                    "Lead Accountant",
                 ]
             ]
         ]
@@ -286,7 +291,11 @@ fixtures=[
                     "Return for Update",
                     "submit",
                     "Submit for Approval",
-                    
+                    "Return to Initiator",
+                    "Approve",
+                    "Return to Senior Accountant",
+                    "Reject",
+                    "Return to Lead Accountant",
                 ]
             ]
         ]
