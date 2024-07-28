@@ -88,7 +88,7 @@ def get_data(filters):
 	
 	if filters.get("mr_no"):
 		mr_filters["name"] = filters.get("mr_no")
-		
+
 	if filters.get("from") and filters.get("to"):
 		mr_filters["transaction_date"] = ["between", [filters.get("from"), filters.get("to")]] 
 	
@@ -105,25 +105,26 @@ def get_data(filters):
 			"status" : doc.status,
 		}
 
-		for item in doc.items:
+		for mr_item in doc.items:
 			if item:
 				item.update({
-					"item_code" : item.item_code,
-					"item_name" : item.item_name,
-					"description" : item.description,
-					"qty" : item.qty,
-					"remark" : item.custom_remarks,
-					"expense_account" : item.expense_account,
+					"item_code" : mr_item.item_code,
+					"item_name" : mr_item.item_name,
+					"description" : mr_item.description,
+					"qty" : mr_item.qty,
+					"remark" : mr_item.custom_remarks,
+					"expense_account" : mr_item.expense_account,
 				})
 			else:
 				item = {
-					"item_code" : item.item_code,
-					"item_name" : item.item_name,
-					"description" : item.description,
-					"qty" : item.qty,
-					"remark" : item.custom_remarks,
-					"expense_account" : item.expense_account,
+					"item_code" : mr_item.item_code,
+					"item_name" : mr_item.item_name,
+					"description" : mr_item.description,
+					"qty" : mr_item.qty,
+					"remark" : mr_item.custom_remarks,
+					"expense_account" : mr_item.expense_account,
 				}
+				
 			data.append(item)
 			item = None
 	
