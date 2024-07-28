@@ -96,36 +96,19 @@ def get_data(filters):
 	
 	for row in docs:
 		doc = frappe.get_doc("Material Request", row.name)
-		
-		item = {
-			"material_request" : doc.name,
-			"date" : doc.transaction_date,
-			"department": doc.custom_department,
-			"purpose" : doc.custom_from,
-			"status" : doc.status,
-		}
-
 		for mr_item in doc.items:
-			if item:
-				item.update({
-					"item_code" : mr_item.item_code,
-					"item_name" : mr_item.item_name,
-					"description" : mr_item.description,
-					"qty" : mr_item.qty,
-					"remark" : mr_item.custom_remarks,
-					"expense_account" : mr_item.expense_account,
-				})
-			else:
-				item = {
-					"item_code" : mr_item.item_code,
-					"item_name" : mr_item.item_name,
-					"description" : mr_item.description,
-					"qty" : mr_item.qty,
-					"remark" : mr_item.custom_remarks,
-					"expense_account" : mr_item.expense_account,
-				}
-				
-			data.append(item)
-			item = None
-	
+			data.append({
+				"material_request" : doc.name,
+				"date" : doc.transaction_date,
+				"department": doc.custom_department,
+				"purpose" : doc.custom_from,
+				"status" : doc.status,
+				"item_code" : mr_item.item_code,
+				"item_name" : mr_item.item_name,
+				"description" : mr_item.description,
+				"qty" : mr_item.qty,
+				"remark" : mr_item.custom_remarks,
+				"expense_account" : mr_item.expense_account,
+			})
+			
 	return data
