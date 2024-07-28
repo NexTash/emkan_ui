@@ -127,7 +127,7 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
 
 doc_events = {
 	"Purchase Order": {
-		"validate": "emkan_ui.events.po_naming.autoname",
+		"autoname": "emkan_ui.events.po_naming.autoname",
 	}
 }
 
