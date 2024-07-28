@@ -31,28 +31,34 @@ def get_columns(filters):
 		},
 		{
 			"label": "From",
-			"fieldname": "purpose", 
+			"fieldname": "from", 
 			"fieldtype": "Data",
 			"width" : 120 
 		},
 		{
-			"label": "Code",
+			"label": "Item Code",
 			"fieldname": "item_code", 
 			"fieldtype": "Link", 
 			"options": "Item",
 			"width" : 120
 		},
 		{
-			"label": "Name",
+			"label": "Item Name",
 			"fieldname": "item_name", 
 			"fieldtype": "Data",
-			"width" : 120 
+			"width" : 150 
+		},
+		{
+			"label": "Description",
+			"fieldname": "description", 
+			"fieldtype": "Data",
+			"width" : 300 
 		},
 		{
 			"label": "Qty",
 			"fieldname": "qty", 
 			"fieldtype": "Int",
-			"width" : 120 
+			"width" : 70 
 		},
 		{
 			"label": "Remark",
@@ -66,31 +72,59 @@ def get_columns(filters):
 			"fieldtype": "Data",
 			"width" : 120 
 		},
+		{
+			"label": "Expense Account",
+			"fieldname": "expense_account", 
+			"fieldtype": "Data",
+			"width" : 150 
+		},
 	]
 
 	return columns
 
 def get_data(filters):
 	data = []
-	my_filters = {}
+	mr_filters = {}
+	
+	if filters.get("mr_no"):
+		mr_filters["name"] = filters.get("mr_no")
+		
 	if filters.get("from") and filters.get("to"):
-		my_filters["transaction_date"] = ["between", [filters.get("from"), filters.get("to")]] 
-	mr_docs = frappe.get_list("Material Request",my_filters, ['name'])
-	for row in mr_docs:
+		mr_filters["transaction_date"] = ["between", [filters.get("from"), filters.get("to")]] 
+	
+	docs = frappe.get_list("Material Request", mr_filters)
+	
+	for row in docs:
 		doc = frappe.get_doc("Material Request", row.name)
+		
+		item = {
+			"material_request" : doc.name,
+			"date" : doc.transaction_date,
+			"department": doc.custom_department,
+			"purpose" : doc.custom_from,
+			"status" : doc.status,
+		}
+
 		for item in doc.items:
-			data.append({
-				"material_request" : doc.name,
-				"date" : doc.transaction_date,
-				"department": doc.custom_department,
-				"purpose" : doc.custom_from,
-				"item_code" : item.item_code,
-				"item_name" : item.item_name,
-				"qty" : item.qty,
-				"remark" : item.custom_remarks,
-				"status" : doc.status,
-
-
-
-			})
+			if item:
+				item.update({
+					"item_code" : item.item_code,
+					"item_name" : item.item_name,
+					"description" : item.description,
+					"qty" : item.qty,
+					"remark" : item.custom_remarks,
+					"expense_account" : item.expense_account,
+				})
+			else:
+				item = {
+					"item_code" : item.item_code,
+					"item_name" : item.item_name,
+					"description" : item.description,
+					"qty" : item.qty,
+					"remark" : item.custom_remarks,
+					"expense_account" : item.expense_account,
+				}
+			data.append(item)
+			item = None
+	
 	return data
