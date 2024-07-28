@@ -13,5 +13,11 @@ frappe.query_reports["MR List with Item Details"] = {
 			"fieldname": "to", 
 			"fieldtype": "Date", 
 		},
+		{
+			"label": "Material Request",
+			"fieldname": "mr_no", 
+			"fieldtype": "Link",
+			"options": "Material Request",
+		},
 	]
 };
