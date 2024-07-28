@@ -101,7 +101,7 @@ def get_data(filters):
 				"material_request" : doc.name,
 				"date" : doc.transaction_date,
 				"department": doc.custom_department,
-				"purpose" : doc.custom_from,
+				"from" : doc.custom_from,
 				"status" : doc.status,
 				"item_code" : mr_item.item_code,
 				"item_name" : mr_item.item_name,
