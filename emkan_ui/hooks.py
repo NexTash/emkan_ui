@@ -289,7 +289,7 @@ fixtures=[
                 "name","in",
                 [
                     "Return for Update",
-                    "submit",
+                    "Submit",
                     "Submit for Approval",
                     "Return to Initiator",
                     "Approve",
