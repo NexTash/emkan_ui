@@ -5,5 +5,5 @@
 from frappe.model.document import Document
 
 
-class ahmed(Document):
+class UserSignature(Document):
 	pass

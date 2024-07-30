@@ -1,24 +1,35 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-07-29 12:33:43.047348",
+ "autoname": "field:user",
+ "creation": "2024-07-30 21:48:09.906361",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_p1a3"
+  "user",
+  "signature"
  ],
  "fields": [
   {
-   "fieldname": "section_break_p1a3",
-   "fieldtype": "Section Break"
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "unique": 1
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Attach Image",
+   "label": "Signature"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-07-29 12:33:43.047348",
+ "modified": "2024-07-30 21:58:27.689254",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
- "name": "ahmed",
+ "name": "User Signature",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
