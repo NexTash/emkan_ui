@@ -4,7 +4,6 @@ app_publisher = "NexTash"
 app_description = "emkan_ui"
 app_email = "support@emkan_ui.com"
 app_license = "mit"
-
 # required_apps = []
 
 # Includes in <head>
@@ -29,11 +28,10 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-doctype_js = {
-    "Stock Entry" : "public/js/stock_entry.js",
-    "Purchase Order" : "public/js/purchase_order.js"
-}
-
+doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
+              "Payment Entry" : "public/js/payment_entry.js",
+              "Purchase Order" : "public/js/purchase_order.js"
+              }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -229,8 +227,76 @@ doc_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
-# fixtures=[]
+fixtures=[
+    {
+        "dt" : "Workflow State",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Draft",
+                    "Approved by Finance Director",
+                    "Completed",
+                    "Rejected",
+                    "Verified by Senior Accountant",
+                    "Approved by Lead Accountant",
+                    "Recommended by Finance Director",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Role",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Finance Director",
+                    "Senior Accountant",
+                    "Lead Accountant",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow Action Master",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Return to Initiator",
+                    "Approve",
+                    "Return to Senior Accountant",
+                    "Reject",
+                    "Return to Lead Accountant",
+                ]
+            ]
+        ]
+    },
+    {
+        "dt" : "Workflow",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Payment Request",
+                ]
+            ]
+        ]
+    },
+    # {
+    #     "dt" : "Letter Head",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Emkan",
+    #                 "Emkan Ui"
+    #             ]
+    #         ]
+    #     ]
+    # }
+]
 
 
 
