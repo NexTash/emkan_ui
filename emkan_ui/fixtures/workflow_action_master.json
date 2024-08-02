@@ -2,20 +2,6 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
-  "modified": "2024-06-25 13:33:42.839089",
-  "name": "Approve",
-  "workflow_action_name": "Approve"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow Action Master",
-  "modified": "2024-06-25 13:33:42.840678",
-  "name": "Reject",
-  "workflow_action_name": "Reject"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow Action Master",
   "modified": "2024-06-27 15:28:44.808230",
   "name": "Submit for Approval",
   "workflow_action_name": "Submit for Approval"
@@ -26,6 +12,27 @@
   "modified": "2024-06-28 15:32:39.373942",
   "name": "Return for Update",
   "workflow_action_name": "Return for Update"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-07-26 12:20:46.068606",
+  "name": "Return to Lead Accountant",
+  "workflow_action_name": "Return to Lead Accountant"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-25 13:33:42.839089",
+  "name": "Approve",
+  "workflow_action_name": "Approve"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-25 13:33:42.840678",
+  "name": "Reject",
+  "workflow_action_name": "Reject"
  },
  {
   "docstatus": 0,
@@ -44,15 +51,29 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
-  "modified": "2024-07-26 12:20:46.068606",
-  "name": "Return to Lead Accountant",
-  "workflow_action_name": "Return to Lead Accountant"
+  "modified": "2024-07-29 10:50:58.326015",
+  "name": "Submit",
+  "workflow_action_name": "Submit"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
-  "modified": "2024-07-29 10:50:58.326015",
-  "name": "Submit",
-  "workflow_action_name": "Submit"
+  "modified": "2024-08-02 15:33:10.829220",
+  "name": "Send For Store Verification",
+  "workflow_action_name": "Send For Store Verification"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-08-02 15:34:19.160513",
+  "name": "Send For Mgmt. Approval",
+  "workflow_action_name": "Send For Mgmt. Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-08-02 15:36:52.982873",
+  "name": "Return Back To Initiator",
+  "workflow_action_name": "Return Back To Initiator"
  }
 ]

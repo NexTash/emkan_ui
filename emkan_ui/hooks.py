@@ -253,6 +253,10 @@ fixtures=[
                     "Verified by Senior Accountant",
                     "Approved by Lead Accountant",
                     "Recommended by Finance Director",
+                    "MR Prepared",
+                    "Store Verification",
+                    "Pending Mgmt. Approval",
+                    "Mgmt Approved",
                 ]
             ]
         ]
@@ -278,6 +282,9 @@ fixtures=[
                     "Finance Director",
                     "Senior Accountant",
                     "Lead Accountant",
+                    "MR Creator",
+                    "Store Verifier",
+                    "MR Approver",
                 ]
             ]
         ]
@@ -296,6 +303,9 @@ fixtures=[
                     "Return to Senior Accountant",
                     "Reject",
                     "Return to Lead Accountant",
+                    "Send For Store Verification",
+                    "Send For Mgmt. Approval",
+                    "Return Back To Initiator",
                 ]
             ]
         ]
@@ -308,6 +318,7 @@ fixtures=[
                 [
                     "Purchase Order",
                     "Payment Request",
+                    "MR-Approval-Flow",
                 ]
             ]
         ]
