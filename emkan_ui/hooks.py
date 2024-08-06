@@ -257,6 +257,7 @@ fixtures=[
                     "Store Verification",
                     "Pending Mgmt. Approval",
                     "Mgmt Approved",
+                    "Move to Purchase",
                 ]
             ]
         ]
