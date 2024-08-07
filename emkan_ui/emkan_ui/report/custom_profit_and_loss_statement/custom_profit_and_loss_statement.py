@@ -67,7 +67,6 @@ def execute(filters=None):
 	report_summary, primitive_summary = get_report_summary(
 		period_list, filters.periodicity, income, expense, net_profit_loss, currency, filters
 	)
-	frappe.msgprint(f"{columns}")
 	return columns, data, None, chart, report_summary, primitive_summary
 
 
@@ -172,8 +171,6 @@ def get_chart_data(filters, columns, income, expense, net_profit_loss):
 		datasets.append({"name": _("Expense"), "values": expense_data})
 	if net_profit:
 		datasets.append({"name": _("Net Profit/Loss"), "values": net_profit})
-
-	frappe.msgprint(f"{datasets}")
 	chart = {"data": {"labels": labels, "datasets": datasets}}
 
 	if not filters.accumulated_values:
