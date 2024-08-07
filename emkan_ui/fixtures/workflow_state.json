@@ -205,5 +205,14 @@
   "name": "Pending Mgmt. Approval",
   "style": "",
   "workflow_state_name": "Pending Mgmt. Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-07 11:25:10.370608",
+  "name": "Move to Purchase",
+  "style": "",
+  "workflow_state_name": "Move to Purchase"
  }
 ]
