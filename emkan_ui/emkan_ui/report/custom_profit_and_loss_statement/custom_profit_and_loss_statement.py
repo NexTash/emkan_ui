@@ -171,8 +171,6 @@ def get_chart_data(filters, columns, income, expense, net_profit_loss):
 		datasets.append({"name": _("Expense"), "values": expense_data})
 	if net_profit:
 		datasets.append({"name": _("Net Profit/Loss"), "values": net_profit})
-
-	frappe.msgprint(f"{datasets}")
 	chart = {"data": {"labels": labels, "datasets": datasets}}
 
 	if not filters.accumulated_values:
