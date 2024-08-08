@@ -23,7 +23,7 @@
     }
 
     th, td {
-        border: 1px solid black;
+        border: 2px solid black;
         padding: 8px;
         text-align: left;
     }
@@ -40,6 +40,10 @@
         color: black;
         font-weight: bold;
         border-bottom-width: 1px !important;
+    }
+    .amount{
+        position: relative;
+        right: 72%;
     }
 </style>
 
@@ -157,9 +161,13 @@
                 {% var row_currency_sum = row_currency_sum + value %}
             {% endif %}
         {% endfor %}
-
-        <h3>Profit for the year:{{frappe.format(row_currency_sum, {"fieldtype": "Currency"})}}</h3>
+            <table>
+                <tr>
+                    <td><h3 style=" margin-top: 0px;">Profit for the year: <div style=" margin-top: -22px; " class="amount" > {{frappe.format(row_currency_sum, {"fieldtype": "Currency"})}}</div>
+                    </h3></td>
+                </tr>
+            </table>
+        <!-- <h3>Profit for the year:{{frappe.format(row_currency_sum, {"fieldtype": "Currency"})}}</h3> -->
     {% endif %}
 {% endfor %}
-
 
