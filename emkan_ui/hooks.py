@@ -258,6 +258,10 @@ fixtures=[
                     "Pending Mgmt. Approval",
                     "Mgmt Approved",
                     "Move to Purchase",
+                    "Verified by Account User",
+                    "Recommended by Lead Account",
+                    "Approved by Senior Accountant",
+                    "Submit",
                 ]
             ]
         ]
@@ -320,6 +324,7 @@ fixtures=[
                     "Purchase Order",
                     "Payment Request",
                     "MR-Approval-Flow",
+                    "Expense Claim",
                 ]
             ]
         ]
