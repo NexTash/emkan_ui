@@ -128,7 +128,13 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
 doc_events = {
 	"Purchase Order": {
 		"autoname": "emkan_ui.events.po_naming.autoname",
-	}
+	},
+    "DocShare": {
+		"after_insert": "emkan_ui.events.share_emkan.after_insert",
+	},
+    "ToDo":{
+        "on_update": "emkan_ui.events.share_emkan.remove_share"
+	},
 }
 
 # Scheduled Tasks
