@@ -210,15 +210,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-07-08 17:42:13.290877",
-  "name": "Draft",
-  "style": "",
-  "workflow_state_name": "Draft"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2024-08-09 13:03:28.733192",
   "name": "Approved by Senior Accountant",
   "style": "",
@@ -232,6 +223,15 @@
   "name": "Approved by Finance Director",
   "style": "",
   "workflow_state_name": "Approved by Finance Director"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-08 17:42:13.290877",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
  },
  {
   "docstatus": 0,

@@ -338,6 +338,29 @@ fixtures=[
             ]
         ]
     },
+    {
+        "dt" : "Payment Type",
+        "filters": [
+            [
+                "name","in",
+                [
+                    "Pantry & Refreshment Expenses",
+                    "Electricity & Water Charges",
+                    "Communication Expenses",
+                    "Penaly & other Fine Charges",
+                    "Vehicle Maintenance",
+                    "Mess Expenses",
+                    "Visa & Imigration Expenses",
+                    "Employee Welfare Expenses",
+                    "Office & Admin Expenses",
+                    "Fuel Expenses",
+                    "Employee Advance",
+                    "Administration Related expenses",
+                    "Management expenses",
+                ]
+            ]
+        ]
+    },
     # {
     #     "dt" : "Letter Head",
     #     "filters": [

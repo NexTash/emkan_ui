@@ -880,7 +880,7 @@
   "doctype": "Workflow",
   "document_type": "Expense Claim",
   "is_active": 1,
-  "modified": "2024-08-09 13:34:45.971012",
+  "modified": "2024-08-12 15:15:56.514563",
   "name": "Expense Claim",
   "override_status": 0,
   "send_email_alert": 0,
@@ -911,8 +911,8 @@
     "parentfield": "states",
     "parenttype": "Workflow",
     "state": "Verified by Account User",
-    "update_field": null,
-    "update_value": null,
+    "update_field": "",
+    "update_value": "",
     "workflow_builder_id": null
    },
    {
