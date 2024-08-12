@@ -135,6 +135,9 @@ doc_events = {
     "ToDo":{
         "on_update": "emkan_ui.events.share_emkan.remove_share"
 	},
+    "Expense Claim":{
+        "validate": "emkan_ui.events.expense_claim.get_account_user"
+	},
 }
 
 # Scheduled Tasks
