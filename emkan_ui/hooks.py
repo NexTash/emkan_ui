@@ -140,7 +140,10 @@ doc_events = {
 	},
     "Material Request": {
 		"on_update": "emkan_ui.events.material_request.change_state",
-	}
+	},
+    # "Material Request": {
+	# 	"on_update": "emkan_ui.events.material_request.assign_user",
+	# }
 }
 
 # Scheduled Tasks
