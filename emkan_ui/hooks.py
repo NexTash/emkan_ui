@@ -138,28 +138,31 @@ doc_events = {
     "Expense Claim":{
         "validate": "emkan_ui.events.expense_claim.get_account_user"
 	},
+    "Material Request": {
+		"on_update": "emkan_ui.events.material_request.change_state",
+	}
 }
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"emkan_ui.tasks.all"
-# 	],
-# 	"daily": [
-# 		"emkan_ui.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"emkan_ui.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"emkan_ui.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"emkan_ui.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"emkan_ui.tasks.all"
+	# ],
+	# "daily": [
+	# 	"emkan_ui.tasks.daily"
+	# ],
+	"hourly": [
+		"emkan_ui.events.material_request.change_state"
+	],
+	# "weekly": [
+	# 	"emkan_ui.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"emkan_ui.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------
