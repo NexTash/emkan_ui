@@ -234,73 +234,73 @@ doc_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 fixtures=[
-    {
-        "dt" : "Workflow State",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Draft",
-                    "Approved by Finance Director",
-                    "Completed",
-                    "Rejected",
-                    "Verified by Senior Accountant",
-                    "Approved by Lead Accountant",
-                    "Recommended by Finance Director",
-                    "MR Prepared",
-                    "Store Verification",
-                    "Pending Mgmt. Approval",
-                    "Mgmt Approved",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Role",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Finance Director",
-                    "Senior Accountant",
-                    "Lead Accountant",
-                    "MR Creator",
-                    "Store Verifier",
-                    "MR Approver",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Workflow Action Master",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Return to Initiator",
-                    "Approve",
-                    "Return to Senior Accountant",
-                    "Reject",
-                    "Return to Lead Accountant",
-                    "Send For Store Verification",
-                    "Send For Mgmt. Approval",
-                    "Return Back To Initiator",
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Workflow",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Payment Request",
-                    "MR-Approval-Flow",
-                ]
-            ]
-        ]
-    },
+    # {
+    #     "dt" : "Workflow State",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Draft",
+    #                 "Approved by Finance Director",
+    #                 "Completed",
+    #                 "Rejected",
+    #                 "Verified by Senior Accountant",
+    #                 "Approved by Lead Accountant",
+    #                 "Recommended by Finance Director",
+    #                 "MR Prepared",
+    #                 "Store Verification",
+    #                 "Pending Mgmt. Approval",
+    #                 "Mgmt Approved",
+    #             ]
+    #         ]
+    #     ]
+    # },
+    # {
+    #     "dt" : "Role",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Finance Director",
+    #                 "Senior Accountant",
+    #                 "Lead Accountant",
+    #                 "MR Creator",
+    #                 "Store Verifier",
+    #                 "MR Approver",
+    #             ]
+    #         ]
+    #     ]
+    # },
+    # {
+    #     "dt" : "Workflow Action Master",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Return to Initiator",
+    #                 "Approve",
+    #                 "Return to Senior Accountant",
+    #                 "Reject",
+    #                 "Return to Lead Accountant",
+    #                 "Send For Store Verification",
+    #                 "Send For Mgmt. Approval",
+    #                 "Return Back To Initiator",
+    #             ]
+    #         ]
+    #     ]
+    # },
+    # {
+    #     "dt" : "Workflow",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Payment Request",
+    #                 "MR-Approval-Flow",
+    #             ]
+    #         ]
+    #     ]
+    # },
     # {
     #     "dt" : "Letter Head",
     #     "filters": [
