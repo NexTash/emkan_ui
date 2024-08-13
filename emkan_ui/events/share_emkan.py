@@ -14,4 +14,5 @@ def remove_share(doc, method=None):
     if doc.status == "Cancelled":
         frappe.db.delete("DocShare", {"share_doctype": doc.reference_type, "share_name" : doc.reference_name, "user" : doc.allocated_to})    
     frappe.db.commit()
-        
+    
+
