@@ -139,11 +139,11 @@ doc_events = {
         "validate": "emkan_ui.events.expense_claim.get_account_user"
 	},
     "Material Request": {
-		"on_update": "emkan_ui.events.material_request.change_state",
-	},
-    # "Material Request": {
-	# 	"on_update": "emkan_ui.events.material_request.assign_user",
-	# }
+		"on_update": [
+                "emkan_ui.events.material_request.change_state",
+                "emkan_ui.events.material_request.assign_user"
+                ]
+	}
 }
 
 # Scheduled Tasks
