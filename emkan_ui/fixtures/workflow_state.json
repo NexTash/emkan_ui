@@ -1,0 +1,137 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:56:21.503144",
+  "name": "Completed",
+  "style": "",
+  "workflow_state_name": "Completed"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-26 12:11:52.006881",
+  "name": "Approved by Lead Accountant",
+  "style": "",
+  "workflow_state_name": "Approved by Lead Accountant"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-26 12:12:12.384446",
+  "name": "Verified by Senior Accountant",
+  "style": "",
+  "workflow_state_name": "Verified by Senior Accountant"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-26 12:12:36.748717",
+  "name": "Recommended by Finance Director",
+  "style": "",
+  "workflow_state_name": "Recommended by Finance Director"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-02 15:30:54.662880",
+  "name": "Mgmt Approved",
+  "style": "",
+  "workflow_state_name": "Mgmt Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:32:41.032452",
+  "name": "Submit",
+  "style": "",
+  "workflow_state_name": "Submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-02 15:29:09.842752",
+  "name": "MR Prepared",
+  "style": "",
+  "workflow_state_name": "MR Prepared"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-02 15:29:43.435203",
+  "name": "Store Verification",
+  "style": "",
+  "workflow_state_name": "Store Verification"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:32:17.842467",
+  "name": "Approved by Senior Accountant",
+  "style": "",
+  "workflow_state_name": "Approved by Senior Accountant"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-02 15:35:18.968285",
+  "name": "Pending Mgmt. Approval",
+  "style": "",
+  "workflow_state_name": "Pending Mgmt. Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-08 17:42:13.290877",
+  "name": "Draft",
+  "style": "",
+  "workflow_state_name": "Draft"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 17:01:34.021599",
+  "name": "Approved by Finance Director",
+  "style": "",
+  "workflow_state_name": "Approved by Finance Director"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2024-06-25 13:33:42.812848",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:31:55.428227",
+  "name": "Recommended by Lead Account",
+  "style": "",
+  "workflow_state_name": "Recommended by Lead Account"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:31:41.407334",
+  "name": "Verified by Account User",
+  "style": "",
+  "workflow_state_name": "Verified by Account User"
+ }
+]
