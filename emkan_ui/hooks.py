@@ -135,6 +135,12 @@ doc_events = {
     "ToDo":{
         "on_update": "emkan_ui.events.share_emkan.remove_share"
 	},
+    "Material Request": {
+		"on_update": [
+                "emkan_ui.events.material_request.change_state",
+                "emkan_ui.events.material_request.assign_user"
+                ]
+	}
 }
 
 # Scheduled Tasks
