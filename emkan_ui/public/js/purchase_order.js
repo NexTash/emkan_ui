@@ -1,6 +1,6 @@
 frappe.ui.form.on("Purchase Order", {
     custom_department(frm, dt, dn){
-        if(frm.doc.custom_department == "BSI"){
+        if(frm.doc.custom_department == "EMKAN-4 (BSI)"){
             frappe.model.set_value(dt, dn, "custom_prefix", "BSI-")
         }
         else{
