@@ -208,6 +208,10 @@ function get_filters() {
 			fieldtype: "Date",
 			reqd: 1,
 			depends_on: "eval:doc.filter_based_on == 'Date Range'",
+			on_change: function(report) {
+				period_end_date()
+				report.refresh();
+			}
 		},
 		{
 			fieldname: "from_fiscal_year",
@@ -328,5 +332,14 @@ function period_start_date(){
 	} else {
 		// Clear customer data from localStorage if no customer is selected
 		localStorage.setItem("period_start_date", JSON.stringify({}));
+	}
+}
+function period_end_date(){
+	let period_end_date = frappe.query_report.get_filter_value('period_end_date');
+	if (period_end_date) {
+		localStorage.setItem("period_end_date", JSON.stringify({period_end_date}));
+	} else {
+		// Clear customer data from localStorage if no customer is selected
+		localStorage.setItem("period_end_date", JSON.stringify({}));
 	}
 }
