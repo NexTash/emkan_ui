@@ -145,6 +145,8 @@ custom_balance_sheet = {
 				frappe.set_route("query-report", "Cash Flow", { company: filters.company });
 			});
 		}
+		period_start_date()
+		period_end_date()
 		
 	},
 };
