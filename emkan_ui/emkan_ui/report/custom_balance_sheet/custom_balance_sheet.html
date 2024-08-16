@@ -64,7 +64,7 @@
         <td style="font-weight: bold; font-size: 15px; text-align: center;">Balance Sheet</td>
     </tr>
     <tr>
-        <td style="text-align: center;">{{ JSON.parse(localStorage.getItem("period_start_date")).period_start_date || "" }} TO {{JSON.parse(localStorage.getItem("period_end_date")).period_end_date || "" }}</td>
+        <td style="text-align: center;">{{ JSON.parse(localStorage.getItem("period_start_date")).period_start_date || "" }} <b>TO</b> {{JSON.parse(localStorage.getItem("period_end_date")).period_end_date || "" }}</td>
     </tr>
 </table>
 
@@ -108,7 +108,7 @@
                         {% endfor %}
                         {% if row_currency_sum <= 0 %}
                             {% for row in data %}
-                                {% if row["account"] && row["account"] == "'Profit for the year'" %}
+                                {% if row["account"] && row["account"] == "'Provisional Profit / Loss (Credit)'" %}
                                     {% var row_currency_sum = 0 %}
 
                                     {% for col in columns %}
@@ -118,7 +118,7 @@
                                         {% endif %}
                                     {% endfor %}
                                             <tr>
-                                                <td style="color: red;"><strong>Profit for the year:</strong></td>
+                                                <td style="color: red;"><strong>Provisional Profit / Loss (Credit):</strong></td>
                                                 <td></td>
                                                 <td style="color: red;"><strong>{{frappe.format(row_currency_sum, {"fieldtype": "Currency"})}}</strong></td>
                                             </tr>
@@ -169,7 +169,7 @@
                         {% endfor %}
                         {% if row_currency_sum > 0 %}
                             {% for row in data %}
-                                {% if row["account"] && row["account"] == "'Profit for the year'" %}
+                                {% if row["account"] && row["account"] == "'Provisional Profit / Loss (Credit)'" %}
                                     {% var row_currency_sum = 0 %}
 
                                     {% for col in columns %}
@@ -179,7 +179,7 @@
                                         {% endif %}
                                     {% endfor %}
                                             <tr>
-                                                <td style="color: green;"><strong>Profit for the year:</strong></td>
+                                                <td style="color: green;"><strong>Provisional Profit / Loss (Credit):</strong></td>
                                                 <td></td>
                                                 <td style="color: green;"><strong>{{frappe.format(row_currency_sum, {"fieldtype": "Currency"})}}</strong></td>
                                             </tr>
