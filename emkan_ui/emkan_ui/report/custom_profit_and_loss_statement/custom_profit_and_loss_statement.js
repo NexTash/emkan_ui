@@ -145,7 +145,8 @@ custom_profit_and_loss = {
 				frappe.set_route("query-report", "Cash Flow", { company: filters.company });
 			});
 		}
-		
+		period_start_date()
+		period_end_date()
 	},
 };
 
