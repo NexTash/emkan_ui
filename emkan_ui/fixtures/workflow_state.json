@@ -3,6 +3,33 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2024-08-07 11:25:10.370608",
+  "name": "Move to Purchase",
+  "style": "",
+  "workflow_state_name": "Move to Purchase"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-17 17:01:10.854392",
+  "name": "Approved by EXE Manager",
+  "style": "",
+  "workflow_state_name": "Approved by EXE Manager"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-17 17:05:53.473063",
+  "name": "Submitted",
+  "style": "",
+  "workflow_state_name": "Submitted"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-07-23 16:56:21.503144",
   "name": "Completed",
   "style": "",

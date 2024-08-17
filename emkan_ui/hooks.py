@@ -261,6 +261,8 @@ fixtures=[
                     "Recommended by Lead Account",
                     "Approved by Senior Accountant",
                     "Submit",
+                    "Approved by EXE Manager",
+                    "Submitted"
                 ]
             ]
         ]
@@ -279,6 +281,7 @@ fixtures=[
                     "MR Approver",
                     "Account user",
                     "Account Lead",
+                    "EXE APPROVER"
                 ]
             ]
         ]
@@ -300,7 +303,8 @@ fixtures=[
                     "Return to Lead Accountant",
                     "Send For Store Verification",
                     "Send For Mgmt. Approval",
-                    "Return Back To Initiator"
+                    "Return Back To Initiator",
+                    "Return to Account User"
                 ]
             ]
         ]
