@@ -3,6 +3,114 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2024-06-27 15:22:16.171864",
+  "name": "Approval 1",
+  "style": "",
+  "workflow_state_name": "Approval 1"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-27 15:22:26.990061",
+  "name": "Approval 2",
+  "style": "",
+  "workflow_state_name": "Approval 2"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-27 15:22:36.429216",
+  "name": "Approval 3",
+  "style": "",
+  "workflow_state_name": "Approval 3"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-27 15:22:43.157079",
+  "name": "Approval 4",
+  "style": "",
+  "workflow_state_name": "Approval 4"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-28 14:24:09.295749",
+  "name": "Approval 5",
+  "style": "",
+  "workflow_state_name": "Approval 5"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-28 14:24:20.648380",
+  "name": "Approval 6",
+  "style": "",
+  "workflow_state_name": "Approval 6"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-28 14:24:31.913319",
+  "name": "Approval 7",
+  "style": "",
+  "workflow_state_name": "Approval 7"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-06-28 14:24:40.375288",
+  "name": "Approval 8",
+  "style": "",
+  "workflow_state_name": "Approval 8"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:57:07.575300",
+  "name": "Approval reqd by Account Lead",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Account Lead"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:57:47.288019",
+  "name": "Approval reqd by Finance Director",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Finance Director"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 16:58:30.060453",
+  "name": "Approval reqd by Account User",
+  "style": "",
+  "workflow_state_name": "Approval reqd by Account User"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-07 11:25:10.370608",
+  "name": "Move to Purchase",
+  "style": "",
+  "workflow_state_name": "Move to Purchase"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-06-27 15:28:04.613634",
   "name": "Submit for Approval",
   "style": "",
@@ -57,15 +165,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-14 16:32:41.032452",
-  "name": "Submit",
-  "style": "",
-  "workflow_state_name": "Submit"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2024-08-02 15:29:09.842752",
   "name": "MR Prepared",
   "style": "",
@@ -84,19 +183,46 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-14 16:32:17.842467",
-  "name": "Approved by Senior Accountant",
+  "modified": "2024-08-02 15:35:18.968285",
+  "name": "Pending Mgmt. Approval",
   "style": "",
-  "workflow_state_name": "Approved by Senior Accountant"
+  "workflow_state_name": "Pending Mgmt. Approval"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-02 15:35:18.968285",
-  "name": "Pending Mgmt. Approval",
+  "modified": "2024-08-17 17:01:10.854392",
+  "name": "Approved by EXE Manager",
   "style": "",
-  "workflow_state_name": "Pending Mgmt. Approval"
+  "workflow_state_name": "Approved by EXE Manager"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-17 17:05:53.473063",
+  "name": "Submitted",
+  "style": "",
+  "workflow_state_name": "Submitted"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:32:41.032452",
+  "name": "Submit",
+  "style": "",
+  "workflow_state_name": "Submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:32:17.842467",
+  "name": "Approved by Senior Accountant",
+  "style": "",
+  "workflow_state_name": "Approved by Senior Accountant"
  },
  {
   "docstatus": 0,
@@ -110,20 +236,20 @@
  {
   "docstatus": 0,
   "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2024-07-23 17:01:34.021599",
-  "name": "Approved by Finance Director",
-  "style": "",
-  "workflow_state_name": "Approved by Finance Director"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
   "icon": "remove",
   "modified": "2024-06-25 13:33:42.812848",
   "name": "Rejected",
   "style": "Danger",
   "workflow_state_name": "Rejected"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-07-23 17:01:34.021599",
+  "name": "Approved by Finance Director",
+  "style": "",
+  "workflow_state_name": "Approved by Finance Director"
  },
  {
   "docstatus": 0,
