@@ -135,8 +135,12 @@ doc_events = {
     "ToDo":{
         "on_update": "emkan_ui.events.share_emkan.remove_share"
 	},
+    "Expense Claim":{
+        "validate": "emkan_ui.events.expense_claim.get_account_user"
+	},
     "Material Request": {
 		"on_update": [
+                "emkan_ui.events.material_request.change_state",
                 "emkan_ui.events.material_request.assign_user"
                 ]
 	}
@@ -145,23 +149,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"emkan_ui.tasks.all"
-# 	],
-# 	"daily": [
-# 		"emkan_ui.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"emkan_ui.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"emkan_ui.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"emkan_ui.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"emkan_ui.tasks.all"
+	# ],
+	# "daily": [
+	# 	"emkan_ui.tasks.daily"
+	# ],
+	"hourly": [
+		"emkan_ui.events.material_request.change_state"
+	],
+	# "weekly": [
+	# 	"emkan_ui.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"emkan_ui.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------
@@ -245,7 +249,19 @@ fixtures=[
             [
                 "name","in",
                 [
+                    "Approval 1",
+                    "Approval 2",
+                    "Approval 3",
+                    "Approval 4",
+                    "Approval 5",    
+                    "Approval 6",
+                    "Approval 7",
+                    "Approval 8",
                     "Draft",
+                    "Submit for Approval",
+                    "Approval reqd by Account Lead",
+                    "Approval reqd by Finance Director",
+                    "Approval reqd by Account User",
                     "Approved by Finance Director",
                     "Completed",
                     "Rejected",
@@ -273,14 +289,24 @@ fixtures=[
             [
                 "name","in",
                 [
+                    "No",
+                    "Yes",
+                    "Role 1",
+                    "Role 2",
+                    "Role 3",    
+                    "Role 4",
+                    "Role 5",
+                    "Role 6",
+                    "Role 7",
+                    "Role 8",
+                    "Account user",
+                    "Account Lead",
                     "Finance Director",
                     "Senior Accountant",
                     "Lead Accountant",
                     "MR Creator",
                     "Store Verifier",
                     "MR Approver",
-                    "Account user",
-                    "Account Lead",
                     "EXE APPROVER"
                 ]
             ]
@@ -292,14 +318,13 @@ fixtures=[
             [
                 "name","in",
                 [
+                    "Return for Update",
+                    "Submit",
+                    "Submit for Approval",
                     "Return to Initiator",
                     "Approve",
                     "Return to Senior Accountant",
                     "Reject",
-                    "Return to Lead Accountant",
-                    "Send For Store Verification",
-                    "Send For Mgmt. Approval",
-                    "Return Back To Initiator",
                     "Return to Lead Accountant",
                     "Send For Store Verification",
                     "Send For Mgmt. Approval",
@@ -315,8 +340,10 @@ fixtures=[
             [
                 "name","in",
                 [
+                    "Purchase Order",
                     "Payment Request",
                     "MR-Approval-Flow",
+                    "Expense Claim",
                     "Employee Advance",
                 ]
             ]

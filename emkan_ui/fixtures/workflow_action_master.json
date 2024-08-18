@@ -2,9 +2,9 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
-  "modified": "2024-08-17 17:06:34.183601",
-  "name": "Return to Account User",
-  "workflow_action_name": "Return to Account User"
+  "modified": "2024-06-27 15:28:44.808230",
+  "name": "Submit for Approval",
+  "workflow_action_name": "Submit for Approval"
  },
  {
   "docstatus": 0,
@@ -37,6 +37,13 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
+  "modified": "2024-08-17 17:06:34.183601",
+  "name": "Return to Account User",
+  "workflow_action_name": "Return to Account User"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
   "modified": "2024-07-26 12:20:46.068606",
   "name": "Return to Lead Accountant",
   "workflow_action_name": "Return to Lead Accountant"
@@ -44,9 +51,23 @@
  {
   "docstatus": 0,
   "doctype": "Workflow Action Master",
+  "modified": "2024-07-29 10:50:58.326015",
+  "name": "Submit",
+  "workflow_action_name": "Submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
   "modified": "2024-08-02 15:36:52.982873",
   "name": "Return Back To Initiator",
   "workflow_action_name": "Return Back To Initiator"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow Action Master",
+  "modified": "2024-06-28 15:32:39.373942",
+  "name": "Return for Update",
+  "workflow_action_name": "Return for Update"
  },
  {
   "docstatus": 0,
