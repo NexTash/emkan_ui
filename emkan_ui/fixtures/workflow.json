@@ -547,7 +547,7 @@
   "doctype": "Workflow",
   "document_type": "Payment Entry",
   "is_active": 1,
-  "modified": "2024-07-29 10:53:50.991263",
+  "modified": "2024-08-19 08:56:56.136308",
   "name": "Payment Request",
   "override_status": 0,
   "send_email_alert": 0,
@@ -648,7 +648,7 @@
     "action": "Approve",
     "allow_self_approval": 1,
     "allowed": "Senior Accountant",
-    "condition": "doc.payment_type == \"Pay\"",
+    "condition": "doc.payment_type == \"Pay\" and doc.party_type == \"Supplier\"",
     "next_state": "Verified by Senior Accountant",
     "parent": "Payment Request",
     "parentfield": "transitions",
@@ -660,7 +660,7 @@
     "action": "Submit",
     "allow_self_approval": 1,
     "allowed": "All",
-    "condition": "doc.payment_type != \"Pay\"",
+    "condition": "",
     "next_state": "Completed",
     "parent": "Payment Request",
     "parentfield": "transitions",
@@ -762,7 +762,7 @@
   "doctype": "Workflow",
   "document_type": "Employee Advance",
   "is_active": 1,
-  "modified": "2024-08-17 17:26:28.876099",
+  "modified": "2024-08-14 16:56:39.861508",
   "name": "Employee Advance",
   "override_status": 0,
   "send_email_alert": 0,
@@ -783,7 +783,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Account user",
+    "allow_edit": "All",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -798,7 +798,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Lead Accountant",
+    "allow_edit": "All",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -813,7 +813,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Finance Director",
+    "allow_edit": "All",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -828,7 +828,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "Senior Accountant",
+    "allow_edit": "All",
     "avoid_status_override": 0,
     "doc_status": "0",
     "is_optional_state": 0,
@@ -858,22 +858,7 @@
     "workflow_builder_id": null
    },
    {
-    "allow_edit": "EXE APPROVER",
-    "avoid_status_override": 0,
-    "doc_status": "0",
-    "is_optional_state": 0,
-    "message": null,
-    "next_action_email_template": null,
-    "parent": "Employee Advance",
-    "parentfield": "states",
-    "parenttype": "Workflow",
-    "state": "Approved by EXE Manager",
-    "update_field": null,
-    "update_value": null,
-    "workflow_builder_id": null
-   },
-   {
-    "allow_edit": "Senior Accountant",
+    "allow_edit": "All",
     "avoid_status_override": 0,
     "doc_status": "1",
     "is_optional_state": 0,
@@ -882,7 +867,7 @@
     "parent": "Employee Advance",
     "parentfield": "states",
     "parenttype": "Workflow",
-    "state": "Submitted",
+    "state": "Submit",
     "update_field": null,
     "update_value": null,
     "workflow_builder_id": null
@@ -904,7 +889,7 @@
    {
     "action": "Approve",
     "allow_self_approval": 1,
-    "allowed": "Lead Accountant",
+    "allowed": "Account user",
     "condition": null,
     "next_state": "Recommended by Lead Account",
     "parent": "Employee Advance",
@@ -916,7 +901,7 @@
    {
     "action": "Reject",
     "allow_self_approval": 1,
-    "allowed": "Lead Accountant",
+    "allowed": "Account user",
     "condition": null,
     "next_state": "Rejected",
     "parent": "Employee Advance",
@@ -928,7 +913,7 @@
    {
     "action": "Return Back To Initiator",
     "allow_self_approval": 1,
-    "allowed": "Lead Accountant",
+    "allowed": "Account user",
     "condition": null,
     "next_state": "Draft",
     "parent": "Employee Advance",
@@ -940,7 +925,7 @@
    {
     "action": "Approve",
     "allow_self_approval": 1,
-    "allowed": "Finance Director",
+    "allowed": "Lead Accountant",
     "condition": null,
     "next_state": "Approved by Finance Director",
     "parent": "Employee Advance",
@@ -952,7 +937,7 @@
    {
     "action": "Reject",
     "allow_self_approval": 1,
-    "allowed": "Finance Director",
+    "allowed": "Lead Accountant",
     "condition": null,
     "next_state": "Rejected",
     "parent": "Employee Advance",
@@ -964,7 +949,7 @@
    {
     "action": "Return for Update",
     "allow_self_approval": 1,
-    "allowed": "Finance Director",
+    "allowed": "Lead Accountant",
     "condition": null,
     "next_state": "Verified by Account User",
     "parent": "Employee Advance",
@@ -974,23 +959,11 @@
     "workflow_builder_id": null
    },
    {
-    "action": "Submit",
-    "allow_self_approval": 1,
-    "allowed": "Account user",
-    "condition": "doc.custom_executive_manager_approval == 0",
-    "next_state": "Submitted",
-    "parent": "Employee Advance",
-    "parentfield": "transitions",
-    "parenttype": "Workflow",
-    "state": "Approved by Finance Director",
-    "workflow_builder_id": null
-   },
-   {
     "action": "Approve",
     "allow_self_approval": 1,
-    "allowed": "EXE APPROVER",
-    "condition": "doc.custom_executive_manager_approval",
-    "next_state": "Approved by EXE Manager",
+    "allowed": "Finance Director",
+    "condition": null,
+    "next_state": "Approved by Senior Accountant",
     "parent": "Employee Advance",
     "parentfield": "transitions",
     "parenttype": "Workflow",
@@ -1000,8 +973,8 @@
    {
     "action": "Reject",
     "allow_self_approval": 1,
-    "allowed": "EXE APPROVER",
-    "condition": "doc.custom_executive_manager_approval",
+    "allowed": "Finance Director",
+    "condition": null,
     "next_state": "Rejected",
     "parent": "Employee Advance",
     "parentfield": "transitions",
@@ -1010,11 +983,11 @@
     "workflow_builder_id": null
    },
    {
-    "action": "Return to Account User",
+    "action": "Return to Lead Accountant",
     "allow_self_approval": 1,
-    "allowed": "EXE APPROVER",
-    "condition": "doc.custom_executive_manager_approval",
-    "next_state": "Draft",
+    "allowed": "Finance Director",
+    "condition": null,
+    "next_state": "Recommended by Lead Account",
     "parent": "Employee Advance",
     "parentfield": "transitions",
     "parenttype": "Workflow",
@@ -1024,13 +997,13 @@
    {
     "action": "Submit",
     "allow_self_approval": 1,
-    "allowed": "Account user",
+    "allowed": "Senior Accountant",
     "condition": null,
-    "next_state": "Submitted",
+    "next_state": "Submit",
     "parent": "Employee Advance",
     "parentfield": "transitions",
     "parenttype": "Workflow",
-    "state": "Approved by EXE Manager",
+    "state": "Approved by Senior Accountant",
     "workflow_builder_id": null
    }
   ],
