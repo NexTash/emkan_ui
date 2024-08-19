@@ -192,6 +192,33 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
+  "modified": "2024-08-14 16:32:41.032452",
+  "name": "Submit",
+  "style": "",
+  "workflow_state_name": "Submit"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-19 14:57:43.737389",
+  "name": "Verified by Senior Account Manager",
+  "style": "",
+  "workflow_state_name": "Verified by Senior Account Manager"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-08-14 16:32:17.842467",
+  "name": "Approved by Senior Accountant",
+  "style": "",
+  "workflow_state_name": "Approved by Senior Accountant"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
   "modified": "2024-08-17 17:01:10.854392",
   "name": "Approved by EXE Manager",
   "style": "",
@@ -205,24 +232,6 @@
   "name": "Submitted",
   "style": "",
   "workflow_state_name": "Submitted"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2024-08-14 16:32:41.032452",
-  "name": "Submit",
-  "style": "",
-  "workflow_state_name": "Submit"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2024-08-14 16:32:17.842467",
-  "name": "Approved by Senior Accountant",
-  "style": "",
-  "workflow_state_name": "Approved by Senior Accountant"
  },
  {
   "docstatus": 0,
@@ -246,19 +255,19 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-07-23 17:01:34.021599",
-  "name": "Approved by Finance Director",
+  "modified": "2024-08-14 16:31:55.428227",
+  "name": "Recommended by Lead Account",
   "style": "",
-  "workflow_state_name": "Approved by Finance Director"
+  "workflow_state_name": "Recommended by Lead Account"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-14 16:31:55.428227",
-  "name": "Recommended by Lead Account",
+  "modified": "2024-07-23 17:01:34.021599",
+  "name": "Approved by Finance Director",
   "style": "",
-  "workflow_state_name": "Recommended by Lead Account"
+  "workflow_state_name": "Approved by Finance Director"
  },
  {
   "docstatus": 0,

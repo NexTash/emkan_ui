@@ -278,7 +278,8 @@ fixtures=[
                     "Approved by Senior Accountant",
                     "Submit",
                     "Approved by EXE Manager",
-                    "Submitted"
+                    "Submitted",
+                    "Verified by Senior Account Manager"
                 ]
             ]
         ]
@@ -307,7 +308,8 @@ fixtures=[
                     "MR Creator",
                     "Store Verifier",
                     "MR Approver",
-                    "EXE APPROVER"
+                    "EXE APPROVER",
+                    "Senior Account Manager"
                 ]
             ]
         ]
@@ -329,7 +331,8 @@ fixtures=[
                     "Send For Store Verification",
                     "Send For Mgmt. Approval",
                     "Return Back To Initiator",
-                    "Return to Account User"
+                    "Return to Account User",
+                    "Return Back To Account User"
                 ]
             ]
         ]
