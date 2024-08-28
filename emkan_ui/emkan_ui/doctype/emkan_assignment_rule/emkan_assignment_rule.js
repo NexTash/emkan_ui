@@ -14,8 +14,8 @@ frappe.ui.form.on("Emkan Assignment Rule", {
 				}
 				return null;
 			});
-			frm.set_df_property("condition_key", "options", options);
-			frm.get_field("condition_key").refresh();
+			frm.fields_dict["conditions"].grid.update_docfield_property("condition_key", "options", options);
+			frm.fields_dict["conditions"].grid.refresh_field("condition_key");
 		});
     }
 });

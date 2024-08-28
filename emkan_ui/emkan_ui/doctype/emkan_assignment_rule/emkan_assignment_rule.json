@@ -7,11 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "doctypes",
-  "condition_key",
-  "condition_value",
   "column_break_ighz",
   "rule_name",
   "section_break_q1i1",
+  "conditions",
   "emkan_assignment_rule_users"
  ],
  "fields": [
@@ -20,16 +19,6 @@
    "fieldtype": "Link",
    "label": "Doctypes",
    "options": "DocType"
-  },
-  {
-   "fieldname": "condition_key",
-   "fieldtype": "Select",
-   "label": "Condition Key"
-  },
-  {
-   "fieldname": "condition_value",
-   "fieldtype": "Data",
-   "label": "Condition Value"
   },
   {
    "fieldname": "emkan_assignment_rule_users",
@@ -50,11 +39,17 @@
   {
    "fieldname": "section_break_q1i1",
    "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "conditions",
+   "fieldtype": "Table",
+   "label": "Conditions",
+   "options": "Conditions"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-14 17:43:49.746926",
+ "modified": "2024-08-28 14:03:26.159832",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Emkan Assignment Rule",
