@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "condition_key",
-  "condition_value"
+  "condition_value",
+  "operator"
  ],
  "fields": [
   {
@@ -21,12 +22,19 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Condition Value"
+  },
+  {
+   "fieldname": "operator",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Operator",
+   "options": "\nAND\nOR\nNOT"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-28 13:58:40.925022",
+ "modified": "2024-08-28 14:15:08.286125",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Conditions",
