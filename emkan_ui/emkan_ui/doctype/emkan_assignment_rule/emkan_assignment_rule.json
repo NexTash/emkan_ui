@@ -7,10 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "doctypes",
+  "conditions",
   "column_break_ighz",
   "rule_name",
   "section_break_q1i1",
-  "conditions",
   "emkan_assignment_rule_users"
  ],
  "fields": [
@@ -42,14 +42,14 @@
   },
   {
    "fieldname": "conditions",
-   "fieldtype": "Table",
+   "fieldtype": "Code",
    "label": "Conditions",
-   "options": "Conditions"
+   "options": "PythonExpression"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-28 14:03:26.159832",
+ "modified": "2024-08-29 10:16:09.360610",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Emkan Assignment Rule",
