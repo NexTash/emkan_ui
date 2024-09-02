@@ -327,6 +327,7 @@ fixtures=[
             [
                 "name","in",
                 [
+                    "Purchase Order",
                     "Payment Request",
                     "MR-Approval-Flow",
                     "Expense Claim",
