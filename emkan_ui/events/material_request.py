@@ -14,11 +14,11 @@ def change_state(doc=None, method=None):
 
 def assign_user(doc=None, method=None):
     doc = doc.as_dict()
-    assign_docs = frappe.get_all("Emkan Assignment Rule", {"doctypes": doc["doctype"]}, ['*'])
+    assign_docs = frappe.get_all("Assignment Rule Emkan", {"doctypes": doc["doctype"]}, ['*'])
     for row in assign_docs:
         my_condition =  eval(row['conditions'], {}, {"doc": doc})
         if my_condition == True:
-            assign_doc = frappe.get_doc("Emkan Assignment Rule", row.name)
+            assign_doc = frappe.get_doc("Assignment Rule Emkan", row.name)
             for child in assign_doc.emkan_assignment_rule_users:
                 if(frappe.db.exists("ToDo", {"status" : ["!=", "Cancelled"], "allocated_to": child.user, "reference_name" : doc.name, "reference_type" : doc.doctype})):
                     continue

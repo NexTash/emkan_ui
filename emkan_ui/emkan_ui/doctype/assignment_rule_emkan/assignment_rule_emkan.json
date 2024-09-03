@@ -2,7 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "field:rule_name",
- "creation": "2024-08-13 16:48:06.924013",
+ "creation": "2024-08-29 19:09:55.732580",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -21,10 +21,14 @@
    "options": "DocType"
   },
   {
-   "fieldname": "emkan_assignment_rule_users",
-   "fieldtype": "Table",
-   "label": "Emkan Assignment Rule Users",
-   "options": "Emkan Assignment Rule Users"
+   "fieldname": "conditions",
+   "fieldtype": "Code",
+   "label": "Conditions",
+   "options": "PythonExpression"
+  },
+  {
+   "fieldname": "column_break_ighz",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "rule_name",
@@ -33,26 +37,22 @@
    "unique": 1
   },
   {
-   "fieldname": "column_break_ighz",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "section_break_q1i1",
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "conditions",
-   "fieldtype": "Code",
-   "label": "Conditions",
-   "options": "PythonExpression"
+   "fieldname": "emkan_assignment_rule_users",
+   "fieldtype": "Table",
+   "label": "Emkan Assignment Rule Users",
+   "options": "Emkan Assignment Rule Users"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-08-29 10:16:09.360610",
+ "modified": "2024-08-29 19:09:55.732580",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
- "name": "Emkan Assignment Rule",
+ "name": "Assignment Rule Emkan",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

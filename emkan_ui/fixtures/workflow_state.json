@@ -201,15 +201,6 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-19 14:57:43.737389",
-  "name": "Verified by Senior Account Manager",
-  "style": "",
-  "workflow_state_name": "Verified by Senior Account Manager"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2024-08-14 16:32:17.842467",
   "name": "Approved by Senior Accountant",
   "style": "",
