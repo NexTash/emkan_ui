@@ -78,6 +78,18 @@ def get_columns(filters):
 			"fieldtype": "Data",
 			"width" : 150 
 		},
+		{
+			"label": "Created By",
+			"fieldname": "created_by", 
+			"fieldtype": "Data",
+			"width" : 150 
+		},
+		{
+			"label": "Workflow State",
+			"fieldname": "workflow_state", 
+			"fieldtype": "Data",
+			"width" : 150 
+		},
 	]
 
 	return columns
@@ -96,6 +108,7 @@ def get_data(filters):
 	
 	for row in docs:
 		doc = frappe.get_doc("Material Request", row.name)
+		user_name = frappe.db.get_value("User", doc.owner, "full_name")
 		for mr_item in doc.items:
 			data.append({
 				"material_request" : doc.name,
@@ -109,6 +122,8 @@ def get_data(filters):
 				"qty" : mr_item.qty,
 				"remark" : mr_item.custom_remarks,
 				"expense_account" : mr_item.expense_account,
+				"created_by" : user_name,
+				"workflow_state" : doc.workflow_state,
 			})
 			
 	return data
