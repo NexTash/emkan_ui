@@ -18,7 +18,7 @@ frappe.ui.form.on("Purchase Order", {
     refresh(frm, dt, dn){
 		if(frm.doc.docstatus < 1){
 			frm.add_custom_button(
-				__("Balance Quanity"),
+				__("Order Quanity"),
 				function () {
 					if(frm.doc.items && frm.doc.items.length > 0){
 						get_qty(frm, dt, dn)
