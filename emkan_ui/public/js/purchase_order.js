@@ -16,15 +16,8 @@ frappe.ui.form.on("Purchase Order", {
         }
     },
     refresh(frm, dt, dn){
-		if(frm.doc.docstatus < 1){
-			frm.add_custom_button(
-				__("Order Quanity"),
-				function () {
-					if(frm.doc.items && frm.doc.items.length > 0){
-						get_qty(frm, dt, dn)
-					}
-			},
-		);
+		if(frm.doc.docstatus == 0){
+			get_qty(frm, dt, dn);
 		}
 		frm.add_custom_button(
 			__("Material Request"),
