@@ -19,7 +19,8 @@ frappe.ui.form.on("Purchase Receipt", {
                         });
                     }
                     erpnext.utils.map_current_doc({
-                        method: "erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_receipt",
+                        // method: "erpnext.buying.doctype.purchase_order.purchase_order.make_purchase_receipt",
+                        method: "emkan_ui.events.override.make_purchase_receipt",
                         source_doctype: "Purchase Order",
                         target: frm,
                         setters: {
