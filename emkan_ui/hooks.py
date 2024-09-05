@@ -250,14 +250,6 @@ fixtures=[
             [
                 "name","in",
                 [
-                    "Approval 1",
-                    "Approval 2",
-                    "Approval 3",
-                    "Approval 4",
-                    "Approval 5",    
-                    "Approval 6",
-                    "Approval 7",
-                    "Approval 8",
                     "Draft",
                     "Submit for Approval",
                     "Approval reqd by Account Lead",
@@ -279,7 +271,19 @@ fixtures=[
                     "Approved by Senior Accountant",
                     "Submit",
                     "Approved by EXE Manager",
-                    "Submitted"
+                    "Submitted",
+                    "MR Prepared",
+                    "Store Verification",
+                    "Dept. Verification",
+                    "Dept. Review",
+                    "Pending Head Of Service Approval",
+                    "CAPEX Verification",
+                    "CAPEX Review",
+                    "Pending COO Approval",
+                    "COO Approval",
+                    "COO Approved",
+                    "Pending Mgmt. Approval",
+                    "Mgmt Approved",
                 ]
             ]
         ]
@@ -292,14 +296,6 @@ fixtures=[
                 [
                     "No",
                     "Yes",
-                    "Role 1",
-                    "Role 2",
-                    "Role 3",    
-                    "Role 4",
-                    "Role 5",
-                    "Role 6",
-                    "Role 7",
-                    "Role 8",
                     "Account user",
                     "Account Lead",
                     "Finance Director",
@@ -308,7 +304,13 @@ fixtures=[
                     "MR Creator",
                     "Store Verifier",
                     "MR Approver",
-                    "EXE APPROVER"
+                    "EXE APPROVER",
+                    "Store Verifier",
+                    "MR Verifier",
+                    "MR Reviewer",
+                    "CAPEX Reviewer",
+                    "COO",
+                    "MR Approver"
                 ]
             ]
         ]
@@ -330,7 +332,10 @@ fixtures=[
                     "Send For Store Verification",
                     "Send For Mgmt. Approval",
                     "Return Back To Initiator",
-                    "Return to Account User"
+                    "Return to Account User",
+                    "Send For CAPEX Verify",
+                    "Return to Verifier",
+                    "Return to Reviewer"
                 ]
             ]
         ]
@@ -346,6 +351,7 @@ fixtures=[
                     "MR-Approval-Flow",
                     "Expense Claim",
                     "Employee Advance",
+                    "MR-Approval-Flow-V4",
                 ]
             ]
         ]
