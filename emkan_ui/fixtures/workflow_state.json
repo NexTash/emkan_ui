@@ -183,10 +183,19 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-09-05 18:08:04.628127",
-  "name": "COO Approved",
+  "modified": "2024-09-05 18:07:02.886709",
+  "name": "Pending Head Of Service Approval",
   "style": "",
-  "workflow_state_name": "COO Approved"
+  "workflow_state_name": "Pending Head Of Service Approval"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "remove",
+  "modified": "2024-06-25 13:33:42.812848",
+  "name": "Rejected",
+  "style": "Danger",
+  "workflow_state_name": "Rejected"
  },
  {
   "docstatus": 0,
@@ -210,37 +219,10 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-09-05 18:06:51.212462",
-  "name": "Dept. Review",
-  "style": "",
-  "workflow_state_name": "Dept. Review"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
-  "modified": "2024-09-05 18:07:02.886709",
-  "name": "Pending Head Of Service Approval",
-  "style": "",
-  "workflow_state_name": "Pending Head Of Service Approval"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "",
   "modified": "2024-09-05 18:07:26.309479",
   "name": "CAPEX Review",
   "style": "",
   "workflow_state_name": "CAPEX Review"
- },
- {
-  "docstatus": 0,
-  "doctype": "Workflow State",
-  "icon": "remove",
-  "modified": "2024-06-25 13:33:42.812848",
-  "name": "Rejected",
-  "style": "Danger",
-  "workflow_state_name": "Rejected"
  },
  {
   "docstatus": 0,
@@ -255,18 +237,36 @@
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-09-05 18:07:36.184031",
-  "name": "Pending COO Approval",
+  "modified": "2024-08-02 15:29:09.842752",
+  "name": "MR Prepared",
   "style": "",
-  "workflow_state_name": "Pending COO Approval"
+  "workflow_state_name": "MR Prepared"
  },
  {
   "docstatus": 0,
   "doctype": "Workflow State",
   "icon": "",
-  "modified": "2024-08-02 15:29:09.842752",
-  "name": "MR Prepared",
+  "modified": "2024-09-05 18:08:04.628127",
+  "name": "COO Approved",
   "style": "",
-  "workflow_state_name": "MR Prepared"
+  "workflow_state_name": "COO Approved"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-09-05 18:06:51.212462",
+  "name": "Dept. Review",
+  "style": "",
+  "workflow_state_name": "Dept. Review"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Workflow State",
+  "icon": "",
+  "modified": "2024-09-05 18:07:36.184031",
+  "name": "Pending COO Approval",
+  "style": "",
+  "workflow_state_name": "Pending COO Approval"
  }
 ]

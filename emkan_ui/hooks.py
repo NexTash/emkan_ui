@@ -284,6 +284,10 @@ fixtures=[
                     "COO Approved",
                     "Pending Mgmt. Approval",
                     "Mgmt Approved",
+                    "Prepared",
+                    "Approval Reqd by Manager",
+                    "PO issued",
+                    "Approval Reqd by Manager",
                 ]
             ]
         ]
@@ -310,7 +314,10 @@ fixtures=[
                     "MR Reviewer",
                     "CAPEX Reviewer",
                     "COO",
-                    "MR Approver"
+                    "MR Approver",
+                    "Purchase User",
+                    "Purchase Manager",
+                    "All"
                 ]
             ]
         ]
