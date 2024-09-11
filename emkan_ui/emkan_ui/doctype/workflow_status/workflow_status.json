@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "workflow_states",
-  "approved_by"
+  "approved_by",
+  "approved_by_name"
  ],
  "fields": [
   {
@@ -22,12 +23,19 @@
    "in_list_view": 1,
    "label": "Approved By",
    "options": "User"
+  },
+  {
+   "fetch_from": "approved_by.full_name",
+   "fieldname": "approved_by_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Approved By (Name)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-09-10 21:27:18.665445",
+ "modified": "2024-09-11 18:20:49.971392",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Workflow Status",
