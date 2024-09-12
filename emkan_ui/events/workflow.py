@@ -2,6 +2,7 @@ import frappe
 
 
 def store_data(doc, method=None):
+    timestamp = frappe.utils.now()
     doc.custom_current_workflow_state = doc.workflow_state
     old_doc = doc.get_doc_before_save()
 
@@ -15,6 +16,11 @@ def store_data(doc, method=None):
 
     if doc.workflow_state == "MR Prepared":
         doc.custom_workflow_status = []
+        if not doc.get("__islocal"):
+            current_log = doc.get('custom_workflow_log')
+            my_log = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to MR Prepared"
+            updated_log = f"{current_log}\n{my_log}"
+            doc.set('custom_workflow_log', updated_log)
         return
     
     if not state_exists:
@@ -37,7 +43,6 @@ def store_data(doc, method=None):
         doc.set('custom_workflow_log', "")
 
     # Get the current date and time
-    timestamp = frappe.utils.now()
 
     if old_doc:
         workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
