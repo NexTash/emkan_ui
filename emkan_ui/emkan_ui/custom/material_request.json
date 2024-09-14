@@ -297,7 +297,7 @@
    "name": "Material Request-custom_from",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nCAPEX\nPROJECT\nWORKSHOP\nMAINTENANCE\nHSE\nTRANSPORTATION\nHR & ADMIN\nQA/QC\nMISC",
+   "options": "\nCAPEX\nPROJECT\nWORKSHOP\nMAINTENANCE\nHSE\nTRANSPORTATION\nHR & ADMIN\nQA/QC",
    "owner": "Administrator",
    "permlevel": 0,
    "precision": "",
