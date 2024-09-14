@@ -141,8 +141,11 @@ doc_events = {
     "Material Request": {
 		"on_update": [
                 # "emkan_ui.events.material_request.change_state",
-                "emkan_ui.events.material_request.assign_user"
-                ]
+                "emkan_ui.events.material_request.assign_user",
+                ],
+        "before_save": ["emkan_ui.events.workflow.store_data"],
+        "before_submit": ["emkan_ui.events.workflow.last_state"],
+        
 	}
 }
 
