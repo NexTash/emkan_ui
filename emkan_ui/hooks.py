@@ -138,11 +138,21 @@ doc_events = {
     "Expense Claim":{
         "validate": "emkan_ui.events.expense_claim.get_account_user"
 	},
-    "Material Request": {
+    # "Material Request": {
+	# 	"on_update": [
+    #             # "emkan_ui.events.material_request.change_state",
+    #             "emkan_ui.events.material_request.assign_user"
+    #             ]
+	# }
+    
+      "Material Request": {
 		"on_update": [
-                # "emkan_ui.events.material_request.change_state",
-                "emkan_ui.events.material_request.assign_user"
-                ]
+                "emkan_ui.events.material_request.change_state",
+                "emkan_ui.events.material_request.assign_user",
+                ],
+        "before_save": ["emkan_ui.events.workflow.store_data"],
+        "before_submit": ["emkan_ui.events.workflow.last_state"],
+        
 	}
 }
 
