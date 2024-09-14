@@ -130,11 +130,11 @@ doc_events = {
 		"autoname": "emkan_ui.events.po_naming.autoname",
 	},
     "DocShare": {
-		"after_insert": "emkan_ui.events.share_emkan.after_insert",
-	},
+        "after_insert": "emkan_ui.events.share_emkan.after_insert",
+    },
     "ToDo":{
         "on_update": "emkan_ui.events.share_emkan.remove_share"
-	},
+    },
     "Expense Claim":{
         "validate": "emkan_ui.events.expense_claim.get_account_user"
 	},
@@ -147,7 +147,7 @@ doc_events = {
     
       "Material Request": {
 		"on_update": [
-                # "emkan_ui.events.material_request.change_state",
+                "emkan_ui.events.material_request.change_state",
                 "emkan_ui.events.material_request.assign_user",
                 ],
         "before_save": ["emkan_ui.events.workflow.store_data"],
