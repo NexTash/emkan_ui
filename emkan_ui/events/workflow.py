@@ -81,10 +81,12 @@
 
 
 import frappe
+from datetime import datetime
 
 def store_data(doc, method=None):
     # Get the current timestamp
     timestamp = frappe.utils.now()
+    current_date = datetime.now().date()
     # Get the current workflow state and the previous state
     old_doc = doc.get_doc_before_save()
     
@@ -98,6 +100,7 @@ def store_data(doc, method=None):
         for row in doc.custom_workflow_status:
             if row.workflow_states == doc.workflow_state:
                 row.approved_by = frappe.session.user
+                row.date = current_date
                 state_exists = True
                 break
 
@@ -116,12 +119,14 @@ def store_data(doc, method=None):
         if not state_exists:
             doc.append("custom_workflow_status", {
                 "workflow_states": old_doc.workflow_state,
-                "approved_by": frappe.session.user
+                "approved_by": frappe.session.user,
+                "date" : current_date
             })
         else:
             doc.append("custom_workflow_status", {
                 "workflow_states": doc.workflow_state,
-                "approved_by": frappe.session.user
+                "approved_by": frappe.session.user,
+                "date" : current_date
             })
 
         # Ensure the custom workflow log field is initialized
@@ -146,6 +151,7 @@ def store_data(doc, method=None):
 def last_state(doc, method=None):
     # Get the previous document
     old_doc = doc.get_doc_before_save()
+    current_date = datetime.now().date()
 
     # Proceed only if there is a change in workflow_state
     if old_doc and doc.workflow_state != old_doc.workflow_state:
@@ -155,7 +161,8 @@ def last_state(doc, method=None):
         # Append COO Approved status to the child table
         doc.append("custom_workflow_status", {
             "workflow_states": "COO Approved",
-            "approved_by": frappe.session.user
+            "approved_by": frappe.session.user,
+            "date" : current_date
         })
 
         # Log the workflow transition
