@@ -246,62 +246,52 @@ scheduler_events = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
 fixtures=[
-    {
-        "dt" : "Workflow State",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Approval 1",
-                    "Approval 2",
-                    "Approval 3",
-                    "Approval 4",
-                    "Approval 5",    
-                    "Approval 6",
-                    "Approval 7",
-                    "Approval 8",
-                    "Draft",
-                    "Submit for Approval",
-                    "Approval reqd by Account Lead",
-                    "Approval reqd by Finance Director",
-                    "Approval reqd by Account User",
-                    "Approved by Finance Director",
-                    "Completed",
-                    "Rejected",
-                    "Verified by Senior Accountant",
-                    "Approved by Lead Accountant",
-                    "Recommended by Finance Director",
-                    "MR Prepared",
-                    "Store Verification",
-                    "Pending Mgmt. Approval",
-                    "Mgmt Approved",
-                    "Move to Purchase",
-                    "Verified by Account User",
-                    "Recommended by Lead Account",
-                    "Approved by Senior Accountant",
-                    "Submit",
-                    "Approved by EXE Manager",
-                    "Submitted"
-                ]
-            ]
-        ]
-    },
+    # {
+    #     "dt" : "Workflow State",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Approval 1",
+    #                 "Approval 2",
+    #                 "Approval 3",
+    #                 "Approval 4",
+    #                 "Approval 5",    
+    #                 "Approval 6",
+    #                 "Approval 7",
+    #                 "Approval 8",
+    #                 "Draft",
+    #                 "Submit for Approval",
+    #                 "Approval reqd by Account Lead",
+    #                 "Approval reqd by Finance Director",
+    #                 "Approval reqd by Account User",
+    #                 "Approved by Finance Director",
+    #                 "Completed",
+    #                 "Rejected",
+    #                 "Verified by Senior Accountant",
+    #                 "Approved by Lead Accountant",
+    #                 "Recommended by Finance Director",
+    #                 "MR Prepared",
+    #                 "Store Verification",
+    #                 "Pending Mgmt. Approval",
+    #                 "Mgmt Approved",
+    #                 "Move to Purchase",
+    #                 "Verified by Account User",
+    #                 "Recommended by Lead Account",
+    #                 "Approved by Senior Accountant",
+    #                 "Submit",
+    #                 "Approved by EXE Manager",
+    #                 "Submitted"
+    #             ]
+    #         ]
+    #     ]
+    # },
     {
         "dt" : "Role",
         "filters": [
             [
                 "name","in",
                 [
-                    "No",
-                    "Yes",
-                    "Role 1",
-                    "Role 2",
-                    "Role 3",    
-                    "Role 4",
-                    "Role 5",
-                    "Role 6",
-                    "Role 7",
-                    "Role 8",
                     "Account user",
                     "Account Lead",
                     "Finance Director",
@@ -315,43 +305,43 @@ fixtures=[
             ]
         ]
     },
-    {
-        "dt" : "Workflow Action Master",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Return for Update",
-                    "Submit",
-                    "Submit for Approval",
-                    "Return to Initiator",
-                    "Approve",
-                    "Return to Senior Accountant",
-                    "Reject",
-                    "Return to Lead Accountant",
-                    "Send For Store Verification",
-                    "Send For Mgmt. Approval",
-                    "Return Back To Initiator",
-                    "Return to Account User"
-                ]
-            ]
-        ]
-    },
-    {
-        "dt" : "Workflow",
-        "filters": [
-            [
-                "name","in",
-                [
-                    "Purchase Order",
-                    "Payment Request",
-                    "MR-Approval-Flow",
-                    "Expense Claim",
-                    "Employee Advance",
-                ]
-            ]
-        ]
-    },
+    # {
+    #     "dt" : "Workflow Action Master",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Return for Update",
+    #                 "Submit",
+    #                 "Submit for Approval",
+    #                 "Return to Initiator",
+    #                 "Approve",
+    #                 "Return to Senior Accountant",
+    #                 "Reject",
+    #                 "Return to Lead Accountant",
+    #                 "Send For Store Verification",
+    #                 "Send For Mgmt. Approval",
+    #                 "Return Back To Initiator",
+    #                 "Return to Account User"
+    #             ]
+    #         ]
+    #     ]
+    # },
+    # {
+    #     "dt" : "Workflow",
+    #     "filters": [
+    #         [
+    #             "name","in",
+    #             [
+    #                 "Purchase Order",
+    #                 "Payment Request",
+    #                 "MR-Approval-Flow",
+    #                 "Expense Claim",
+    #                 "Employee Advance",
+    #             ]
+    #         ]
+    #     ]
+    # },
     {
         "dt" : "Payment Type",
         "filters": [
