@@ -139,6 +139,9 @@ doc_events = {
     "Expense Claim":{
         "validate": "emkan_ui.events.expense_claim.get_account_user"
 	},
+    "Comment":{
+        "after_insert": "emkan_ui.events.assigned_comments.delete_assigned"
+	},
     "Material Request": {
 		"on_update": [
                 "emkan_ui.events.material_request.change_state",
