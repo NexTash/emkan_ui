@@ -294,6 +294,7 @@ fixtures=[
                     "Approval Reqd by Manager",
                     "PO issued",
                     "Approval Reqd by Manager",
+                    "Verified By MNGT PETTY",
                 ]
             ]
         ]
@@ -323,7 +324,8 @@ fixtures=[
                     "MR Approver",
                     "Purchase User",
                     "Purchase Manager",
-                    "All"
+                    "All",
+                    "MNGT PETTY"
                 ]
             ]
         ]
