@@ -162,9 +162,9 @@ scheduler_events = {
 	# "daily": [
 	# 	"emkan_ui.tasks.daily"
 	# ],
-	"hourly": [
-		"emkan_ui.events.material_request.change_state"
-	],
+	# "hourly": [
+	# 	"emkan_ui.events.material_request.change_state"
+	# ],
 	# "weekly": [
 	# 	"emkan_ui.tasks.weekly"
 	# ],
