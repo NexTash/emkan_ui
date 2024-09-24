@@ -8,6 +8,7 @@ def store_data(doc, method=None):
     # Get the current workflow state and the previous state
     old_doc = doc.get_doc_before_save()
     user_doc = frappe.get_doc("User", frappe.session.user)
+    
     # Proceed only if there is a change in workflow_state
     if old_doc and doc.workflow_state != old_doc.workflow_state:
         # Store the current workflow state in the custom field
@@ -33,27 +34,21 @@ def store_data(doc, method=None):
                 updated_log = f"{current_log}\n{my_log}" if current_log else my_log
                 doc.set('custom_workflow_log', updated_log)
             return
-        
-        # Append the old and new workflow states to the child table
+
+        # Append the old workflow state to the child table if it doesn't exist
         if not state_exists:
-            doc.append("custom_workflow_status", {
-                "workflow_states": old_doc.workflow_state,
-                "approved_by": frappe.session.user,
-                "approved_by_name" : user_doc.full_name,
-                "date" : current_date
-            })
-        else:
-            doc.append("custom_workflow_status", {
-                "workflow_states": doc.workflow_state,
-                "approved_by": frappe.session.user,
-                "approved_by_name" : user_doc.full_name,
-                "date" : current_date
-            })
+            old_state_exists = any(row.workflow_states == old_doc.workflow_state for row in doc.custom_workflow_status)
+            if not old_state_exists:
+                doc.append("custom_workflow_status", {
+                    "workflow_states": old_doc.workflow_state,
+                    "approved_by": frappe.session.user,
+                    "approved_by_name": user_doc.full_name,
+                    "date": current_date
+                })
 
         # Ensure the custom workflow log field is initialized
         if not doc.get('custom_workflow_log'):
             doc.set('custom_workflow_log', "")
-
         # Log the workflow transition
         if old_doc:
             workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
@@ -68,7 +63,6 @@ def store_data(doc, method=None):
 
         # Update the custom workflow log field
         doc.set('custom_workflow_log', updated_log)
-
 def last_state(doc, method=None):
     # Get the previous document
     old_doc = doc.get_doc_before_save()
