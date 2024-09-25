@@ -104,9 +104,6 @@ def last_state(doc, method=None):
         timestamp = frappe.utils.now()
         workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
         updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
-<<<<<<< Updated upstream
-        doc.set('custom_workflow_log', updated_log)
-=======
         doc.set('custom_workflow_log', updated_log)
 
 
@@ -151,4 +148,4 @@ def role_assign_by_user(doc):
                                 approvers.append(todo['allocated_to']) 
 
     return approvers if approvers else []
->>>>>>> Stashed changes
+
