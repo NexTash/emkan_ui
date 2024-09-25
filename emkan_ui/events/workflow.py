@@ -35,7 +35,7 @@ def store_data(doc, method=None):
             return
         
         # Append the old and new workflow states to the child table
-        if not state_exists:
+        if not state_exists:       
             doc.append("custom_workflow_status", {
                 "workflow_states": old_doc.workflow_state,
                 "approved_by": frappe.session.user,
@@ -50,6 +50,17 @@ def store_data(doc, method=None):
                 "date" : current_date
             })
 
+        if doc.custom_workflow_status:
+            # Compare the current workflow state with the last row in the child table
+            if doc.workflow_state == doc.custom_workflow_status[-1].workflow_states:
+                # Remove the last row from the child table
+                oldstates=[]
+                for row in doc.custom_workflow_status:
+                    if row.workflow_states != doc.workflow_state:
+                        oldstates.append(row)
+                doc.custom_workflow_status = []
+                for state in oldstates:
+                    doc.append("custom_workflow_status", state)
         # Ensure the custom workflow log field is initialized
         if not doc.get('custom_workflow_log'):
             doc.set('custom_workflow_log', "")
