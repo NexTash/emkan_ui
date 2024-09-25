@@ -104,4 +104,51 @@ def last_state(doc, method=None):
         timestamp = frappe.utils.now()
         workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
         updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
+<<<<<<< Updated upstream
         doc.set('custom_workflow_log', updated_log)
+=======
+        doc.set('custom_workflow_log', updated_log)
+
+
+import json
+
+@frappe.whitelist()
+def role_assign_by_user(doc):
+
+    doc = json.loads(doc) 
+
+    workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
+    current_state = doc.get('workflow_state')
+    transition_rule = None
+
+    for transition in workflow_doc.transitions:
+        if transition.state == current_state:
+            transition_rule = transition
+            break
+
+    if transition_rule:
+        approving_role = transition_rule.allowed
+        if approving_role:
+            assigned_users = frappe.get_list('Has Role', filters={'role': 'MR Verifier'}, fields=['parent'])
+            approvers = []
+
+            for user in assigned_users:
+                user_email = frappe.db.get_value("User", user['parent'], "email")
+                if user_email: 
+                    todos = frappe.get_all(
+                        "ToDo",
+                        filters={
+                            "allocated_to": user_email,
+                            "reference_type": doc.get('doctype'),
+                            "reference_name": doc.get('name'),
+                            "status": "Open"
+                        },
+                        fields=["allocated_to"]
+                    )
+                    if todos :
+                        for todo in todos:
+                            if todo.get('allocated_to'):
+                                approvers.append(todo['allocated_to']) 
+
+    return approvers if approvers else []
+>>>>>>> Stashed changes
