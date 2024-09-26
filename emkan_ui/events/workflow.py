@@ -129,7 +129,7 @@ def role_assign_by_user(doc):
     if transition_rule:
         approving_role = transition_rule.allowed
         if approving_role:
-            assigned_users = frappe.get_list('Has Role', filters={'role': approving_role}, fields=['parent'])
+            assigned_users = frappe.get_all('Has Role', filters={'role': approving_role}, fields=['parent'])
 
             for user in assigned_users:
                 user_email = frappe.db.get_value("User", user['parent'], "email")
