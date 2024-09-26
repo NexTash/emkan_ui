@@ -107,13 +107,7 @@ def last_state(doc, method=None):
         doc.set('custom_workflow_log', updated_log)
 
 
-import json
-
-@frappe.whitelist()
-def role_assign_by_user(doc):
-
-    doc = json.loads(doc)  # Parse the JSON input
-
+def role_assign_by_user(doc, method = None):
     workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
     current_state = doc.get('workflow_state')
     transition_rule = None
@@ -150,5 +144,5 @@ def role_assign_by_user(doc):
                             if todo.get('allocated_to'):
                                 approvers.append(todo['allocated_to']) 
 
-    return approvers
-
+    my_string = ', '.join(approvers)
+    doc.db_set("custom_possible_assignees", my_string)
