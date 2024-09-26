@@ -112,22 +112,24 @@ import json
 @frappe.whitelist()
 def role_assign_by_user(doc):
 
-    doc = json.loads(doc) 
+    doc = json.loads(doc)  # Parse the JSON input
 
     workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
     current_state = doc.get('workflow_state')
     transition_rule = None
+    approvers = []  # Initialize the approvers list at the beginning
 
+    # Find the transition rule that matches the current state
     for transition in workflow_doc.transitions:
         if transition.state == current_state:
             transition_rule = transition
             break
 
+    # If a transition rule exists, get the role and assign approvers
     if transition_rule:
         approving_role = transition_rule.allowed
         if approving_role:
             assigned_users = frappe.get_list('Has Role', filters={'role': 'MR Verifier'}, fields=['parent'])
-            approvers = []
 
             for user in assigned_users:
                 user_email = frappe.db.get_value("User", user['parent'], "email")
@@ -142,10 +144,11 @@ def role_assign_by_user(doc):
                         },
                         fields=["allocated_to"]
                     )
-                    if todos :
+                    # If there are any todos, append the email to approvers list
+                    if todos:
                         for todo in todos:
                             if todo.get('allocated_to'):
                                 approvers.append(todo['allocated_to']) 
 
-    return approvers if approvers else []
+    return approvers
 
