@@ -105,3 +105,44 @@ def last_state(doc, method=None):
         workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
         updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
         doc.set('custom_workflow_log', updated_log)
+
+
+def role_assign_by_user(doc, method = None):
+    workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
+    current_state = doc.get('workflow_state')
+    transition_rule = None
+    approvers = []  # Initialize the approvers list at the beginning
+
+    # Find the transition rule that matches the current state
+    for transition in workflow_doc.transitions:
+        if transition.state == current_state:
+            transition_rule = transition
+            break
+
+    # If a transition rule exists, get the role and assign approvers
+    if transition_rule:
+        approving_role = transition_rule.allowed
+        if approving_role:
+            assigned_users = frappe.get_all('Has Role', filters={'role': approving_role}, fields=['parent'])
+
+            for user in assigned_users:
+                user_email = frappe.db.get_value("User", user['parent'], "email")
+                if user_email: 
+                    todos = frappe.get_all(
+                        "ToDo",
+                        filters={
+                            "allocated_to": user_email,
+                            "reference_type": doc.get('doctype'),
+                            "reference_name": doc.get('name'),
+                            "status": "Open"
+                        },
+                        fields=["allocated_to"]
+                    )
+                    # If there are any todos, append the email to approvers list
+                    if todos:
+                        for todo in todos:
+                            if todo.get('allocated_to'):
+                                approvers.append(todo['allocated_to']) 
+
+    my_string = ', '.join(approvers)
+    doc.db_set("custom_possible_assignees", my_string)
