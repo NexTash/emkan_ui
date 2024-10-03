@@ -1,0 +1,194 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-weight: 600;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .company-details {
+        text-align: left;
+    }
+
+    .company-details p {
+        margin: 5px 0;
+    }
+
+    .logo {
+        text-align: center;
+    }
+
+    .logo img {
+        width: 60% !important;
+    }
+
+    .right-section {
+        text-align: right;
+    }
+
+    .right-section p {
+        margin: 5px 0;
+    }
+
+    .date-range {
+        text-align: start;
+        margin-top: 20px;
+    }
+
+    .print-format .table-bordered thead {
+        border-top: 2px solid black;
+    }
+
+    .print-format .table-bordered thead {
+        border-bottom: 2px solid black;
+    }
+
+    .print-format .table-bordered th {
+        color: black;
+        font-weight: bold;
+    }
+
+    /* Print-specific styles */
+    @media print {
+        body {
+            font-family: Arial, sans-serif;
+            font-weight: 600;
+            color-adjust: exact; /* Ensures consistent color rendering */
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid black;
+            padding: 10px;
+        }
+
+        .logo img {
+            height: 100%;
+        }
+
+        .right-section {
+            text-align: right;
+        }
+
+        /* Remove default print margins */
+        @page {
+            margin: 0;
+        }
+
+        /* Avoid page breaks within sections */
+        .header, .date-range, .statement-title {
+            page-break-inside: avoid;
+        }
+    }
+
+    .table tbody tr:last-child td:last-child,
+    .table tbody tr:last-child td:nth-last-child(2),
+    .table tbody tr:last-child td:nth-last-child(3) {
+        border-style: solid !important;
+        border-width: 7px !important;
+        border-color: white !important;
+        border-top: 6px double #000 !important;
+    }
+</style>
+
+<div class="header">
+    <div class="company-details">
+        <b>{{ JSON.parse(localStorage.getItem('company'))?.name || "" }}</b><br>
+        {{ JSON.parse(localStorage.getItem('company_address'))?.address || "" }}<br>
+        Tel: {{ JSON.parse(localStorage.getItem('company'))?.phone || "" }}<br>
+        <a href="mailto:{{ JSON.parse(localStorage.getItem('company'))?.email || "" }}">
+            {{ JSON.parse(localStorage.getItem('company'))?.email || "" }}
+        </a><br>
+        <a href="{{ JSON.parse(localStorage.getItem('company'))?.website || '' }}">
+            {{ JSON.parse(localStorage.getItem('company'))?.website || "" }}
+        </a><br>
+    </div>
+    <div class="logo">
+		<img src="/assets/emkan_ui/images/logo1.png" alt="Synergy Logo">
+    </div>
+    <div class="right-section">
+        <p>Date: {{ localStorage.getItem("current_date") || "" }}</p>
+        <p>User: {{ localStorage.getItem("session_user") || "" }}</p>
+    </div>
+</div>
+
+<div class="statement-title">
+    <h2 style="text-align: center;">SUPPLIER STATEMENT OF ACCOUNT</h2>
+</div>
+
+<div class="date-range">
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;From: {{
+        new Date(JSON.parse(localStorage.getItem("from_date"))?.from_date || "").toLocaleDateString("en-GB", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+    }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To: {{
+        new Date(JSON.parse(localStorage.getItem("to_date"))?.to_date || "").toLocaleDateString("en-GB", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+    }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    Supplier ID: {{ JSON.parse(localStorage.getItem("supplier"))?.id || "" }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    Supplier Name: {{ JSON.parse(localStorage.getItem("supplier"))?.name || "" }}</p>
+</div>
+
+<table class="table table-bordered">
+    <thead class="t-head bordr-bottom border-top">
+        <tr>
+            <th>#</th>
+            {% for col in columns %}
+            {% if col.name && col._id !== "_check" && col.fieldname !== "currency" %}
+            <th {% if col.minWidth %} style="min-width: {{ col.minWidth }}px" {% endif %} 
+                {% if col.docfield && frappe.model.is_numeric_field(col.docfield) %} class="text-right" {% endif %}>
+                {{ __(col.name) }}
+            </th>
+            {% endif %}
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody class="tbody">
+        {% for row in data %}
+        <tr style="height: 30px;">
+            <td {% if row.bold == 1 %} style="font-weight: bold" {% endif %}>
+                {% if row._index < data.length - 1 %}
+                <span>{{ row._index + 1 }}</span> 
+                {% endif %}
+            </td>
+            {% for col in columns %}
+            {% if col.name && col._id !== "_check" && col.fieldname !== "currency" %}
+            {% var value = col.fieldname ? row[col.fieldname] : row[col.id] %}
+            {% var longest_word = cstr(value).split(' ').reduce((longest, word) => word.length > longest.length ? word : longest, ''); %}
+            <td {% if row.bold == 1 %} style="font-weight: bold" {% endif %} {% if longest_word.length > 45 %} class="overflow-wrap-anywhere" {% endif %}>
+                <span {% if col._index == 0 %} style="padding-left: {%= cint(row.indent) * 2 %}em" {% endif %}>
+                    {% format_data = row.is_total_row && ["Currency", "Float"].includes(col.fieldtype) ? data[0] : row %}
+                    {% if (row.is_total_row && col._index == 0) { %}
+                    {{ __("Total") }}
+                    {% } else { %}
+                    {{
+                        col.formatter 
+                        ? col.formatter(row._index, col._index, value, col, format_data, true)
+                        : col.format 
+                        ? col.format(value, row, col, format_data)
+                        : col.docfield 
+                        ? frappe.format(value, col.docfield)
+                        : value
+                    }}
+                    {% } %}
+                </span>
+            </td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
