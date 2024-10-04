@@ -1,10 +1,22 @@
+<style>
+  .table thead tr{
+    background-color:#dcecf4;
+  }
+
+  @media print {
+    .table thead tr td {
+        background-color: #dcecf4 !important;
+    }
+  }
+</style>
+
 <div style="display: flex;align-items: center;">
     <div>
-        <p> EMKAN ACCOUNTS RECEIVABLE</p>
+        <p>EMKAN ACCOUNTS RECEIVABLE</p>
         <p>Date: {{ localStorage.getItem("posting_date") || "" }}</p>
     </div>
-    <img style="margin-left: 20%; width:30%"
-      src="/assets/emkan_ui/images/logo.png" alt="Synergy Logo"
+    <img style="margin-left: 20%; width:20%"
+      src="/assets/emkan_ui/images/logo.png" alt="Logo"
     />
   </div>
 
@@ -49,7 +61,7 @@
   {% } %}
 </tbody>
 <tfoot>
-  <tr style="font-weight: bold; background-color: #f0f0f0;">
+  <tr style="font-weight: bold;">
       <td>Total</td>
       <td>{{ frappe.format(total_range1, {"fieldtype": "Currency"}) }}</td>
       <td>{{ frappe.format(total_range2, {"fieldtype": "Currency"}) }}</td>
