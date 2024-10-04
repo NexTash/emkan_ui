@@ -1,181 +1,62 @@
+      <div style="display: flex;align-items: center;">
+        <div>
+            <p> EMKAN ACCOUNTS PAYABLE</p>
+            <p>Date: {{ localStorage.getItem("posting_date") || "" }}</p>
+        </div>
+        <img style="margin-left: 20%; width:30%"
+          src="/assets/emkan_ui/images/logo.png" alt="Synergy Logo"
+        />
+      </div>
 
 <table class="table" id="amount-table">
-	<!-- heading -->
-	<thead>
-		<tr class="bgcolor" style="background-color: #dce8da !important;">
-            <td>Supplier</td>
-            <td>(< 30 Days)</td>
-            <td>30 to 60 Days</td>
-            <td>60 to 90 Days</td>
-            <td>90 to 180 Days</td>
-            <td>(> 180 Days)</td>
-            <td>Outstanding Amount</td>
+  <!-- heading -->
+  <thead>
+      <tr style="background-color:#dcecf4 !important; text-align:center;">
+          <td>Supplier</td>
+          <td>(< 30 Days)</td>
+          <td>30 to 60 Days</td>
+          <td>60 to 90 Days</td>
+          <td>90 to 180 Days</td>
+          <td>(> 180 Days)</td>
+          <td>Outstanding Amount</td>
+      </tr>
+  </thead>
+  <tbody>
+      {% var total_range1 = 0; %}
+      {% var total_range2 = 0; %}
+      {% var total_range3 = 0; %}
+      {% var total_range4 = 0; %}
+      {% var total_range5 = 0; %}
+      {% var total_outstanding = 0; %}
+      
+      {% for (var i = 0; i < data.length - 1; i++) { %}
+          {% var row = data[i]; %}
+          <tr>
+              <td>{{ frappe.format(row["party"], {"fieldtype": "Data"}) }}</td>
+              <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
+              <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
+              <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
+              <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
+              <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
+              <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
           </tr>
-	</thead>
-    <tbody>
-        {% for (var i = 0; i < data.length - 1; i++) { %}
-        {% var row = data[i]; %}
-            <tr>
-                <td>{{ frappe.format(row["party"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["range1"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["range2"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["range3"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["range4"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["range5"], {"fieldtype": "Data"}) }}</td>
-                <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
-            </tr>
-        {% } %}
-    </tbody>
+          {% total_range1 += row["range1"]; %}
+          {% total_range2 += row["range2"]; %}
+          {% total_range3 += row["range3"]; %}
+          {% total_range4 += row["range4"]; %}
+          {% total_range5 += row["range5"]; %}
+          {% total_outstanding += row["outstanding"]; %}
+      {% } %}
+  </tbody>
+  <tfoot>
+      <tr style="font-weight: bold; background-color: #f0f0f0;">
+          <td>Total</td>
+          <td>{{ frappe.format(total_range1, {"fieldtype": "Currency"}) }}</td>
+          <td>{{ frappe.format(total_range2, {"fieldtype": "Currency"}) }}</td>
+          <td>{{ frappe.format(total_range3, {"fieldtype": "Currency"}) }}</td>
+          <td>{{ frappe.format(total_range4, {"fieldtype": "Currency"}) }}</td>
+          <td>{{ frappe.format(total_range5, {"fieldtype": "Currency"}) }}</td>
+          <td>{{ frappe.format(total_outstanding, {"fieldtype": "Currency"}) }}</td>
+      </tr>
+  </tfoot>
 </table>
-
-<style>
-
-    .boxed {
-        padding: 0 30px ;
-    }
-
-    .print-format td{
-        padding: 4px 6px !important;
-        font-size: 13px;
-        color: #000;
-    }
-
-    .inline-block div {
-        display: inline-block;
-    }
-
-    header {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    }
-    header .left h3 {
-    color: #000;
-    font-size: 19px;
-    margin: 0;
-    }
-    header .left p {
-    margin: 0;
-    color: #000;
-    font-weight: 400;
-    font-size: 15px;
-    
-    }
-    header .left a {
-    color: #000;
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 15px;
-    }
-
-    .head h1 {
-    margin: 0;
-    margin-bottom: 10px !important;
-    font-size: 2em;
-    font-weight: 500;
-    }
-
-    .bold span {
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 15px;
-    
-    }
-    .sec-tbl{
-        width: 700px;
-    }
-    .sec-tbl tr:first-child td {
-    color: #000;
-    font-size: 14px;
-    font-weight: 500;
-    text-transform: uppercase;
-    }
-    
-    .sec-tbl tr .right {
-    text-align: right;
-    }
-    .sec-tbl tr .desc {
-        width: 100px;
-    }
-
-    tr {
-    border: none !important;
-    }
-
-    td {
-    padding: 0;
-    margin: 0;
-    }
-
-    .bgcolor td{
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 13px; 
-        background-color: #dce8da !important;
-    }
-
-    .l-tr {
-        width: 100%;
-        margin-bottom: 0 !important;
-    }
-
-    .l-tr td {
-        padding: 0 10px;
-        text-transform: capitalize !important;
-        width: 16%;
-        padding: 4px 16px !important;
-    }
-
-    .w-tr td {
-    width: 100px;
-    }
-
-    @media print {
-        
-        footer {
-            /* position: absolute; */
-            bottom: 0;
-        } 
-    }
-
-    address{
-        margin: 0 !important;
-    }
-
-    .right{
-        text-align: end;
-    }
-
-    .font-w{
-        font-weight: 600;
-    }
-
-    .company-link a{
-        text-decoration: none;
-        font-size: 15px;
-    }
-
-
-    #amount-table tr{
-        text-align: center ;
-    }
-
-    .desc-amount{
-        text-align: right !important;
-    }
-    #due-table{
-        width: 100%;
-    }
-
-    #due-table tr {
-        text-align: center;
-    }
-    
-    .sec-tbl {
-        width: 100% !important;
-    }
-
-    .sec-tbl td div {
-        text-align: center !important;
-    }
-</style>

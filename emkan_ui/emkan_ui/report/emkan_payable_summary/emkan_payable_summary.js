@@ -11,11 +11,16 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			default: frappe.defaults.get_user_default("Company"),
 		},
 		{
-			fieldname: "report_date",
-			label: __("Posting Date"),
-			fieldtype: "Date",
-			default: frappe.datetime.get_today(),
-		},
+            fieldname: "report_date",
+            label: __("Posting Date"),
+            fieldtype: "Date",
+            default: frappe.datetime.get_today(),
+            on_change: function() {
+                // Save Posting Date to localStorage
+                let posting_date = frappe.query_report.get_filter_value('report_date');
+                localStorage.setItem('posting_date', posting_date);
+            }
+        },
 		{
 			fieldname: "ageing_based_on",
 			label: __("Ageing Based On"),
