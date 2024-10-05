@@ -68,11 +68,17 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 					fieldname = "supplier_name"
 				else:
 					doctype = "Customer"
-					fieldname = "customer_name"
+					fieldname = "customer_name" 
 				row.party_name = frappe.get_cached_value(doctype, party, fieldname)
-
 			row.update(party_dict)
-
+			if "Supplier" in self.party_type:
+				p_name = frappe.db.get_value("Supplier", row.party, "supplier_name")
+				if p_name:
+					row.p_name = p_name
+			else:
+				p_name = frappe.get_doc("Customer", row.party)
+				row.p_name = p_name.customer_name
+    
 			# Advance against party
 			row.advance = party_advance_amount.get(party, 0)
 
@@ -148,6 +154,12 @@ class AccountsReceivableSummary(ReceivablePayableReport):
 			fieldname="party",
 			fieldtype="Dynamic Link",
 			options="party_type",
+			width=180,
+		)
+		self.add_column(
+			label=_("Party Name"),
+			fieldname="p_name",
+			fieldtype="Data",
 			width=180,
 		)
 

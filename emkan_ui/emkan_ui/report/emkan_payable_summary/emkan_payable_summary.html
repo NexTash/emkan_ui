@@ -25,6 +25,7 @@
   <thead>
     <tr style="background-color:#dcecf4 !important; text-align:center;">
         <td>Supplier</td>
+        <td>Party Name</td>
         <td>(< 30 Days)</td>
         <td>30 to 60 Days</td>
         <td>60 to 90 Days</td>
@@ -35,6 +36,7 @@
   </thead>
   <tbody>
     {% var total_range1 = 0; %}
+    {% var total_party_name = 0; %}
     {% var total_range2 = 0; %}
     {% var total_range3 = 0; %}
     {% var total_range4 = 0; %}
@@ -45,6 +47,7 @@
         {% var row = data[i]; %}
         <tr>
             <td>{{ frappe.format(row["party"], {"fieldtype": "Data"}) }}</td>
+            <td>{{ frappe.format(row["p_name"], {"fieldtype": "Data"}) }}</td>
             <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
@@ -53,6 +56,7 @@
             <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
         </tr>
         {% total_range1 += row["range1"]; %}
+        {% total_party_name += row["party_name"]; %}
         {% total_range2 += row["range2"]; %}
         {% total_range3 += row["range3"]; %}
         {% total_range4 += row["range4"]; %}
@@ -63,6 +67,7 @@
   <tfoot>
     <tr style="font-weight: bold;">
         <td>Total</td>
+        <td></td>
         <td>{{ frappe.format(total_range1, {"fieldtype": "Currency"}) }}</td>
         <td>{{ frappe.format(total_range2, {"fieldtype": "Currency"}) }}</td>
         <td>{{ frappe.format(total_range3, {"fieldtype": "Currency"}) }}</td>
