@@ -133,9 +133,9 @@ frappe.query_reports["Emkan Receivable Summary"] = {
 	],
 
 	onload: function (report) {
-		report.page.add_inner_button(__("Accounts Receivable"), function () {
+		report.page.add_inner_button(__("Emkan Accounts Receivable"), function () {
 			var filters = report.get_values();
-			frappe.set_route("query-report", "Accounts Receivable", { company: filters.company });
+			frappe.set_route("query-report", "Emkan Accounts Receivable", { company: filters.company });
 		});
 	},
 };

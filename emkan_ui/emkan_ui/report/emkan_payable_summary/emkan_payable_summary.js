@@ -105,9 +105,9 @@ frappe.query_reports["Emkan Payable Summary"] = {
 	],
 
 	onload: function (report) {
-		report.page.add_inner_button(__("Accounts Payable"), function () {
+		report.page.add_inner_button(__("Emkan Accounts Payable"), function () {
 			var filters = report.get_values();
-			frappe.set_route("query-report", "Accounts Payable", { company: filters.company });
+			frappe.set_route("query-report", "Emkan Accounts Payable", { company: filters.company });
 		});
 	},
 };
