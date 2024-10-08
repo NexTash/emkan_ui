@@ -1,0 +1,99 @@
+<style>
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .table thead tr {
+        background-color: #dcecf4;
+    }
+
+    .table th, .table td {
+        padding: 0 !important;
+        text-align: center;
+        width: 7.69%;
+        word-wrap: break-word;
+    }
+
+    @media print {
+        .table thead tr td {
+            background-color: #dcecf4 !important;
+        }
+    }
+
+    .party-header {
+        background-color: #f0f0f0;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .total-label {
+        font-weight: bold;
+    }
+</style>
+
+<div style="display: flex; align-items: center;">
+    <div>
+        <p>EMKAN ACCOUNTS RECEIVABLE</p>
+        <p>Date: {{ localStorage.getItem("posting_date") || "" }}</p>
+    </div>
+    <img style="margin-left: 20%; width: 20%;" src="/assets/emkan_ui/images/logo.png" alt="Logo" />
+</div>
+
+<table class="table">
+    <thead>
+        <tr style="background-color: #dcecf4 !important;">
+            <td>Voucher No</td>
+            <td>Bill No</td>
+            <td>Bill Date</td>
+            <td>Invoiced Amount</td>
+            <td>Paid Amount</td>
+            <td>Debit Note</td>
+            <td>Outstanding Amount</td>
+            <td>Age (Days)</td>
+            <td>0-30</td>
+            <td>31-60</td>
+            <td>61-90</td>
+            <td>91-120</td>
+            <td>121-Above</td>
+        </tr>
+    </thead>
+    <tbody>
+        {% 
+            var last_party = null;
+        %}
+
+        {% data.forEach(function(row, index) { %}
+
+        {% if (row["party"] !== last_party) { %}
+        <tr class="party-header">
+            <td colspan="14">
+                Party ID: {{ frappe.format(row["party"], {"fieldtype": "Data"}) }} | Party Name: {{ frappe.format(row["p_name"], {"fieldtype": "Data"}) }}
+            </td>
+        </tr>
+
+        {% last_party = row["party"]; %}
+        {% } %}
+
+        {% var is_last_row_for_party = (index === data.length - 1) || (data[index + 1] && data[index + 1]["party"] !== row["party"]); %}
+
+        <tr class="{{ is_last_row_for_party ? 'total-label' : '' }}">
+            <td>{{ is_last_row_for_party ? 'Total' : frappe.format(row["voucher_no"], {"fieldtype": "Data"}) }}</td>
+            <td>{{ frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
+            <td>{{ frappe.format(row["bill_date"], {"fieldtype": "Date"}) }}</td>
+            <td>{{ frappe.format(row["invoiced"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["paid"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["credit_note"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td>
+            <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
+        </tr>
+
+        {% }); %}
+    </tbody>
+</table>
