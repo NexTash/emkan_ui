@@ -15,25 +15,20 @@
         width: 7.69%;
         word-wrap: break-word;
     }
-    
+
     @media print {
         .table thead tr td {
             background-color: #dcecf4 !important;
         }
     }
-    
+
     .party-header {
         background-color: #f0f0f0;
         font-weight: bold;
         text-align: left;
     }
 
-    .bold-row {
-        font-weight: bold;
-    }
-
-    .total-row {
-        background-color: #e0f7fa;
+    .total-label {
         font-weight: bold;
     }
 </style>
@@ -67,42 +62,11 @@
     <tbody>
         {% 
             var last_party = null;
-            var party_data = [];
-            var party_totals = {
-                invoiced: 0, 
-                paid: 0, 
-                credit_note: 0, 
-                outstanding: 0, 
-                range1: 0, 
-                range2: 0, 
-                range3: 0, 
-                range4: 0, 
-                range5: 0
-            };
         %}
 
         {% data.forEach(function(row, index) { %}
 
         {% if (row["party"] !== last_party) { %}
-        {% if (party_data.length > 0) { %}
-        <tr class="bold-row">
-            <td>Total</td>
-            <td></td>
-            <td></td>
-            <td>{{ frappe.format(party_totals.invoiced, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.paid, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.credit_note, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.outstanding, {"fieldtype": "Currency"}) }}</td>
-            <td></td>
-            <td>{{ frappe.format(party_totals.range1, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range2, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range3, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range4, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range5, {"fieldtype": "Currency"}) }}</td>
-            <td></td>
-        </tr>
-        {% } %}
-
         <tr class="party-header">
             <td colspan="14">
                 Party ID: {{ frappe.format(row["party"], {"fieldtype": "Data"}) }} | Party Name: {{ frappe.format(row["p_name"], {"fieldtype": "Data"}) }}
@@ -110,12 +74,12 @@
         </tr>
 
         {% last_party = row["party"]; %}
-        {% party_data = []; %}
-        {% party_totals = { invoiced: 0, paid: 0, credit_note: 0, outstanding: 0, range1: 0, range2: 0, range3: 0, range4: 0, range5: 0 }; %} <!-- Reset totals -->
         {% } %}
 
-        <tr>
-            <td>{{ frappe.format(row["voucher_no"], {"fieldtype": "Data"}) }}</td>
+        {% var is_last_row_for_party = (index === data.length - 1) || (data[index + 1] && data[index + 1]["party"] !== row["party"]); %}
+
+        <tr class="{{ is_last_row_for_party ? 'total-label' : '' }}">
+            <td>{{ is_last_row_for_party ? 'Total' : frappe.format(row["voucher_no"], {"fieldtype": "Data"}) }}</td>
             <td>{{ frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
             <td>{{ frappe.format(row["bill_date"], {"fieldtype": "Date"}) }}</td>
             <td>{{ frappe.format(row["invoiced"], {"fieldtype": "Currency"}) }}</td>
@@ -130,37 +94,6 @@
             <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
         </tr>
 
-        {% party_data.push(row); %}
-        {% 
-            party_totals.invoiced += parseFloat(row["invoiced"]) || 0;
-            party_totals.paid += parseFloat(row["paid"]) || 0;
-            party_totals.credit_note += parseFloat(row["credit_note"]) || 0;
-            party_totals.outstanding += parseFloat(row["outstanding"]) || 0;
-            party_totals.range1 += parseFloat(row["range1"]) || 0;
-            party_totals.range2 += parseFloat(row["range2"]) || 0;
-            party_totals.range3 += parseFloat(row["range3"]) || 0;
-            party_totals.range4 += parseFloat(row["range4"]) || 0;
-            party_totals.range5 += parseFloat(row["range5"]) || 0;
-        %}
         {% }); %}
-
-        {% if (party_data.length > 0) { %}
-        <tr class="bold-row">
-            <td>Total</td>
-            <td></td>
-            <td></td>
-            <td>{{ frappe.format(party_totals.invoiced, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.paid, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.credit_note, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.outstanding, {"fieldtype": "Currency"}) }}</td>
-            <td></td>
-            <td>{{ frappe.format(party_totals.range1, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range2, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range3, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range4, {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(party_totals.range5, {"fieldtype": "Currency"}) }}</td>
-            <td></td>
-        </tr>
-        {% } %}
     </tbody>
 </table>
