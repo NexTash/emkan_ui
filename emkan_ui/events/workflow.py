@@ -145,4 +145,5 @@ def role_assign_by_user(doc, method = None):
                                 approvers.append(todo['allocated_to']) 
 
     my_string = ', '.join(approvers)
+    
     doc.db_set("custom_possible_assignees", my_string)
