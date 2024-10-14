@@ -60,51 +60,76 @@ def get_columns(filters):
 
 	return columns
 
+
 def get_data(filters):
-	data = []
-	asset_filters = {}
+    data = []
 
-	# Apply asset, location, and item_code filters if provided
-	if filters.get("asset"):
-		asset_filters["name"] = filters.get("asset")
-	if filters.get("location"):
-		asset_filters["location"] = filters.get("location")
-	if filters.get("item_code"):
-		asset_filters["item_code"] = filters.get("item_code")
+    # Convert from_date and to_date from string to date objects
+    from_date = getdate(filters.get("from_date")) if filters.get("from_date") else None
+    to_date = getdate(filters.get("to_date")) if filters.get("to_date") else None
 
-	# Fetch Asset records based on filters
-	docs = frappe.get_all("Asset", asset_filters, ["name", "item_code", "asset_name", "location"])
+    # Ensure both from_date and to_date are valid
+    if from_date and to_date and from_date > to_date:
+        frappe.throw("From Date cannot be greater than To Date")
 
-	# Convert from_date and to_date from string to date objects
-	from_date = getdate(filters.get("from_date")) if filters.get("from_date") else None
-	to_date = getdate(filters.get("to_date")) if filters.get("to_date") else None
+    # Apply asset, location, and item_code filters if provided
+    asset_filters = {}
+    if filters.get("asset"):
+        asset_filters["name"] = filters.get("asset")
+    if filters.get("location"):
+        asset_filters["location"] = filters.get("location")
+    if filters.get("item_code"):
+        asset_filters["item_code"] = filters.get("item_code")
 
-	# Apply date range filter if both from_date and to_date are provided
-	for row in docs:
-		child_filters = {"custom_asset": row.name}
+    # Fetch asset names that match the filters
+    assets = frappe.get_list("Asset", filters=asset_filters, fields=["name"])
+    asset_names = [asset.name for asset in assets]
 
-		# Apply the date filter directly to depreciation schedules
-		if from_date and to_date:
-			child_filters["schedule_date"] = ["between", [from_date, to_date]]
+    if not asset_names:
+        return data
 
-		# Fetch filtered depreciation schedules based on the asset and date range
-		dep_docs = frappe.get_all("Depreciation Schedule", filters=child_filters, fields=["*"])
-		for child in dep_docs:
-			je = "No"
-			if child.journal_entry:
-				je = "Yes"
+    # SQL Query to fetch the required data with joins
+    query = """
+        SELECT
+            ds.schedule_date,
+            ds.depreciation_amount,
+            ds.accumulated_depreciation_amount,
+            ds.journal_entry,
+            fa.name AS asset,
+            fa.item_code,
+            fa.asset_name,
+            fa.location
+        FROM
+            `tabDepreciation Schedule` ds
+        INNER JOIN
+            `tabAsset Depreciation Schedule` ads ON ds.parent = ads.name
+        INNER JOIN
+            `tabAsset` fa ON ads.asset = fa.name
+        WHERE
+            ds.schedule_date BETWEEN %(from_date)s AND %(to_date)s
+            AND fa.name IN %(asset_names)s
+    """
 
-			# Append data to the list
-			data.append({
-				"asset": row.name,
-				"item_code": row.item_code,
-				"asset_name": row.asset_name,
-				"location": row.location,
-				"schedule_date": child.schedule_date,
-				"depreciation_amount": child.depreciation_amount,
-				"accumulated_depreciation_amount": child.accumulated_depreciation_amount,
-				"journal_entry": je,
-				"journal_number": child.journal_entry,
-			})
+    # Execute the query using Frappe's db.sql
+    results = frappe.db.sql(query, {
+        "from_date": from_date,
+        "to_date": to_date,
+        "asset_names": tuple(asset_names)
+    }, as_dict=True)
 
-	return data
+    # Process the results and prepare the data for output
+    for row in results:
+        je = "Yes" if row.journal_entry else "No"
+        data.append({
+            "asset": row.asset,
+            "item_code": row.item_code,
+            "asset_name": row.asset_name,
+            "location": row.location,
+            "schedule_date": row.schedule_date,
+            "depreciation_amount": row.depreciation_amount,
+            "accumulated_depreciation_amount": row.accumulated_depreciation_amount,
+            "journal_entry": je,
+            "journal_number": row.journal_entry
+        })
+
+    return data
