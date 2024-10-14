@@ -145,6 +145,9 @@ doc_events = {
     "Comment":{
         "after_insert": "emkan_ui.events.assigned_comments.delete_assigned"
 	},
+    "Asset Depreciation Schedule":{
+        "validate": "emkan_ui.events.asset_depreciation_schedule.set_child_asset"
+	},
     "Material Request": {
 		"on_update": [
                 # "emkan_ui.events.material_request.change_state",

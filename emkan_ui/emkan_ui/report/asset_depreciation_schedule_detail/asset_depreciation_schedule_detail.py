@@ -73,7 +73,7 @@ def get_data(filters):
 		asset_filters["item_code"] = filters.get("item_code")
 
 	# Fetch Asset records based on filters
-	docs = frappe.get_list("Asset", asset_filters, ["name", "item_code", "asset_name", "location"])
+	docs = frappe.get_all("Asset", asset_filters, ["name", "item_code", "asset_name", "location"])
 
 	# Convert from_date and to_date from string to date objects
 	from_date = getdate(filters.get("from_date")) if filters.get("from_date") else None
@@ -81,39 +81,30 @@ def get_data(filters):
 
 	# Apply date range filter if both from_date and to_date are provided
 	for row in docs:
-		child_filters = {"asset": row.name}
+		child_filters = {"custom_asset": row.name}
 
 		# Apply the date filter directly to depreciation schedules
 		if from_date and to_date:
 			child_filters["schedule_date"] = ["between", [from_date, to_date]]
 
 		# Fetch filtered depreciation schedules based on the asset and date range
-		dep_docs = frappe.get_list("Asset Depreciation Schedule", filters=child_filters, fields=["name"])
-
+		dep_docs = frappe.get_all("Depreciation Schedule", filters=child_filters, fields=["*"])
 		for child in dep_docs:
-			doc = frappe.get_doc("Asset Depreciation Schedule", child.name)
+			je = "No"
+			if child.journal_entry:
+				je = "Yes"
 
-			# Iterate through each depreciation schedule entry
-			for child1 in doc.depreciation_schedule:
-				schedule_date = getdate(child1.schedule_date)
-
-				# Ensure the date falls within the given range
-				if from_date <= schedule_date <= to_date:
-					je = "No"
-					if child1.journal_entry:
-						je = "Yes"
-
-					# Append data to the list
-					data.append({
-						"asset": row.name,
-						"item_code": row.item_code,
-						"asset_name": row.asset_name,
-						"location": row.location,
-						"schedule_date": child1.schedule_date,
-						"depreciation_amount": child1.depreciation_amount,
-						"accumulated_depreciation_amount": child1.accumulated_depreciation_amount,
-						"journal_entry": je,
-						"journal_number": child1.journal_entry,
-					})
+			# Append data to the list
+			data.append({
+				"asset": row.name,
+				"item_code": row.item_code,
+				"asset_name": row.asset_name,
+				"location": row.location,
+				"schedule_date": child.schedule_date,
+				"depreciation_amount": child.depreciation_amount,
+				"accumulated_depreciation_amount": child.accumulated_depreciation_amount,
+				"journal_entry": je,
+				"journal_number": child.journal_entry,
+			})
 
 	return data
