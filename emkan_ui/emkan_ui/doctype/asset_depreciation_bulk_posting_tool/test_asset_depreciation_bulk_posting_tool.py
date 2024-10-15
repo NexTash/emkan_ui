@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestBulkScheduledDepreciationPostingtool(FrappeTestCase):
+class TestAssetDepreciationBulkPostingTool(FrappeTestCase):
 	pass

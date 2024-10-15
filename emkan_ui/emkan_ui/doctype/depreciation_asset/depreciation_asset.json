@@ -7,16 +7,17 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "asset",
+  "asset_depreciation_schedule",
   "schedule_date",
   "depreciation_amount",
   "column_break_3",
   "accumulated_depreciation_amount",
-  "journal_entry",
-  "shift",
-  "make_depreciation_entry"
+  "journal_entry"
  ],
  "fields": [
   {
+   "columns": 2,
    "fieldname": "schedule_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -24,6 +25,7 @@
    "reqd": 1
   },
   {
+   "columns": 1,
    "fieldname": "depreciation_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -36,6 +38,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 1,
    "fieldname": "accumulated_depreciation_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -44,31 +47,33 @@
    "read_only": 1
   },
   {
-   "depends_on": "eval:doc.docstatus==1",
+   "columns": 2,
    "fieldname": "journal_entry",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Journal Entry",
-   "options": "Journal Entry",
-   "read_only": 1
+   "options": "Journal Entry"
   },
   {
-   "fieldname": "shift",
+   "columns": 2,
+   "fieldname": "asset",
    "fieldtype": "Link",
-   "label": "Shift",
-   "options": "Asset Shift Factor"
+   "in_list_view": 1,
+   "label": "Asset",
+   "options": "Asset"
   },
   {
-   "allow_on_submit": 1,
-   "depends_on": "eval:(doc.docstatus==1 && !doc.journal_entry && doc.schedule_date <= frappe.datetime.now_date())",
-   "fieldname": "make_depreciation_entry",
-   "fieldtype": "Button",
-   "label": "Make Depreciation Entry"
+   "columns": 2,
+   "fieldname": "asset_depreciation_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset Depreciation Schedule",
+   "options": "Asset Depreciation Schedule"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-15 08:07:50.120464",
+ "modified": "2024-10-15 13:17:23.244453",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Depreciation Asset",

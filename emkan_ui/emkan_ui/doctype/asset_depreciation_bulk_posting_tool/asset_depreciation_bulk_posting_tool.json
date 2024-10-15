@@ -1,12 +1,14 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2024-10-14 16:08:12.709055",
+ "creation": "2024-10-15 13:10:13.487155",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "section_break_nsza",
-  "asset_depreciation_schedule",
+  "from_date",
+  "column_break_kapo",
+  "to_date",
   "depreciation_schedule_section",
   "depreciation_schedule",
   "amended_from"
@@ -17,10 +19,9 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "asset_depreciation_schedule",
-   "fieldtype": "Link",
-   "label": "Asset Depreciation Schedule",
-   "options": "Asset Depreciation Schedule"
+   "fieldname": "depreciation_schedule_section",
+   "fieldtype": "Section Break",
+   "label": "Depreciation Schedule"
   },
   {
    "fieldname": "depreciation_schedule",
@@ -29,16 +30,29 @@
    "options": "Depreciation Asset"
   },
   {
-   "fieldname": "depreciation_schedule_section",
-   "fieldtype": "Section Break",
-   "label": "Depreciation Schedule"
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_kapo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "To Date",
+   "reqd": 1
   },
   {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Bulk Scheduled Depreciation Posting tool",
+   "options": "Asset Depreciation Bulk Posting Tool",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -47,10 +61,10 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2024-10-15 08:06:28.779481",
+ "modified": "2024-10-15 13:21:20.871811",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
- "name": "Bulk Scheduled Depreciation Posting tool",
+ "name": "Asset Depreciation Bulk Posting Tool",
  "owner": "Administrator",
  "permissions": [
   {
