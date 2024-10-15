@@ -220,7 +220,7 @@ def get_data(filters):
             "amount_cr": format_currency(amount_cr),
             "balance": format_currency(balance)
         })
-
+ 
         previous_balance = balance
         processed_references.add(entry['voucher_no'])
 
