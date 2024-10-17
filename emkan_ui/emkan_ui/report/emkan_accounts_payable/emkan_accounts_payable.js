@@ -17,6 +17,15 @@ frappe.query_reports["Emkan Accounts Payable"] = {
 			label: __("Posting Date"),
 			fieldtype: "Date",
 			default: frappe.datetime.get_today(),
+			on_change: function(report) {
+				let report_date = frappe.query_report.get_filter_value('report_date');
+				if (report_date) {
+					localStorage.setItem("report_date", JSON.stringify({report_date}));
+				} else {
+					localStorage.setItem("report_date", JSON.stringify({}));
+				}
+				report.refresh();
+			}
 		},
 		{
 			fieldname: "finance_book",
