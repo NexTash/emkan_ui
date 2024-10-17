@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-15 08:03:02.503328",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "asset",
+  "asset_depreciation_schedule",
+  "schedule_date",
+  "depreciation_amount",
+  "column_break_3",
+  "accumulated_depreciation_amount",
+  "journal_entry"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "schedule_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Schedule Date",
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "depreciation_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Depreciation Amount",
+   "options": "Company:company:default_currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "columns": 1,
+   "fieldname": "accumulated_depreciation_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Accumulated Depreciation Amount",
+   "options": "Company:company:default_currency",
+   "read_only": 1
+  },
+  {
+   "columns": 2,
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Journal Entry",
+   "options": "Journal Entry"
+  },
+  {
+   "columns": 2,
+   "fieldname": "asset",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset",
+   "options": "Asset"
+  },
+  {
+   "columns": 2,
+   "fieldname": "asset_depreciation_schedule",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Asset Depreciation Schedule",
+   "options": "Asset Depreciation Schedule"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2024-10-15 13:17:23.244453",
+ "modified_by": "Administrator",
+ "module": "Emkan Ui",
+ "name": "Depreciation Asset",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
