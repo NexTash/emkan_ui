@@ -17,5 +17,16 @@ frappe.ui.form.on('Material Request', {
         });
 
         frm.refresh_field('items');
+    },
+    custom_department(frm, dt, dn){
+        frappe.call({
+            method: 'emkan_ui.events.mapping.mapping_cost_center',
+            args: {
+                division: frm.doc.custom_department
+            },
+            callback: (r) => {
+                frappe.model.set_value(dt, dn, "custom_cost_center", r.message)  
+            }
+        })
     }
 });
