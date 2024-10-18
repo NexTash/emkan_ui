@@ -122,7 +122,6 @@ def get_data(filters):
     if filters.get("to_date"):
         conditions += " AND posting_date <= %(to_date)s"
         
-
     gl_entries = frappe.db.sql(f"""
         SELECT
             posting_date,
@@ -161,9 +160,8 @@ def get_data(filters):
         supplier_currency = default_currency
     counter=0
     unique={}
+
     for entry in gl_entries:
-        if entry['voucher_no'] == "Bank - Payment - EMK-420-1":
-            x=1
         transactions = ""
         details = ""
         check_no = ""
@@ -174,7 +172,7 @@ def get_data(filters):
             amount_cr = convert_currency(amount_cr, entry['account_currency'], default_currency, entry['posting_date'])
             amount_dr = convert_currency(amount_dr, entry['account_currency'], default_currency, entry['posting_date'])
 
-        if entry['voucher_no'] in processed_references and entry['voucher_type']!="Journal Entry":
+        if entry['voucher_no'] in processed_references and entry['voucher_type'] != "Journal Entry":
             continue
 
         if entry['voucher_type'] == "Purchase Invoice":
@@ -194,11 +192,10 @@ def get_data(filters):
                 if entry["debit"] > entry["credit"]:
                     amount_cr = entry["debit"]
                     amount_dr = entry["credit"]
-                else :
+                else:
                     amount_cr = entry["credit"]
                     amount_dr = entry["debit"]
-                # if entry["debit"] == 0
-            
+
             details = f"{entry['voucher_no']}"
 
         elif entry['voucher_type'] == "Payment Entry":
@@ -207,11 +204,9 @@ def get_data(filters):
                 continue
             
             paid_amount = pe_doc.get('paid_amount', 0.0)
-            
             transactions = entry['voucher_type']
             check_no = pe_doc.reference_no or ""
             details = f"{entry['voucher_no']}"
-            
             amount_dr = paid_amount
 
         elif entry['voucher_type'] == "Journal Entry":
@@ -219,18 +214,14 @@ def get_data(filters):
             if je_doc.docstatus == 2:
                 continue
             if entry['voucher_no'] not in unique:
-                unique[entry['voucher_no']] = counter+1
+                unique[entry['voucher_no']] = counter + 1
             else:
                 entry_jv = unique[entry['voucher_no']]
                 if data[entry_jv]['details'] == entry['voucher_no']:
-                    if not data[entry_jv]['amount_dr']:
-                        data[entry_jv]['amount_dr']=0
-                    data[entry_jv]['amount_dr'] = sum_values(float(data[entry_jv]['amount_dr']),amount_dr) 
-                    if not data[entry_jv]['amount_cr']:
-                        data[entry_jv]['amount_cr']=0
-                    data[entry_jv]['amount_cr'] =sum_values(float(data[entry_jv]['amount_cr']),amount_cr )
-                    total_cr=sum_values(total_cr,amount_cr)
-                    total_dt=sum_values(total_dt,amount_dr)
+                    data[entry_jv]['amount_dr'] = sum_values(data[entry_jv]['amount_dr'], amount_dr) 
+                    data[entry_jv]['amount_cr'] = sum_values(data[entry_jv]['amount_cr'], amount_cr)
+                    total_cr = sum_values(total_cr, amount_cr)
+                    total_dt = sum_values(total_dt, amount_dr)
                     continue
        
             transactions = entry['voucher_type']
@@ -252,7 +243,8 @@ def get_data(filters):
  
         previous_balance = balance
         processed_references.add(entry['voucher_no'])
-        counter+=1
+        counter += 1
+
     data.append({
         "details": "",
         "check_no": "Total :",
