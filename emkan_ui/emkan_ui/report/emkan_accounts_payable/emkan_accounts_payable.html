@@ -64,11 +64,17 @@
     <tbody>
         {% 
             var last_party = null;
+            var skip_next_row = false;
         %}
 
         {% data.forEach(function(row, index) { %}
 
-        {% if ((row["party"] || row["p_name"]) && row["party"] !== last_party) { %}
+        {% if (skip_next_row) { 
+            skip_next_row = false; 
+            return;
+        } %}
+
+        {% if ((row["party"] || row["p_name"]) && row["party"] !== last_party && row["party"] !== "Total" && row["p_name"] !== "Total") { %}
         <tr class="party-header">
             <td colspan="14">
                 Party ID: {{ frappe.format(row["party"]) }} | Party Name: {{ frappe.format(row["p_name"]) }}
@@ -76,6 +82,9 @@
         </tr>
 
         {% last_party = row["party"]; %}
+        {% } else if (row["party"] === "Total" || row["p_name"] === "Total") { %}
+            {% skip_next_row = true; %}
+            {% return; %}
         {% } %}
 
         {% if (row["party"] || row["p_name"]) { %}
