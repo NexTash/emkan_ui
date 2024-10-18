@@ -1,6 +1,6 @@
 frappe.ui.form.on('Material Request', {
-    custom_cost_center: function(frm) {
-        let department = frm.doc.custom_cost_center;
+    cost_center: function(frm) {
+        let department = frm.doc.cost_center;
 
         frm.doc.items.forEach(function(item) {
             item.cost_center = department;
@@ -25,7 +25,7 @@ frappe.ui.form.on('Material Request', {
                 division: frm.doc.custom_department
             },
             callback: (r) => {
-                frappe.model.set_value(dt, dn, "custom_cost_center", r.message)  
+                frappe.model.set_value(dt, dn, "cost_center", r.message)  
             }
         })
     }
