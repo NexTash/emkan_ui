@@ -20,6 +20,12 @@ def assign_user(doc=None, method=None):
         if my_condition == True:
             assign_doc = frappe.get_doc("Assignment Rule Emkan", row.name)
             for child in assign_doc.emkan_assignment_rule_users:
+    
+                share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype,"user":child.user})
+                share_doc.write=child.write
+                share_doc.read=child.read
+                share_doc.save()
+                frappe.db.commit()
                 if(frappe.db.exists("ToDo", {"status" : ["!=", "Cancelled"], "allocated_to": child.user, "reference_name" : doc.name, "reference_type" : doc.doctype})):
                     continue
                 add(

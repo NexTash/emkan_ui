@@ -2,13 +2,14 @@ import frappe
 
 
 def after_insert(doc, method=None):
-    if doc.share_doctype == "Material Request":
-        doc.read = 1
-        doc.write = 1
+    # if doc.share_doctype == "Material Request":
+    #     doc.read = 1
+    #     doc.write = 1
 
-    doc.save()
+    # doc.save()
     
-    frappe.db.commit()
+    # frappe.db.commit()
+    pass
 
 def remove_share(doc, method=None):
     if doc.status == "Cancelled":
