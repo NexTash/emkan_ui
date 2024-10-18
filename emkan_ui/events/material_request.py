@@ -21,7 +21,7 @@ def assign_user(doc=None, method=None):
             assign_doc = frappe.get_doc("Assignment Rule Emkan", row.name)
             for child in assign_doc.emkan_assignment_rule_users:
     
-                share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype,"user":child.user})
+                share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype, "user":child.user})
                 share_doc.write=child.write
                 share_doc.read=child.read
                 share_doc.save()
@@ -36,3 +36,8 @@ def assign_user(doc=None, method=None):
                         "description": "Test Assignment",
                     }
                 )
+                share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype, "user":child.user})
+                share_doc.write=child.write
+                share_doc.read=child.read
+                share_doc.save()
+                frappe.db.commit()
