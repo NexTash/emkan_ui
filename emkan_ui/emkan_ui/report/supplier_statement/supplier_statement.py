@@ -105,9 +105,6 @@ def convert_currency(amount, from_currency, to_currency, date):
     exchange_rate = get_exchange_rate(from_currency, to_currency, date)
     return amount / exchange_rate
 
-def sum_values(value1, value2):
-    return flt(value1) + flt(value2)
-
 def get_data(filters):
     default_currency = frappe.get_value("Company", filters.get("company"), "default_currency")
     opening_balance = get_opening_balance(filters)
@@ -161,8 +158,9 @@ def get_data(filters):
         supplier_currency = frappe.db.get_value("Supplier", filters.get("supplier"), ["default_currency"]) 
     if not supplier_currency:
         supplier_currency = default_currency
-    counter = 0
-    unique = {}
+    counter=0
+    unique={}
+
     for entry in gl_entries:
         transactions = ""
         details = ""
@@ -220,19 +218,15 @@ def get_data(filters):
             else:
                 entry_jv = unique[entry['voucher_no']]
                 if data[entry_jv]['details'] == entry['voucher_no']:
-                    if not data[entry_jv]['amount_dr']:
-                        data[entry_jv]['amount_dr'] = 0
-                    data[entry_jv]['amount_dr'] = sum_values(flt(data[entry_jv]['amount_dr']), amount_dr) 
-                    if not data[entry_jv]['amount_cr']:
-                        data[entry_jv]['amount_cr'] = 0
-                    data[entry_jv]['amount_cr'] = sum_values(flt(data[entry_jv]['amount_cr']), amount_cr)
+                    data[entry_jv]['amount_dr'] = sum_values(data[entry_jv]['amount_dr'], amount_dr) 
+                    data[entry_jv]['amount_cr'] = sum_values(data[entry_jv]['amount_cr'], amount_cr)
                     total_cr = sum_values(total_cr, amount_cr)
                     total_dt = sum_values(total_dt, amount_dr)
                     continue
-
+       
             transactions = entry['voucher_type']
             details = f"{entry['voucher_no']}"
-
+         
         total_cr += amount_cr
         total_dt += amount_dr
         balance = (previous_balance or 0) + (amount_dr - amount_cr)
@@ -246,18 +240,33 @@ def get_data(filters):
             "amount_cr": format_currency(amount_cr),
             "balance": format_currency(balance)
         })
-
+ 
         previous_balance = balance
         processed_references.add(entry['voucher_no'])
+        counter += 1
 
     data.append({
-        "date": "",
-        "transactions": "",
-        "details": "Total",
-        "check_no": "",
+        "details": "",
+        "check_no": "Total :",
         "amount_dr": format_currency(total_dt),
         "amount_cr": format_currency(total_cr),
         "balance": format_currency(balance)
     })
 
     return data
+
+def sum_values(value1, value2):
+    # Helper function to convert string to float
+    def to_float(value):
+        if isinstance(value, str):
+            # Remove commas and check for empty strings
+            value = value.replace(',', '').strip()
+            if value == '':
+                return 0.0  # Return 0.0 for empty strings
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return 0.0  # Handle invalid values by returning 0.0
+
+    # Convert both values to float and return their sum
+    return to_float(value1) + to_float(value2)
