@@ -9,8 +9,8 @@ frappe.ui.form.on('Material Request', {
         frm.refresh_field('items');
     },
 
-    custom_project: function(frm) {
-        let project = frm.doc.custom_project;
+    project: function(frm) {
+        let project = frm.doc.project;
 
         frm.doc.items.forEach(function(item) {
             item.project = project;
