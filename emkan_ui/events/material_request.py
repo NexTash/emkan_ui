@@ -24,6 +24,8 @@ def assign_user(doc=None, method=None):
                 share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype, "user":child.user})
                 share_doc.write=child.write
                 share_doc.read=child.read
+                share_doc.submit=child.submit_
+                share_doc.share=child.share
                 share_doc.save(ignore_permissions=True)
                 if(frappe.db.exists("ToDo", {"status" : ["!=", "Cancelled"], "allocated_to": child.user, "reference_name" : doc.name, "reference_type" : doc.doctype})):
                     continue
@@ -38,5 +40,7 @@ def assign_user(doc=None, method=None):
                 share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype, "user":child.user})
                 share_doc.write=child.write
                 share_doc.read=child.read
+                share_doc.share=child.share
+                share_doc.submit=child.submit_
                 share_doc.save(ignore_permissions=True)
                 frappe.db.commit()
