@@ -6,7 +6,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "user"
+  "user",
+  "read",
+  "write",
+  "submit_",
+  "share"
  ],
  "fields": [
   {
@@ -15,12 +19,40 @@
    "in_list_view": 1,
    "label": "User",
    "options": "User"
+  },
+  {
+   "default": "1",
+   "fieldname": "read",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Read"
+  },
+  {
+   "default": "0",
+   "fieldname": "write",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Write"
+  },
+  {
+   "default": "0",
+   "fieldname": "share",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Share"
+  },
+  {
+   "default": "0",
+   "fieldname": "submit_",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Submit"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2024-08-13 16:54:35.170238",
+ "modified": "2024-10-21 14:24:20.786544",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Emkan Assignment Rule Users",
