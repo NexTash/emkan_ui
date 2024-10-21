@@ -127,22 +127,23 @@ def role_assign_by_user(doc, method = None):
 
             for user in assigned_users:
                 user_email = frappe.db.get_value("User", user['parent'], "email")
-                if user_email: 
-                    todos = frappe.get_all(
-                        "ToDo",
-                        filters={
-                            "allocated_to": user_email,
-                            "reference_type": doc.get('doctype'),
-                            "reference_name": doc.get('name'),
-                            "status": "Open"
-                        },
-                        fields=["allocated_to"]
-                    )
-                    # If there are any todos, append the email to approvers list
-                    if todos:
-                        for todo in todos:
-                            if todo.get('allocated_to'):
-                                approvers.append(todo['allocated_to']) 
+                if user_email:
+                    if frappe.db.exists("DocShare", {"user": user_email, "share_doctype" : doc.doctype, "share_name": doc.name, "write" : 1}): 
+                        todos = frappe.get_all(
+                            "ToDo",
+                            filters={
+                                "allocated_to": user_email,
+                                "reference_type": doc.get('doctype'),
+                                "reference_name": doc.get('name'),
+                                "status": "Open"
+                            },
+                            fields=["allocated_to"]
+                        )
+                        # If there are any todos, append the email to approvers list
+                        if todos:
+                            for todo in todos:
+                                if todo.get('allocated_to'):
+                                    approvers.append(todo['allocated_to']) 
 
     my_string = ', '.join(approvers)
     doc.db_set("custom_possible_assignees", my_string)
