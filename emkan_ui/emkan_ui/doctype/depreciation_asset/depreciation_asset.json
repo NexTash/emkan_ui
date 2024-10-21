@@ -57,23 +57,21 @@
   {
    "columns": 2,
    "fieldname": "asset",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Asset",
-   "options": "Asset"
+   "label": "Asset"
   },
   {
    "columns": 2,
    "fieldname": "asset_depreciation_schedule",
-   "fieldtype": "Link",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Asset Depreciation Schedule",
-   "options": "Asset Depreciation Schedule"
+   "label": "Asset Depreciation Schedule"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2024-10-15 13:17:23.244453",
+ "modified": "2024-10-21 13:25:35.070792",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Depreciation Asset",
