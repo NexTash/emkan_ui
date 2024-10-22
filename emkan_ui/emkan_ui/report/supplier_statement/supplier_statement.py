@@ -229,7 +229,7 @@ def get_data(filters):
          
         total_cr += amount_cr
         total_dt += amount_dr
-        balance = (previous_balance or 0) + (amount_dr - amount_cr)
+        balance = (previous_balance or 0) + (amount_cr - amount_dr)
 
         data.append({
             "date": entry['posting_date'],

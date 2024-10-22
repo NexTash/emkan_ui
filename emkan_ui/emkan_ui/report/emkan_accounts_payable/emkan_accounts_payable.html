@@ -31,6 +31,13 @@
     .total-label {
         font-weight: bold;
     }
+
+    /* New style to ensure the total section is always at the bottom */
+    .total-section {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
 </style>
 
 <div style="display: flex; align-items: center;">
@@ -64,15 +71,11 @@
     <tbody>
         {% 
             var last_party = null;
-            var skip_next_row = false;
+            var total_row_data = null;
+            var total_row_exists = false;
         %}
 
         {% data.forEach(function(row, index) { %}
-
-        {% if (skip_next_row) { 
-            skip_next_row = false; 
-            return;
-        } %}
 
         {% if ((row["party"] || row["p_name"]) && row["party"] !== last_party && row["party"] !== "Total" && row["p_name"] !== "Total") { %}
         <tr class="party-header">
@@ -83,16 +86,21 @@
 
         {% last_party = row["party"]; %}
         {% } else if (row["party"] === "Total" || row["p_name"] === "Total") { %}
-            {% skip_next_row = true; %}
+            {% total_row_data = row; %}
+            {% total_row_exists = true; %}
             {% return; %}
         {% } %}
 
         {% if (row["party"] || row["p_name"]) { %}
-        {% var is_last_row_for_party = (index === data.length - 1) || (  data[index + 1]["party"] !== row["party"]); %}
+        {% var is_last_row_for_party = (index === data.length - 1) || (data[index + 1]["party"] !== row["party"]); %}
 
-        <tr class="{{ is_last_row_for_party ? 'total-label' : '' }}">
-            <td>{{ is_last_row_for_party ? 'Total' : frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
-            <td>{{ frappe.format(row["bill_date"], {"fieldtype": "Date"}) }}</td>
+        <tr>
+            <td>{{ frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
+            <td>
+                {{ 
+                    frappe.format(row["bill_date"], {"fieldtype": "Date"}) 
+                }}
+            </td>
             <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
@@ -102,7 +110,49 @@
             <td>{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td>
         </tr>
         {% } %}
-
+        
         {% }); %}
+        
+        {% %}
+        {% if (total_row_exists) { %}
+        <tr class="total-label">
+            <td>Total</td>
+            <td>
+                {{ 
+                    new Date().toLocaleDateString("en-GB", {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).replace(/\//g, '-') 
+                }}
+            </td>
+            <td>{{ frappe.format(total_row_data["outstanding"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range1"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range2"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range3"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range4"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range5"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["age"], {"fieldtype": "Int"}) }}</td>
+        </tr>
+        {% } %}
     </tbody>
 </table>
+
+<!-- Total section outside the table to ensure it is always at the bottom -->
+<!-- {% if (total_row_data) { %}
+<div class="total-section">
+    <table class="table">
+        <tr class="total-label">
+            <td>Total</td>
+            <td></td>
+            <td>{{ frappe.format(total_row_data["outstanding"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range1"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range2"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range3"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range4"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(total_row_data["range5"], {"fieldtype": "Currency"}) }}</td>
+            <td></td>
+        </tr>
+    </table>
+</div>
+{% } %} -->
