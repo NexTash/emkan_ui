@@ -185,7 +185,8 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"erpnext.stock.doctype.material_request.material_request.make_purchase_order": "emkan_ui.events.purchase_order.make_purchase_order1"
+	"erpnext.stock.doctype.material_request.material_request.make_purchase_order": "emkan_ui.events.purchase_order.make_purchase_order1",
+    "erpnext.accounts.doctype.payment_request.payment_request.make_payment_request": "emkan_ui.events.payment_request.make_payment_request1"
 }
 #
 # each overriding function accepts a `data` argument;
