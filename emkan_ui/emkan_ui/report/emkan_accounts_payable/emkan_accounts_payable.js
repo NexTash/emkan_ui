@@ -107,6 +107,10 @@ frappe.query_reports["Emkan Accounts Payable"] = {
 
 				return frappe.db.get_link_options(party_type, txt);
 			},
+			on_change: function () {
+				disable_group()
+
+			},
 		},
 		{
 			fieldname: "supplier_group",
@@ -170,6 +174,8 @@ frappe.query_reports["Emkan Accounts Payable"] = {
 			var filters = report.get_values();
 			frappe.set_route("query-report", "Emkan Payable Summary", { company: filters.company });
 		});
+		disable_group()
+		
 	},
 };
 
@@ -185,4 +191,19 @@ function get_party_type_options() {
 			});
 		});
 	return options;
+}
+
+
+function disable_group(){
+	let party_value = frappe.query_report.get_filter_value("party");
+				
+	if (party_value && party_value.length > 0) {
+		// Disable checkbox and uncheck it
+		$('input[data-fieldname="group_by_party"]').prop('checked', false).prop('disabled', true);
+	} else {
+		// Enable checkbox
+		$('input[data-fieldname="group_by_party"]').prop('disabled', false);
+	}
+
+	report.refresh();
 }

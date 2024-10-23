@@ -114,27 +114,20 @@
         {% }); %}
         
         {% %}
-        {% if (total_row_exists) { %}
+        {% var lastRow = data[data.length - 1] %}
         <tr class="total-label">
             <td>Total</td>
             <td>
-                {{ 
-                    new Date().toLocaleDateString("en-GB", {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    }).replace(/\//g, '-') 
-                }}
+                
             </td>
-            <td>{{ frappe.format(total_row_data["outstanding"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["range1"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["range2"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["range3"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["range4"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["range5"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(total_row_data["age"], {"fieldtype": "Int"}) }}</td>
+            <td>{{ frappe.format(lastRow["outstanding"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["range1"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["range2"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["range3"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["range4"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["range5"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(lastRow["age"], {"fieldtype": "Int"}) }}</td>
         </tr>
-        {% } %}
     </tbody>
 </table>
 
