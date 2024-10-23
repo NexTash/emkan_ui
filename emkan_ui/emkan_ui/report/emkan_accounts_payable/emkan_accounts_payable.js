@@ -194,16 +194,24 @@ function get_party_type_options() {
 }
 
 
-function disable_group(){
-	let party_value = frappe.query_report.get_filter_value("party");
-				
-	if (party_value && party_value.length > 0) {
-		// Disable checkbox and uncheck it
-		$('input[data-fieldname="group_by_party"]').prop('checked', false).prop('disabled', true);
-	} else {
-		// Enable checkbox
-		$('input[data-fieldname="group_by_party"]').prop('disabled', false);
-	}
+function disable_group() {
+    let party_value = frappe.query_report.get_filter_value("party");
 
-	report.refresh();
+    // Store the party value in localStorage
+    if (party_value && party_value.length > 0) {
+        localStorage.setItem('party_value', party_value);
+
+        // Disable checkbox and uncheck it
+        $('input[data-fieldname="group_by_party"]').prop('checked', false).prop('disabled', true);
+        localStorage.setItem('group_by_party', 'disabled');
+    } else {
+        // Enable checkbox
+        $('input[data-fieldname="group_by_party"]').prop('disabled', false);
+
+        // Remove the stored party value from localStorage if not present
+        localStorage.removeItem('party_value');
+        localStorage.setItem('group_by_party', 'enabled');
+    }
+
+    report.refresh();
 }

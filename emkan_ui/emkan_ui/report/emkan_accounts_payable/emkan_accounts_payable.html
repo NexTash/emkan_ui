@@ -91,24 +91,26 @@
             {% return; %}
         {% } %}
 
-        {% if (row["party"] || row["p_name"]) { %}
-        {% var is_last_row_for_party = (index === data.length - 1) || (data[index + 1]["party"] !== row["party"]); %}
+                {% if (row["party"] || row["p_name"]) { %}
+            {% var group_by_party_enabled = (localStorage.getItem('group_by_party') === 'enabled'); %}
+            
+            {% if (group_by_party_enabled) { %}
+                {% var is_last_row_for_party = (index === data.length - 1) || (data[index + 1]["party"] !== row["party"]); %}
+            {% } else { %}
+                {% var is_last_row_for_party = false; %}
+            {% } %}
 
-        <tr>
-            <td>{{ frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
-            <td>
-                {{ 
-                    frappe.format(row["bill_date"], {"fieldtype": "Date"}) 
-                }}
-            </td>
-            <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
-            <td>{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td>
-        </tr>
+            <tr class="{{ is_last_row_for_party ? 'total-label' : '' }}">
+                <td>{{ is_last_row_for_party ? 'Total' : frappe.format(row["bill_no"], {"fieldtype": "Data"}) }}</td>
+                <td>{{ frappe.format(row["bill_date"], {"fieldtype": "Date"}) }}</td>
+                <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
+                <td>{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td>
+            </tr>
         {% } %}
         
         {% }); %}
