@@ -6,7 +6,4 @@ from frappe.model.document import Document
 
 
 class MRIssueReasonCode(Document):
-	def validate(self):
-		doc = frappe.get_doc("Report", "Emkan Accounts Payable")
-		doc.db_set("add_total_row", 1)
-		frappe.db.commit()
+	pass
