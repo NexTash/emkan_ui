@@ -211,25 +211,38 @@ def get_data(filters):
 
         elif entry['voucher_type'] == "Journal Entry":
             je_doc = frappe.get_doc("Journal Entry", entry['voucher_no'])
+            
             if je_doc.docstatus == 2:
+                # Skip if the Journal Entry is canceled
                 continue
+
+            # Track Journal Entries using the unique dictionary to handle amendments
             if entry['voucher_no'] not in unique:
                 unique[entry['voucher_no']] = counter + 1
             else:
                 entry_jv = unique[entry['voucher_no']]
                 if data[entry_jv]['details'] == entry['voucher_no']:
+                    # Properly sum debit and credit for amended Journal Entries
                     data[entry_jv]['amount_dr'] = sum_values(data[entry_jv]['amount_dr'], amount_dr) 
                     data[entry_jv]['amount_cr'] = sum_values(data[entry_jv]['amount_cr'], amount_cr)
+                    
+                    # Update totals for credits and debits
                     total_cr = sum_values(total_cr, amount_cr)
                     total_dt = sum_values(total_dt, amount_dr)
+                    
+                    # Update balance calculation for the specific entry
+                    data[entry_jv]['balance'] = format_currency((previous_balance or 0) + (amount_cr - amount_dr))
+                    previous_balance = (previous_balance or 0) + (amount_cr - amount_dr)
                     continue
-       
+
             transactions = entry['voucher_type']
             details = f"{entry['voucher_no']}"
+
+
          
         total_cr += amount_cr
         total_dt += amount_dr
-        balance = (previous_balance or 0) + (amount_dr - amount_cr)
+        balance = (previous_balance or 0) + (amount_cr - amount_dr)
 
         data.append({
             "date": entry['posting_date'],
