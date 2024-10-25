@@ -1,71 +1,140 @@
-# # Copyright (c) 2024, NexTash and contributors
-# # For license information, please see license.txt
+# Copyright (c) 2024, NexTash and contributors
+# For license information, please see license.txt
 
 import frappe
-from frappe.utils import getdate
+from frappe.utils import getdate, date_diff
 
 def execute(filters=None):
-    # Define the report columns
+    
     columns = [
         {
             "label": "Material Request ID",
             "fieldname": "name",
             "fieldtype": "Link",
-            "options": "Material Request",
-            # "width": 150
+            "options": "Material Request"
         },
         {
             "label": "Creation Date",
             "fieldname": "creation",
-            "fieldtype": "Date",
-            # "width": 150
+            "fieldtype": "Date"
         },
         {
-            "label": "Transaction Date",
-            "fieldname": "transaction_date",
-            "fieldtype": "Date",
-            # "width": 150
+            "label": "Submission Date",
+            "fieldname": "date",
+            "fieldtype": "Date"
         },
         {
-            "label": "Schedule Date",
-            "fieldname": "schedule_date",
-            "fieldtype": "Date",
-            # "width": 150
+            "label": "Creation to Approval",
+            "fieldname": "days_between",
+            "fieldtype": "Int"
         },
         {
-            "label": "Delayed",
-            "fieldname": "is_delayed",
-            "fieldtype": "Check",
-            # "width": 100
+            "label": "PO Creation Time",
+            "fieldname": "po_creation_date",
+            "fieldtype": "Time"
+        },
+        {
+            "label": "MR to PO Days",
+            "fieldname": "mr_to_po_days",
+            "fieldtype": "Int"
+        },
+        {
+            "label": "PR Creation Time",
+            "fieldname": "pr_creation_date",
+            "fieldtype": "Time"
+        },
+        {
+            "label": "PO to PR Days",
+            "fieldname": "po_to_pr_days",
+            "fieldtype": "Int"
         }
     ]
     
-    # Fetching material requests with required fields
-    material_requests = frappe.get_list(
+    data = []
+    mr_filters = {}
+
+
+    if filters.get("creation"):
+        mr_filters["creation"] = [">", filters.get("creation")]
+
+    if filters.get("name"):
+        mr_filters["name"] = filters.get("name")
+    
+    if filters.get("date"):
+        mr_filters["date"] = [">", filters.get("date")]
+        
+    if filters.get("days_between"):
+        mr_filters["days_between"] = [">", filters.get("days_between")]
+
+
+    material_requests = frappe.get_all(
         "Material Request",
         fields=[
-            "name",                # Document name or ID
-            "creation",            # Creation timestamp
-            "transaction_date",    # Transaction date
-            "schedule_date"        # Schedule date
+            "name",
+            "creation",
         ],
-        filters={},
-        order_by="creation desc"  # Sort by creation date, latest first
+        filters=mr_filters if mr_filters else {}, 
     )
     
-    # Prepare data for the report
-    data = []
+    
     for request in material_requests:
-        # Determine if the request is delayed
-        is_delayed = getdate(request.transaction_date) > getdate(request.schedule_date)
+        
+        material_request_doc = frappe.get_doc("Material Request", request.name)
+        coo_approved_date = None
+        verification_or_prepared_date = None
+        days_between = None
+        pr_creation_date = None
+        po_to_pr_days = None
+        mr_to_po_days = None
 
+        for doc in material_request_doc.custom_workflow_status: 
+          
+              if doc.workflow_states == "COO Approved":
+                coo_approved_date = getdate(doc.date).strftime("%Y-%m-%d") if doc.date else None
+              if doc.workflow_states in ["MR Prepared", "Store Verification"]:
+                verification_or_prepared_date = getdate(doc.date).strftime("%Y-%m-%d") if doc.date else None
+    
+        if coo_approved_date and verification_or_prepared_date:
+            days_between = date_diff(coo_approved_date, verification_or_prepared_date)
+
+        # Fetch Purchase Order creation date
+        po_creation_date = None
+        po_list = frappe.get_all(
+            "Purchase Order Item",
+            filters={"material_request": request.name},
+            fields=["parent"]
+        )
+            
+        if po_list:
+            # Fetch the first related Purchase Order and get its creation date
+            po_doc = frappe.get_doc("Purchase Order",  po_list[0].parent)
+            po_creation_date = getdate(po_doc.creation).strftime("%Y-%m-%d") if po_doc.creation else None
+            mr_to_po_days = date_diff(po_doc.creation, request.creation)
+            
+            pr_list = frappe.get_all(
+                "Purchase Receipt Item",
+                filters={"purchase_order": po_doc.name},
+                fields=["parent"]
+            )
+            
+            if pr_list:
+                pr_doc = frappe.get_doc("Purchase Receipt", pr_list[0].parent)
+                pr_creation_date = getdate(pr_doc.creation).strftime("%Y-%m-%d") if pr_doc.creation else None
+                po_to_pr_days = date_diff(pr_doc.creation, po_doc.creation)
+                
         data.append({
-            "name": request.name,                                           # Material Request ID
-            "creation": getdate(request.creation).strftime("%Y-%m-%d"),  # Format creation date
-            "transaction_date": getdate(request.transaction_date).strftime("%Y-%m-%d") if request.transaction_date else None,  # Format transaction date
-            "schedule_date": getdate(request.schedule_date).strftime("%Y-%m-%d") if request.schedule_date else None,  # Format schedule date
-            "is_delayed": is_delayed                                       # Flag for delayed requests
+            "name": request.name,
+            "creation": getdate(request.creation).strftime("%Y-%m-%d"), 
+            "transaction_date": getdate(request.transaction_date).strftime("%Y-%m-%d") if request.transaction_date else None, 
+            "schedule_date": getdate(request.schedule_date).strftime("%Y-%m-%d") if request.schedule_date else None,
+            "date": coo_approved_date,
+            "days_between": days_between,
+            "po_creation_date": po_creation_date,
+            "pr_creation_date": pr_creation_date,
+            "po_to_pr_days": po_to_pr_days,
+            "mr_to_po_days": mr_to_po_days                             
         })
     
     return columns, data
+
 

@@ -2,19 +2,27 @@
 // For license information, please see license.txt
 
 frappe.query_reports["Delivery Timing Analysis"] = {
-	"filters": [
-		{
-            "fieldname": "material_request_id",
+    "filters": [
+        {
+            "fieldname": "name",
             "label": __("Material Request ID"),
             "fieldtype": "Link",
-            "options": "Material Request",
-            "reqd": 0
+            "options": "Material Request"
         },
         {
-            "fieldname": "creation_date",
+            "fieldname": "creation",
             "label": __("Creation Date"),
-            "fieldtype": "Date",
-            "reqd": 0
+            "fieldtype": "Date"
+        },
+        {
+            "fieldname": "date",
+            "label": __("Submission Date"),
+            "fieldtype": "Date"
+        },
+        {
+            "label": "Creation to Approval",
+            "fieldname": "days_between",
+            "fieldtype": "Int"
         }
-	]
-};
+    ]
+}

@@ -10,7 +10,7 @@
  "is_standard": "Yes",
  "letter_head": "Emkan",
  "letterhead": null,
- "modified": "2024-10-21 17:11:13.044493",
+ "modified": "2024-10-24 16:28:15.460405",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Delivery Timing Analysis",
@@ -60,5 +60,5 @@
    "role": "MR Verifier EM-1"
   }
  ],
- "timeout": 0
+ "timeout": 1500
 }
