@@ -382,7 +382,7 @@ def get_data_with_opening_closing(filters, account_details, accounting_dimension
 		data += entries
 
 	# totals
-	data.append(totals.total)
+	# data.append(totals.total)
 
 	# closing
 	data.append(totals.closing)
@@ -403,8 +403,8 @@ def get_totals_dict():
 		)
 
 	return _dict(
-		opening=_get_debit_credit_dict(_("Opening")),
 		total=_get_debit_credit_dict(_("Total")),
+		opening=_get_debit_credit_dict(_("Opening")),
 		closing=_get_debit_credit_dict(_("Closing (Opening + Total)")),
 	)
 
