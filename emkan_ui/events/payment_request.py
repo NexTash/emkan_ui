@@ -5,6 +5,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, nowdate
 from frappe.utils.background_jobs import enqueue
+from datetime import datetime
 
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
@@ -209,3 +210,67 @@ def get_amount(ref_doc, payment_account=None):
 		return flt(grand_total, get_currency_precision())
 	else:
 		frappe.throw(_("Payment Entry is already created"))
+  
+
+def store_data(doc, method=None):
+    # Get the current timestamp
+    timestamp = frappe.utils.now()
+    current_date = datetime.now().date()
+    # Get the current workflow state and the previous state
+    old_doc = doc.get_doc_before_save()
+    user_doc = frappe.get_doc("User", frappe.session.user)
+    # Proceed only if there is a change in workflow_state
+    if old_doc and doc.workflow_state != old_doc.workflow_state:
+        # Store the current workflow state in the custom field
+        doc.custom_current_workflow_state = doc.workflow_state
+        frappe.msgprint(f"{doc.custom_current_workflow_state}")
+
+
+        # Check if the workflow state already exists in the child table
+        state_exists = False
+        for row in doc.custom_workflow_status:
+            if row.workflow_states == doc.workflow_state:
+                row.approved_by = frappe.session.user
+                # row.approved_by_name = user_doc.full_name
+                # row.date = current_date
+                state_exists = True
+                break
+
+        # Clear the custom workflow status if workflow state is "MR Prepared"
+        if doc.workflow_state == "MR Prepared":
+            doc.custom_workflow_status = []
+            if not doc.get("__islocal"):
+                # Log the transition to MR Prepared
+                current_log = doc.get('custom_workflow_log')
+                my_log = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to MR Prepared"
+                updated_log = f"{current_log}\n{my_log}" if current_log else my_log
+                doc.set('custom_workflow_log', updated_log)
+            return
+        
+        # Append the old and new workflow states to the child table
+        if not state_exists:       
+            doc.append("custom_workflow_status", {
+                "workflow_states": old_doc.workflow_state,
+                "approved_by": frappe.session.user,
+                # "approved_by_name" : user_doc.full_name,
+                # "date" : current_date
+            })
+        else:
+            doc.append("custom_workflow_status", {
+                "workflow_states": doc.workflow_state,
+                "approved_by": frappe.session.user,
+                # "approved_by_name" : user_doc.full_name,
+                # "date" : current_date
+            })
+
+        if doc.custom_workflow_status:
+            # Compare the current workflow state with the last row in the child table
+            if doc.workflow_state == doc.custom_workflow_status[-1].workflow_states:
+                # Remove the last row from the child table
+                oldstates=[]
+                for row in doc.custom_workflow_status:
+                    if row.workflow_states != doc.workflow_state:
+                        oldstates.append(row)
+                doc.custom_workflow_status = []
+                for state in oldstates:
+                    doc.append("custom_workflow_status", state)
