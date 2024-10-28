@@ -147,7 +147,7 @@ def get_result(filters, account_details):
 
 	result = get_result_as_list(data, filters)
 
-	return result
+	return result 
 
 
 def get_gl_entries(filters, accounting_dimensions):

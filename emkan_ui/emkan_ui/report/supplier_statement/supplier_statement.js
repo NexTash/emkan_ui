@@ -214,3 +214,4 @@ frappe.query_reports["Supplier Statement"] = {
 };
 
 erpnext.utils.add_dimensions("Supplier Statement", 15);
+ 
