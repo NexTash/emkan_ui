@@ -1,7 +1,7 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-frappe.query_reports["Emkan Payable Summary"] = {
+frappe.query_reports["Employee Payable Summary"] = {
 	filters: [
 		{
 			fieldname: "company",
@@ -59,6 +59,7 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			label: __("Party Type"),
 			fieldtype: "Autocomplete",
 			options: get_party_type_options(),
+			default: "Employee",
 			on_change: function () {
 				frappe.query_report.set_filter_value("party", "");
 				frappe.query_report.toggle_filter_display(
@@ -112,7 +113,7 @@ frappe.query_reports["Emkan Payable Summary"] = {
 	},
 };
 
-erpnext.utils.add_dimensions("Emkan Payable Summary", 9);
+erpnext.utils.add_dimensions("Employee Payable Summary", 9);
 
 function get_party_type_options() {
 	let options = [];
