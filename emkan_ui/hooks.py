@@ -157,6 +157,7 @@ doc_events = {
 	},
     "Payment Request":{
         "before_save": ["emkan_ui.events.payment_request.store_data"],
+        "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
 }
 
