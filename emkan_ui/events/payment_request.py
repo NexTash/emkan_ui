@@ -5,6 +5,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, nowdate
 from frappe.utils.background_jobs import enqueue
+from datetime import datetime
 
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
@@ -209,3 +210,76 @@ def get_amount(ref_doc, payment_account=None):
 		return flt(grand_total, get_currency_precision())
 	else:
 		frappe.throw(_("Payment Entry is already created"))
+  
+
+from datetime import datetime
+import frappe
+
+def store_data(doc, method=None):
+    # Get the current timestamp and date
+    timestamp = frappe.utils.now()
+    current_date = datetime.now().date()
+    
+    # Get the current workflow state and the previous state
+    old_doc = doc.get_doc_before_save()
+    user_doc = frappe.get_doc("User", frappe.session.user)
+    
+    # Proceed only if there is a change in workflow_state
+    if old_doc and doc.workflow_state != old_doc.workflow_state:
+        # Store the current workflow state in the custom field
+        doc.custom_current_workflow_state = doc.workflow_state
+        frappe.msgprint(f"{doc.custom_current_workflow_state}")
+        
+        # Check if the workflow state already exists in the child table
+        state_exists = False
+        for row in doc.custom_workflow_status:
+            if row.workflow_states == doc.workflow_state:
+                row.approved_by = frappe.session.user
+                # Uncomment if additional fields are required
+                # row.approved_by_name = user_doc.full_name
+                # row.date = current_date
+                state_exists = True
+                break
+
+        # Append the old workflow state only if it doesn't already exist
+        if not state_exists:       
+            doc.append("custom_workflow_status", {
+                "workflow_states": old_doc.workflow_state,
+                "approved_by": frappe.session.user,
+                # Uncomment if additional fields are required
+                # "approved_by_name": user_doc.full_name,
+                # "date": current_date
+            })
+
+
+        # Remove any duplicate states if present
+        old_states = []
+        for row in doc.custom_workflow_status:
+            if row.workflow_states != doc.workflow_state:
+                old_states.append(row)
+        doc.custom_workflow_status = []
+        for state in old_states:
+            doc.append("custom_workflow_status", state)
+            
+            
+            
+            
+            
+def last_state(doc, method=None):
+    # Get the previous document
+    old_doc = doc.get_doc_before_save()
+    user_doc = frappe.get_doc("User", frappe.session.user)
+    current_date = datetime.now().date()
+
+    # Proceed only if there is a change in workflow_state
+    if old_doc and doc.workflow_state != old_doc.workflow_state:
+        # Set the custom current workflow state
+        doc.custom_current_workflow_state = doc.workflow_state
+
+        # Append COO Approved status to the child table
+        doc.append("custom_workflow_status", {
+            "workflow_states": "Acc Manager Approval",
+            "approved_by": frappe.session.user,
+            "approved_by_name" : user_doc.full_name,
+            "date" : current_date
+        })
