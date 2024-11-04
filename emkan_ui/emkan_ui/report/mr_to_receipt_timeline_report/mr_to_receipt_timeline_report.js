@@ -1,9 +1,9 @@
 // Copyright (c) 2024, NexTash and contributors
 // For license information, please see license.txt
 
-frappe.query_reports["Delivery Timing Analysis"] = {
-    "filters": [
-        {
+frappe.query_reports["MR to Receipt timeline report"] = {
+	"filters": [
+		{
             "fieldname": "name",
             "label": __("Material Request ID"),
             "fieldtype": "Link",
@@ -19,10 +19,10 @@ frappe.query_reports["Delivery Timing Analysis"] = {
             "label": __("Submission Date"),
             "fieldtype": "Date"
         },
-        {
-            "label": "Creation to Approval",
-            "fieldname": "days_between",
-            "fieldtype": "Int"
-        }
-    ]
-}
+        // {
+        //     "label": "Creation to Approval",
+        //     "fieldname": "days_between",
+        //     "fieldtype": "Int"
+        // }
+	]
+};
