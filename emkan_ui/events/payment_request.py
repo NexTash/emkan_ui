@@ -1,6 +1,7 @@
+from datetime import datetime
+import frappe
 import json
 
-import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, nowdate
@@ -212,8 +213,6 @@ def get_amount(ref_doc, payment_account=None):
 		frappe.throw(_("Payment Entry is already created"))
   
 
-from datetime import datetime
-import frappe
 
 def store_data(doc, method=None):
     # Get the current timestamp and date
@@ -236,8 +235,8 @@ def store_data(doc, method=None):
             if row.workflow_states == doc.workflow_state:
                 row.approved_by = frappe.session.user
                 # Uncomment if additional fields are required
-                # row.approved_by_name = user_doc.full_name
-                # row.date = current_date
+                row.approved_by_name = user_doc.full_name
+                row.date = current_date
                 state_exists = True
                 break
 
@@ -247,8 +246,8 @@ def store_data(doc, method=None):
                 "workflow_states": old_doc.workflow_state,
                 "approved_by": frappe.session.user,
                 # Uncomment if additional fields are required
-                # "approved_by_name": user_doc.full_name,
-                # "date": current_date
+                "approved_by_name": user_doc.full_name,
+                "date": current_date
             })
 
 
