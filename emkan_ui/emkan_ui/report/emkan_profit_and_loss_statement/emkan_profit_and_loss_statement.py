@@ -4,11 +4,9 @@
 import frappe
 from frappe import _
 from frappe.utils import flt
-
 from erpnext.accounts.report.financial_statements import (
     get_columns,
     get_data,
-    get_filtered_list_for_consolidated_report,
     get_period_list,
 )
 
@@ -23,6 +21,7 @@ def execute(filters=None):
         company=filters.company,
     )
 
+    # Get Income and Expense data
     income = get_data(
         filters.company,
         "Income",
@@ -45,103 +44,68 @@ def execute(filters=None):
         ignore_accumulated_values_for_fy=True,
     )
 
-    net_profit_loss = get_net_profit_loss(
-        income, expense, period_list, filters.company, filters.presentation_currency
-    )
-
-    data = []
-    data.extend(income or [])
-    data.extend(expense or [])
-    if net_profit_loss:
-        data.append(net_profit_loss)
-
     # Separate direct and indirect expenses
-    direct_expenses = [expense for expense in expense if "Direct Expense" in expense.get("account_type", "")]
-    indirect_expenses = [expense for expense in expense if "Indirect Expense" in expense.get("account_type", "")]
+    direct_expenses = [exp for exp in expense if "Direct Expense" in exp.get("account_type", "")]
+    indirect_expenses = [exp for exp in expense if "Indirect Expense" in exp.get("account_type", "")]
+
+    # Summing up the required values
+    total_sales = flt(sum(item.get("credit", 0) for item in income))
+    total_direct_expense = flt(sum(item.get("debit", 0) for item in direct_expenses))
+    gross_profit = flt(total_sales - total_direct_expense)
+    total_indirect_expense = flt(sum(item.get("debit", 0) for item in indirect_expenses))
+    total_expense = flt(total_direct_expense + total_indirect_expense)
+    net_profit = flt(total_sales - total_expense)
+
+    # Organize data with headers
+    data = [
+        {"account_name": _("1. Sales Revenue"), "is_group": True, "indent": 0},
+        *income,
+        {"account_name": _("A. Total Sales"), "credit": total_sales, "indent": 1},
+        
+        {"account_name": _("2. Expenses"), "is_group": True, "indent": 0},
+        {"account_name": _("2.1 Direct Expense"), "is_group": True, "indent": 1},
+        *direct_expenses,
+        {"account_name": _("B. Total Direct Expense"), "debit": total_direct_expense, "indent": 2},
+        
+        {"account_name": _("C. Gross Profit (A - B)"), "debit": gross_profit, "indent": 1},
+        
+        {"account_name": _("2.2 Indirect Expense"), "is_group": True, "indent": 1},
+        *indirect_expenses,
+        {"account_name": _("D. Total Indirect Expense"), "debit": total_indirect_expense, "indent": 2},
+        
+        {"account_name": _("E. Total Expense (B + D)"), "debit": total_expense, "indent": 1},
+        {"account_name": _("Net Profit (A - E)"), "debit": net_profit, "indent": 0, "indicator": "Green" if net_profit > 0 else "Red"},
+    ]
 
     # Get columns for the report
     columns = get_columns(filters.periodicity, period_list, filters.accumulated_values, filters.company)
+    
+    return columns, data, None
 
-    # Determine currency
-    currency = filters.presentation_currency or frappe.get_cached_value(
-        "Company", filters.company, "default_currency"
-    )
-
-    # Get chart data
-    chart = get_chart_data(filters, columns, income, direct_expenses, indirect_expenses)
-
-    # Get report summary
-    report_summary, primitive_summary = get_report_summary(
-        period_list, filters.periodicity, income, expense, net_profit_loss, currency, filters
-    )
-
-    # Organize data with headers
-    data2 = []
-
-    # Separate income and expense data by type
-    direct_income = [item for item in data if item.get("account_type") == "Direct Income"]
-    indirect_income = [item for item in data if item.get("account_type") == "Indirect Income"]
-    direct_expense = [item for item in data if item.get("account_type") == "Direct Expense"]
-    indirect_expense = [item for item in data if item.get("account_type") == "Indirect Expense"]
-
-    if direct_income:
-        data2.append({"account_name": _("Direct Income"), "is_group": True, "indent": 0})
-        data2.extend(direct_income)
-    if indirect_income:
-        data2.append({"account_name": _("Indirect Income"), "is_group": True, "indent": 0})
-        data2.extend(indirect_income)
-    if direct_expense:
-        data2.append({"account_name": _("Direct Expense"), "is_group": True, "indent": 0})
-        data2.extend(direct_expense)
-    if indirect_expense:
-        data2.append({"account_name": _("Indirect Expense"), "is_group": True, "indent": 0})
-        data2.extend(indirect_expense)
-
-    # Add all other account types that are not in the above categories
-    for item in data:
-        if item.get("account_type") not in ["Direct Income", "Indirect Income", "Direct Expense", "Indirect Expense"]:
-            data2.append(item)
-
-    data = data2
-    return columns, data, None, chart, report_summary, primitive_summary
 
 def get_report_summary(
     period_list, periodicity, income, expense, net_profit_loss, currency, filters, consolidated=False
 ):
     net_income, net_expense, net_profit = 0.0, 0.0, 0.0
 
-    # from consolidated financial statement
-    if filters.get("accumulated_in_group_company"):
-        period_list = get_filtered_list_for_consolidated_report(filters, period_list)
-
     if filters.accumulated_values:
-        # when 'accumulated_values' is enabled, periods have running balance.
-        # so, last period will have the net amount.
         key = period_list[-1].key
         if income:
-            net_income = income[-2].get(key)
+            net_income = flt(income[-1].get(key, 0))
         if expense:
-            net_expense = expense[-2].get(key)
+            net_expense = flt(expense[-1].get(key, 0))
         if net_profit_loss:
-            net_profit = net_profit_loss.get(key)
+            net_profit = flt(net_profit_loss.get(key, 0))
     else:
         for period in period_list:
-            key = period if consolidated else period.key
-            if income:
-                net_income += income[-2].get(key)
-            if expense:
-                net_expense += expense[-2].get(key)
-            if net_profit_loss:
-                net_profit += net_profit_loss.get(key)
+            key = period.key
+            net_income += flt(income[-1].get(key, 0) if income else 0)
+            net_expense += flt(expense[-1].get(key, 0) if expense else 0)
+            net_profit += flt(net_profit_loss.get(key, 0) if net_profit_loss else 0)
 
-    if len(period_list) == 1 and periodicity == "Yearly":
-        profit_label = _("Profit This Year")
-        income_label = _("Total Income This Year")
-        expense_label = _("Total Expense This Year")
-    else:
-        profit_label = _("Net Profit")
-        income_label = _("Total Income")
-        expense_label = _("Total Expense")
+    profit_label = _("Net Profit") if len(period_list) > 1 else _("Profit This Year")
+    income_label = _("Total Income") if len(period_list) > 1 else _("Total Income This Year")
+    expense_label = _("Total Expense") if len(period_list) > 1 else _("Total Expense This Year")
 
     return [
         {"value": net_income, "label": income_label, "datatype": "Currency", "currency": currency},
@@ -170,50 +134,40 @@ def get_net_profit_loss(income, expense, period_list, company, currency=None, co
     has_value = False
 
     for period in period_list:
-        key = period if consolidated else period.key
-        total_income = flt(income[-2][key], 3) if income else 0
-        total_expense = flt(expense[-2][key], 3) if expense else 0
+        key = period.key
+        total_income = flt(income[-1].get(key, 0)) if income else 0
+        total_expense = flt(expense[-1].get(key, 0)) if expense else 0
 
         net_profit_loss[key] = total_income - total_expense
 
         if net_profit_loss[key]:
             has_value = True
 
-        total += flt(net_profit_loss[key])
+        total += net_profit_loss[key]
         net_profit_loss["total"] = total
 
-    if has_value:
-        return net_profit_loss
+    return net_profit_loss if has_value else None
 
 
 def get_chart_data(filters, columns, income, direct_expenses, indirect_expenses):
     labels = [d.get("label") for d in columns[2:]]
 
-    income_data, expense_data, net_profit = [], [], []
+    income_data = [flt(income[-1].get(p.get("fieldname"), 0)) for p in columns[2:]] if income else []
+    direct_expense_data = [flt(direct_expenses[-1].get(p.get("fieldname"), 0)) for p in columns[2:]] if direct_expenses else []
+    indirect_expense_data = [flt(indirect_expenses[-1].get(p.get("fieldname"), 0)) for p in columns[2:]] if indirect_expenses else []
 
-    for p in columns[2:]:
-        if income:
-            income_data.append(income[-2].get(p.get("fieldname")))
-        if direct_expenses:
-            expense_data.append(direct_expenses[-2].get(p.get("fieldname")))
-        if indirect_expenses:
-            expense_data.append(indirect_expenses[-2].get(p.get("fieldname")))
+    datasets = [
+        {"name": _("Income"), "values": income_data},
+        {"name": _("Direct Expenses"), "values": direct_expense_data},
+        {"name": _("Indirect Expenses"), "values": indirect_expense_data},
+    ]
 
-    datasets = []
-    if income_data:
-        datasets.append({"name": _("Income"), "values": income_data})
-    if expense_data:
-        datasets.append({"name": _("Expense"), "values": expense_data})
-
-    chart = {"data": {"labels": labels, "datasets": datasets}}
-
-    if not filters.accumulated_values:
-        chart["type"] = "bar"
-    else:
-        chart["type"] = "line"
-
-    chart["fieldtype"] = "Currency"
-    chart["options"] = "currency"
-    chart["currency"] = filters.presentation_currency or frappe.get_cached_value("Company", filters.company, "default_currency")
+    chart = {
+        "data": {"labels": labels, "datasets": datasets},
+        "type": "bar" if not filters.accumulated_values else "line",
+        "fieldtype": "Currency",
+        "options": "currency",
+        "currency": filters.presentation_currency or frappe.get_cached_value("Company", filters.company, "default_currency"),
+    }
 
     return chart
