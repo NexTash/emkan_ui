@@ -1,6 +1,6 @@
 frappe.ui.form.on('Payment Request', {
     onload: function(frm) {
-        if (frm.doc.message === 'Default Text') {  // Replace 'Default Text' with the actual default value
+        if (frm.is_new() && frm.doc.message) {
             frm.set_value('message', '');
         }
     }
