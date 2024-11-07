@@ -1,9 +1,7 @@
 frappe.ui.form.on('Payment Request', {
     onload: function(frm) {
-        // console.log("hello");
-        
-        frm.set_value('message', '');
-        // console.log("helloooo");
-
+        if (frm.doc.message && frm.doc.message.includes("Thank you for your business!")) {
+            frm.set_value('message', ''); 
+        }
     }
 });
