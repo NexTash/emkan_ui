@@ -1,9 +1,7 @@
 frappe.ui.form.on('Payment Request', {
     onload: function(frm) {
-        // console.log("hello");
-        
-        frm.set_value('message', '');
-        // console.log("helloooo");
-
+        if (frm.doc.message === 'Default Text') {  // Replace 'Default Text' with the actual default value
+            frm.set_value('message', '');
+        }
     }
 });
