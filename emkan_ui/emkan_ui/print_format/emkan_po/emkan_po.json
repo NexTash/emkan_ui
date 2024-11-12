@@ -1,7 +1,7 @@
 {
  "absolute_value": 0,
  "align_labels_right": 0,
- "creation": "2024-07-22 01:00:51.439928",
+ "creation": "2024-11-12 11:59:36.360808",
  "css": ".color-green{\n    background-color: #3B7D23 !important;\n    color: white;\n}\n.color-purple{\n   background-color: #78206E !important;\n    color: white;\n}\n.color-blue{\n    background-color: #1172BC !important;\n    color: white;\n}\n.color-yellow{\n    background-color: #FDC20E !important;\n    color: white;\n}\n.header{\n    display: flex;\n    align-items: center;\n}\n\n.header .logo{\n    width: 50%;\n}\n\n.header p{\n    font-size: 12px;\n}\n\n.header .logo img{\n    height: 120px;\n    width: 100%;\n}\n\n.address{\n    border-left: 2px solid #0f4b7b;\n    padding-left: 10px;\n    margin-left: 10px;\n}\n.address .clr{\n    color: #0f4b7b;\n    font-weight: bold;\n}\n\n\n\ntd,th{\n    color: #000 ;\n}\n\ntable {\n    width: 100%;\n}\n\n.print-format td, .print-format th{\n    padding: 4px 0 !important;\n}\n.b-none{\n  border-bottom: none !important;  \n}\n.b-tr td.b-block{\n    border-right: 1px solid #000 !important;\n    padding-left: 40px !important;\n}\n\n#vendor-table{\n    border: 1px solid #000;\n}\n\n\nthead th, tbody td {\n    border: 1px solid black;\n    padding: 8px;\n    font-size: 13px;\n}\n \n#vendor-table thead th {\n    width: 60%;\n    height: 60px;\n    font-size: 20px;\n    background-color: #0f4b7b;\n    color: white;\n}\n.highlight {\n    background-color: #0f4b7b;\n    color: white;\n}\n\ntd.head, th.head  {\n    border: none !important;\n}\n.qre{\n    display:flex;\n}\n.qre .p1{\n    width:50%;\n}\n.qre .p2{\n    width:50%;\n}\n.f-size{\n    font-size: 13px;\n}\n\n.sec-table .highlight th {\n    color: #fff;\n    text-align: center;\n}\n\n.sec-table  tbody tr td{\n    text-align: center;\n}\n.desc{\n    width: 45%;\n}\n\n.ten-td{\n    width: 10%;\n}\n\n.twe-td{\n    width: 15%;\n}\n\n#l-table{\n    border: 1px solid #000;\n}\n\n#l-table thead tr th{\n    color: #000;\n}\n\n#l-table tbody tr td{\n    border: none !important;\n}\n\n.center{\n    width: 100%;\n    text-align: center;\n}\n\n#l-table tfoot tr td{\n    border: 1px solid #000;\n    font-size: 14px;\n    text-align: center;\n}\n\n.table-foot{\n    width: 20% !important;\n}\n\n\n.sign-area{\n    width: 45%;\n}\n\n#l-table tbody tr td{\n    font-size: 12px;\n}\n\n.t-table{\n    margin-top: 10px;\n}\n.t-table tbody tr {\n    height: 50px;\n}\n\n#b-tr-th{\n    border-bottom: 1px solid #000;\n}\n\n@media print {\n        table {\n            width: 100%;\n            border-collapse: collapse;\n        }\n\n        thead {\n            display: table-header-group !important;\n            /* Ensures headers are repeated on each page */\n        }\n\n        tfoot {\n            display: table-footer-group !important;\n            /* Ensures footers are repeated on each page */\n        }\n\n        tbody {\n            display: table-row-group !important;\n        }\n        \n        table td div {\n            page-break-inside: auto !important;\n        }\n        \n        #footer-html {\n            position: fixed; bottom: 0; width: 100%;\n        }\n }\n \n .main-table > tbody >tr > td {\n     border: none;\n }\n .width {\n     width: 33% !important;\n }\n \n \n \n \n ",
  "custom_format": 1,
  "default_print_language": "en",
@@ -17,7 +17,7 @@
  "margin_left": 15.0,
  "margin_right": 15.0,
  "margin_top": 15.0,
- "modified": "2024-11-12 11:16:49.072131",
+ "modified": "2024-11-12 11:59:36.360808",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Emkan PO",
