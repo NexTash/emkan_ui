@@ -1,0 +1,103 @@
+<style>
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+
+    .report-table th, .report-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .report-table th {
+        background-color: #cfe2f3;
+        font-weight: bold;
+    }
+
+    .report-table .section-header {
+        background-color: #0a81ab;
+        color: #fff;
+        font-weight: bold;
+    }
+
+    .report-table .project-row {
+        background-color: #d9edf7;
+    }
+
+    .report-table .totals-row {
+        background-color: #b0c4de;
+        font-weight: bold;
+    }
+
+    .report-table .highlighted-text {
+        color: red;
+        font-style: italic;
+    }
+</style>
+
+<table class="report-table">
+    <thead>
+        <tr>
+            <th colspan="9">DIVISION WISE SEGREGATION</th>
+        </tr>
+        <tr>
+            <th colspan="8"></th>
+            <th class="highlighted-text">FILTER OPTION: PROJECT WISE</th>
+        </tr>
+        <tr>
+            <th>REVENUE</th>
+            <th>EMKAN-1</th>
+            <th>EMKAN-2</th>
+            <th>EMKAN-3</th>
+            <th>EMKAN-4</th>
+            <th>EMKAN-5</th>
+            <th>PROJECTS COMMON</th>
+            <th>OTHER OH</th>
+            <th>TOTAL</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="section-header">
+            <td>REVENUE</td>
+            <td colspan="8"></td>
+        </tr>
+        <tr class="project-row">
+            <td>Project - A</td>
+            <td>xxxx</td><td></td><td></td><td></td><td></td><td></td><td></td><td>xxxx</td>
+        </tr>
+        <tr class="project-row">
+            <td>Project - B</td>
+            <td></td><td>xxxx</td><td></td><td></td><td></td><td></td><td></td><td>xxxx</td>
+        </tr>
+        
+        <tr class="section-header">
+            <td>(DIRECT EXP.)</td>
+            <td colspan="8"></td>
+        </tr>
+        <tr class="project-row">
+            <td>Project - A</td>
+            <td>(xxx)</td><td></td><td></td><td></td><td></td><td></td><td></td><td>(xxx)</td>
+        </tr>
+        <tr class="project-row">
+            <td>Project - B</td>
+            <td></td><td>(xxx)</td><td></td><td></td><td></td><td></td><td></td><td>(xxx)</td>
+        </tr>
+        
+        <tr class="section-header">
+            <td>GP</td>
+            <td>xxx</td><td>xxx</td><td></td><td></td><td></td><td></td><td></td><td>xxx</td>
+        </tr>
+        
+        <tr class="section-header">
+            <td>OTHER OH</td>
+            <td colspan="8"></td>
+        </tr>
+        
+        <tr class="totals-row">
+            <td>NET TOTAL</td>
+            <td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td>
+        </tr>
+    </tbody>
+</table>
