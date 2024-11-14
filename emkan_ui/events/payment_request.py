@@ -121,6 +121,21 @@ def make_payment_request1(**args):
 
 	return pr.as_dict()
 
+# def validate(self):
+#         if self.party and self.party_type:
+#             # Determine the name field based on party_type
+#             if self.party_type == "Customer":
+#                 name_field = "customer_name"
+#             elif self.party_type == "Supplier":
+#                 name_field = "supplier_name"
+#             elif self.party_type == "Employee":
+#                 name_field = "employee_name"
+#             else:
+#                 name_field = "name"  # Default field for any other party type
+            
+#             # Fetch the name field from the selected party document
+#             party_doc_name = frappe.db.get_value(self.party_type, self.party, name_field)
+#             self.custom_party_name = party_doc_name
 
 def get_gateway_details(args):  # nosemgrep
 	"""
