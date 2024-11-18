@@ -6,6 +6,7 @@ frappe.query_reports["Division-wise Report Segregation"] = {
             "fieldtype": "Link",
             "options": "Company",
             "reqd": 1,
+            "default": frappe.defaults.get_default("Company")
         },
 		{
             fieldname: "from_date",
