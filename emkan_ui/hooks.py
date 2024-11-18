@@ -152,12 +152,12 @@ doc_events = {
                 "emkan_ui.events.material_request.assign_user",
                 "emkan_ui.events.workflow.role_assign_by_user",
                 ],
-        "before_save": ["emkan_ui.events.workflow.store_data"],
+        "validate": ["emkan_ui.events.workflow.store_data"],
         "before_submit": ["emkan_ui.events.workflow.last_state"],
         
 	},
     "Payment Request":{
-        "before_save": ["emkan_ui.events.payment_request.store_data"],
+        "validate": ["emkan_ui.events.payment_request.store_data"],
         "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
 }
