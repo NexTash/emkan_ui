@@ -2,7 +2,7 @@
 # License: GNU General Public License v3. See license.txt
 
 
-from emkan_ui.emkan_ui.report.emkan_receivable_summary.emkan_receivable_summary import (
+from emkan_ui.emkan_ui.report.employee_receivable_summary.employee_receivable_summary import (
 	AccountsReceivableSummary,
 )
 

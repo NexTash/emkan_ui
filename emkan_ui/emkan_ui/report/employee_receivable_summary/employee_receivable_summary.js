@@ -1,7 +1,7 @@
 // Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 // License: GNU General Public License v3. See license.txt
 
-frappe.query_reports["Emkan Payable Summary"] = {
+frappe.query_reports["Emkan Receivable Summary"] = {
 	filters: [
 		{
 			fieldname: "company",
@@ -59,12 +59,11 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			label: __("Party Type"),
 			fieldtype: "Autocomplete",
 			options: get_party_type_options(),
-			default: "Supplier",
 			on_change: function () {
 				frappe.query_report.set_filter_value("party", "");
 				frappe.query_report.toggle_filter_display(
-					"supplier_group",
-					frappe.query_report.get_filter_value("party_type") !== "Supplier"
+					"customer_group",
+					frappe.query_report.get_filter_value("party_type") !== "Customer"
 				);
 			},
 		},
@@ -82,20 +81,48 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			},
 		},
 		{
+			fieldname: "customer_group",
+			label: __("Customer Group"),
+			fieldtype: "Link",
+			options: "Customer Group",
+		},
+		{
 			fieldname: "payment_terms_template",
 			label: __("Payment Terms Template"),
 			fieldtype: "Link",
 			options: "Payment Terms Template",
 		},
 		{
-			fieldname: "supplier_group",
-			label: __("Supplier Group"),
+			fieldname: "territory",
+			label: __("Territory"),
 			fieldtype: "Link",
-			options: "Supplier Group",
+			options: "Territory",
+		},
+		{
+			fieldname: "sales_partner",
+			label: __("Sales Partner"),
+			fieldtype: "Link",
+			options: "Sales Partner",
+		},
+		{
+			fieldname: "sales_person",
+			label: __("Sales Person"),
+			fieldtype: "Link",
+			options: "Sales Person",
 		},
 		{
 			fieldname: "based_on_payment_terms",
 			label: __("Based On Payment Terms"),
+			fieldtype: "Check",
+		},
+		{
+			fieldname: "show_future_payments",
+			label: __("Show Future Payments"),
+			fieldtype: "Check",
+		},
+		{
+			fieldname: "show_gl_balance",
+			label: __("Show GL Balance"),
 			fieldtype: "Check",
 		},
 		{
@@ -106,19 +133,19 @@ frappe.query_reports["Emkan Payable Summary"] = {
 	],
 
 	onload: function (report) {
-		report.page.add_inner_button(__("Emkan Accounts Payable"), function () {
+		report.page.add_inner_button(__("Emkan Accounts Receivable"), function () {
 			var filters = report.get_values();
-			frappe.set_route("query-report", "Emkan Accounts Payable", { company: filters.company });
+			frappe.set_route("query-report", "Emkan Accounts Receivable", { company: filters.company });
 		});
 	},
 };
 
-erpnext.utils.add_dimensions("Emkan Payable Summary", 9);
+erpnext.utils.add_dimensions("Emkan Receivable Summary", 9);
 
 function get_party_type_options() {
 	let options = [];
 	frappe.db
-		.get_list("Party Type", { filters: { account_type: "Payable" }, fields: ["name"] })
+		.get_list("Party Type", { filters: { account_type: "Receivable" }, fields: ["name"] })
 		.then((res) => {
 			res.forEach((party_type) => {
 				options.push(party_type.name);
