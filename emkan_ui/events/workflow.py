@@ -108,7 +108,11 @@ def last_state(doc, method=None):
 
 
 def role_assign_by_user(doc, method = None):
-    workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
+    workflow_doc = frappe.get_value("Workflow", {'is_active': 1,"document_type":doc.doctype},"name")
+    # frappe.msgprint(workflow_doc)
+    # workflow_doc = frappe.get_doc("Workflow", "MR-Approval-Flow-V4")
+    workflow_doc = frappe.get_doc("Workflow",workflow_doc)
+    
     current_state = doc.get('workflow_state')
     transition_rule = None
     approvers = []  # Initialize the approvers list at the beginning
