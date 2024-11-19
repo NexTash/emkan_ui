@@ -61,7 +61,10 @@ class AccountsReceivableSummary(ReceivablePayableReport):
             row = frappe._dict()
 
             row.party = party
-            if "Supplier" in self.party_type:
+            if "Employee" in self.party_type:
+                # Fetch employee name if party type is Employee
+                row.party_name = frappe.db.get_value("Employee", party, "employee_name")
+            elif "Supplier" in self.party_type:
                 # Fetch supplier name if party type is Supplier
                 row.party_name = frappe.db.get_value("Supplier", party, "supplier_name")
             else:
