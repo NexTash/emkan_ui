@@ -81,30 +81,46 @@ def store_data(doc, method=None):
         doc.set('custom_workflow_log', updated_log)
 
 def last_state(doc, method=None):
-    # Get the previous document
+    # Get the previous document state
     old_doc = doc.get_doc_before_save()
     user_doc = frappe.get_doc("User", frappe.session.user)
     current_date = datetime.now().date()
 
-    # Proceed only if there is a change in workflow_state
+    # Proceed if there is a change in workflow_state
     if old_doc and doc.workflow_state != old_doc.workflow_state:
         # Set the custom current workflow state
         doc.custom_current_workflow_state = doc.workflow_state
 
         # Append COO Approved status to the child table
-        doc.append("custom_workflow_status", {
-            "workflow_states": "COO Approved",
-            "approved_by": frappe.session.user,
-            "approved_by_name" : user_doc.full_name,
-            "date" : current_date
-        })
+        if doc.custom_current_workflow_state == "COO Approved":
+            doc.append("custom_workflow_status", {
+                "workflow_states": "COO Approved",
+                "approved_by": frappe.session.user,
+                "approved_by_name": user_doc.full_name,
+                "date": current_date
+            })
 
-        # Log the workflow transition
-        current_log = doc.get('custom_workflow_log')
-        timestamp = frappe.utils.now()
-        workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
-        updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
-        doc.set('custom_workflow_log', updated_log)
+            # Log the workflow transition
+            current_log = doc.get('custom_workflow_log')
+            timestamp = frappe.utils.now()
+            workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
+            updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
+            doc.set('custom_workflow_log', updated_log)
+        else:
+            # If workflow_state hasn't changed, append Transfer Approved
+            doc.append("custom_workflow_status", {
+                "workflow_states": "Transfer Approved",
+                "approved_by": frappe.session.user,
+                "approved_by_name": user_doc.full_name,
+                "date": current_date
+            })
+
+            # Log the workflow transition for Transfer Approved
+            current_log = doc.get('custom_workflow_log')
+            timestamp = frappe.utils.now()
+            workflow_entry = f"{timestamp} - {frappe.session.user} from {old_doc.workflow_state} to {doc.workflow_state}"
+            updated_log = f"{current_log}\n{workflow_entry}" if current_log else workflow_entry
+            doc.set('custom_workflow_log', updated_log)
 
 
 def role_assign_by_user(doc, method = None):
