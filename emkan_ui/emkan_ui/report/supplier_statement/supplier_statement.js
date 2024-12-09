@@ -138,6 +138,7 @@ frappe.query_reports["Supplier Statement"] = {
             options: "Company",
             width: 100,
             reqd: 1,
+            default: frappe.defaults.get_user_default("Company"),
             on_change: function(report) {
                 let company = frappe.query_report.get_filter_value('company');
                 if (company) {
