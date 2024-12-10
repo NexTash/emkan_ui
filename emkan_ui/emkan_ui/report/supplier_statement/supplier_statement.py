@@ -153,13 +153,13 @@ def get_result(filters, account_details):
 def get_gl_entries(filters, accounting_dimensions):
     currency_map = get_currency(filters)
     select_fields = """, debit, credit, debit_in_account_currency,
-        credit_in_account_currency """
+        credit_in_account_currency"""
 
     if filters.get("show_remarks"):
         if remarks_length := frappe.db.get_single_value("Accounts Settings", "general_ledger_remarks_length"):
-            select_fields += f",substr(remarks, 1, {remarks_length}) as 'remarks'"
+            select_fields += f", substr(remarks, 1, {remarks_length}) as 'remarks'"
         else:
-            select_fields += """,remarks"""
+            select_fields += """, remarks"""
 
     order_by_statement = "order by posting_date, account, creation"
 
@@ -186,7 +186,6 @@ def get_gl_entries(filters, accounting_dimensions):
             "debit_in_transaction_currency, credit_in_transaction_currency, transaction_currency,"
         )
 
-    # Fetch GL Entries
     gl_entries = frappe.db.sql(
         f"""
         select
@@ -203,19 +202,28 @@ def get_gl_entries(filters, accounting_dimensions):
         as_dict=1,
     )
 
-    # Filter out Payment Entry records that are reconciliations
+    processed_payment_entries = set()
     filtered_gl_entries = []
+
     for gle in gl_entries:
-	    if gle.get("voucher_type") == "Payment Entry":
-		    voucher_no = gle.get("voucher_no")
-		    if frappe.db.exists("Payment Entry Reference", {"parent": voucher_no}):
-			    continue  # Skip if Payment Entry is a reconciliation
-	    filtered_gl_entries.append(gle)
+        if gle.get("is_canceled") == 1:
+            continue
+
+        if gle.get("voucher_type") == "Payment Entry":
+            voucher_no = gle.get("voucher_no")
+
+            if voucher_no in processed_payment_entries:
+                continue
+
+            processed_payment_entries.add(voucher_no)
+
+        filtered_gl_entries.append(gle)
 
     if filters.get("presentation_currency"):
         return convert_to_presentation_currency(filtered_gl_entries, currency_map)
     else:
         return filtered_gl_entries
+
 
 
 def get_conditions(filters):
