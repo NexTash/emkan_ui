@@ -158,7 +158,7 @@ def get_data(filters):
     """, filters, as_dict=True)
 
     data = []
-    filtered_gl_entries = []
+    processed_entries = set()
     processed_references = set()
 
     data.append({
@@ -210,27 +210,26 @@ def get_data(filters):
                 
                 details = f"{entry['voucher_no']}"
                         
-            if entry.get("voucher_type") == "Payment Entry":
-                voucher_no = entry.get("voucher_no")
+        elif entry['voucher_type'] == "Payment Entry":
+            if entry['voucher_no'] in processed_entries:  # Skip if already processed
+                continue
+            
+            pe_doc = frappe.get_doc("Payment Entry", entry['voucher_no'])
+            if pe_doc.docstatus == 2:
+                continue
 
-                if voucher_no in processed_payment_entries:
-                    continue
+            # Add the payment entry name to the processed set
+            processed_entries.add(entry['voucher_no'])
+            
+            paid_amount = pe_doc.get('paid_amount', 0.0)
+            # mode_of_payment = pe_doc.get('mode_of_payment', '')
+            # cheque_no = pe_doc.get('cheque_no', pe_doc.get('reference_no', ''))
 
-                pe_doc = frappe.get_doc("Payment Entry", voucher_no)
-                
-                if pe_doc.docstatus == 2:
-                    continue
-
-                paid_amount = pe_doc.get('paid_amount', 0.0)
-                check_no = pe_doc.reference_no or ""
-                transactions = entry.get('voucher_type')
-                details = f"{voucher_no}"
-                amount_cr = paid_amount
-
-                processed_payment_entries.add(voucher_no)
-
-            filtered_gl_entries.append(entry)
-
+            # references = frappe.get_all("Payment Entry Reference", filters={"parent": entry['voucher_no']}, fields=["reference_name"])
+            # reference_names = [ref['reference_name'] for ref in references]
+            transactions = entry['voucher_type']
+            check_no = pe_doc.reference_no or ""
+            details = f"{entry['voucher_no']}"
             
             # if mode_of_payment:
             #     details += f", Mode of Payment: {mode_of_payment}"
@@ -240,6 +239,8 @@ def get_data(filters):
             
             # if reference_names:
             #     details += f", {', '.join(reference_names)}"
+            
+            amount_cr = paid_amount
             
 
         elif entry['voucher_type'] == "Journal Entry":
