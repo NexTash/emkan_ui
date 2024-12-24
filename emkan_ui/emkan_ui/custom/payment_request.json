@@ -237,7 +237,7 @@
    "name": "Payment Request-custom_workflow_status",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "Workflow Status",
+   "options": "Workflow States",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,
