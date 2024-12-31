@@ -22,12 +22,20 @@ def assign_user(doc=None, method=None):
             assign_doc = frappe.get_doc("Assignment Rule Emkan", row.name)
             for child in assign_doc.emkan_assignment_rule_users:
     
-                share_doc=frappe.get_doc("DocShare", {"share_doctype":doc.doctype, "user":child.user})
-                share_doc.write=child.write
-                share_doc.read=child.read
-                share_doc.submit=child.submit_
-                share_doc.share=child.share
-                share_doc.flags.ignore_share_permission = True
+                existing_share_docs = frappe.get_all(
+                    "DocShare",
+                    filters={"share_doctype": doc.doctype, "user": child.user},
+                    limit=1
+                )
+
+                if existing_share_docs:
+                    share_doc = frappe.get_doc("DocShare", existing_share_docs[0].name)
+                    share_doc.write = child.write
+                    share_doc.read = child.read
+                    share_doc.submit = child.submit_
+                    share_doc.share = child.share
+                    share_doc.flags.ignore_share_permission = True
+               
                 share_doc.save(ignore_permissions=True)
                 if(frappe.db.exists("ToDo", {"status" : ["!=", "Cancelled"], "allocated_to": child.user, "reference_name" : doc.name, "reference_type" : doc.doctype})):
                     continue
