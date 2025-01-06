@@ -33,14 +33,14 @@ def execute(filters=None):
 		account_details.setdefault(acc.name, acc)
 
 	if filters.get("party"):
-		filters.party = frappe.parse_json(filters.get("party"))
+		filters.party = filters.get("party")
 
 	if filters.get("voucher_no") and not filters.get("group_by"):
 		filters.group_by = "Group by Voucher (Consolidated)"
 
 	validate_filters(filters, account_details)
 
-	validate_party(filters)
+	# validate_party(filters)
 
 	filters = set_account_currency(filters)
 
@@ -53,11 +53,11 @@ def execute(filters=None):
 
 def validate_filters(filters, account_details):
 	if not filters.get("company"):
-		frappe.throw(_("{0} is mandatory").format(_("Company")))
+		frappe.throw(("{0} is mandatory").format(("Company")))
 
 	if not filters.get("from_date") and not filters.get("to_date"):
 		frappe.throw(
-			_("{0} and {1} are mandatory").format(frappe.bold(_("From Date")), frappe.bold(_("To Date")))
+			("{0} and {1} are mandatory").format(frappe.bold(("From Date")), frappe.bold(_("To Date")))
 		)
 
 	if filters.get("account"):
@@ -83,19 +83,22 @@ def validate_filters(filters, account_details):
 
 	if filters.get("cost_center"):
 		filters.cost_center = frappe.parse_json(filters.get("cost_center"))
+	
+	if filters.get("party"):
+		filters.party = filters.get("party")
 
 
-def validate_party(filters):
-	party_type, party = filters.get("party_type"), filters.get("party")
+# def validate_party(filters):
+# 	party_type, party = filters.get("party_type"), filters.get("party")
 
-	if party and party_type:
-		for d in party:
-			if not frappe.db.exists(party_type, d):
-				frappe.throw(_("Invalid {0}: {1}").format(party_type, d))
+# 	if party and party_type:
+# 		for d in party:
+# 			if not frappe.db.exists(party_type, d):
+# 				frappe.throw(_("Invalid {0}: {1}").format(party_type, d))
 
 
 def set_account_currency(filters):
-	if filters.get("account") or (filters.get("party") and len(filters.party) == 1):
+	if filters.get("account") or filters.get("party"):
 		filters["company_currency"] = frappe.get_cached_value("Company", filters.company, "default_currency")
 		account_currency = None
 
@@ -116,7 +119,7 @@ def set_account_currency(filters):
 		elif filters.get("party") and filters.get("party_type"):
 			gle_currency = frappe.db.get_value(
 				"GL Entry",
-				{"party_type": filters.party_type, "party": filters.party[0], "company": filters.company},
+				{"party_type": filters.party_type, "party": filters.party, "company": filters.company},
 				"account_currency",
 			)
 
@@ -126,12 +129,14 @@ def set_account_currency(filters):
 				account_currency = (
 					None
 					if filters.party_type in ["Employee", "Shareholder", "Member"]
-					else frappe.get_cached_value(filters.party_type, filters.party[0], "default_currency")
+					else frappe.get_cached_value(filters.party_type, filters.party, "default_currency")
 				)
 
 		filters["account_currency"] = account_currency or filters.company_currency
 		if filters.account_currency != filters.company_currency and not filters.presentation_currency:
 			filters.presentation_currency = filters.account_currency
+		if filters.get("party"):
+			filters.party = filters.get("party")
 
 	return filters
 
@@ -188,14 +193,15 @@ def get_gl_entries(filters, accounting_dimensions):
 
     gl_entries = frappe.db.sql(
         f"""
-        select
-            name as gl_entry, posting_date, account, party_type, party,
-            voucher_type, voucher_subtype, voucher_no, {dimension_fields}
-            cost_center, project, {transaction_currency_fields}
-            against_voucher_type, against_voucher, account_currency,
-            against, is_opening, creation {select_fields}
-        from `tabGL Entry`
-        where company=%(company)s {get_conditions(filters)}
+        SELECT
+			name AS gl_entry, posting_date, account, party_type, party,
+			voucher_type, voucher_subtype, voucher_no, 
+			cost_center, project, 
+			against_voucher_type, against_voucher, account_currency,
+			against, is_opening, creation, debit, credit, 
+			debit_in_account_currency, credit_in_account_currency
+		FROM tabGL Entry
+        WHERE company=%(company)s {get_conditions(filters)}
         {order_by_statement}
         """,
         filters,
@@ -244,18 +250,18 @@ def get_conditions(filters):
 	if filters.get("against_voucher_no"):
 		conditions.append("against_voucher=%(against_voucher_no)s")
 
-	if filters.get("ignore_err"):
-		err_journals = frappe.db.get_all(
-			"Journal Entry",
-			filters={
-				"company": filters.get("company"),
-				"docstatus": 1,
-				"voucher_type": ("in", ["Exchange Rate Revaluation", "Exchange Gain Or Loss"]),
-			},
-			as_list=True,
-		)
-		if err_journals:
-			filters.update({"voucher_no_not_in": [x[0] for x in err_journals]})
+	# if filters.get("ignore_err"):
+	# 	err_journals = frappe.db.get_all(
+	# 		"Journal Entry",
+	# 		filters={
+	# 			"company": filters.get("company"),
+	# 			"docstatus": 1,
+	# 			"voucher_type": ("in", ["Exchange Rate Revaluation", "Exchange Gain Or Loss"]),
+	# 		},
+	# 		as_list=True,
+	# 	)
+	# 	if err_journals:
+	# 		filters.update({"voucher_no_not_in": [x[0] for x in err_journals]})
 
 	if filters.get("ignore_cr_dr_notes"):
 		system_generated_cr_dr_journals = frappe.db.get_all(
@@ -284,7 +290,7 @@ def get_conditions(filters):
 		conditions.append("party_type=%(party_type)s")
 
 	if filters.get("party"):
-		conditions.append("party in %(party)s")
+		conditions.append("party = %(party)s")
 
 	if not (
 		filters.get("account")
@@ -421,9 +427,9 @@ def get_totals_dict():
 		)
 
 	return _dict(
-		total=_get_debit_credit_dict(_("Total")),
-		opening=_get_debit_credit_dict(_("Opening")),
-		closing=_get_debit_credit_dict(_("Closing (Opening + Total)")),
+		total=get_debit_credit_dict(("Total")),
+		opening=get_debit_credit_dict(("Opening")),
+		closing=get_debit_credit_dict(("Closing (Opening + Total)")),
 	)
 
 
@@ -575,7 +581,7 @@ def get_result_as_list(data, filters):
 def get_supplier_invoice_details():
 	inv_details = {}
 	for d in frappe.db.sql(
-		""" select name, bill_no from `tabPurchase Invoice`
+		""" select name, bill_no from tabPurchase Invoice
 		where docstatus = 1 and bill_no is not null and bill_no != '' """,
 		as_dict=1,
 	):
