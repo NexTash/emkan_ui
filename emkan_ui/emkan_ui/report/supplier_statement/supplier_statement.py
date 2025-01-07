@@ -53,11 +53,11 @@ def execute(filters=None):
 
 def validate_filters(filters, account_details):
 	if not filters.get("company"):
-		frappe.throw(("{0} is mandatory").format(("Company")))
+		frappe.throw(_("{0} is mandatory").format(_("Company")))
 
 	if not filters.get("from_date") and not filters.get("to_date"):
 		frappe.throw(
-			("{0} and {1} are mandatory").format(frappe.bold(("From Date")), frappe.bold(_("To Date")))
+			_("{0} and {1} are mandatory").format(frappe.bold(_("From Date")), frappe.bold(_("To Date")))
 		)
 
 	if filters.get("account"):
@@ -200,7 +200,7 @@ def get_gl_entries(filters, accounting_dimensions):
 			against_voucher_type, against_voucher, account_currency,
 			against, is_opening, creation, debit, credit, 
 			debit_in_account_currency, credit_in_account_currency
-		FROM tabGL Entry
+		FROM `tabGL Entry`
         WHERE company=%(company)s {get_conditions(filters)}
         {order_by_statement}
         """,
@@ -427,9 +427,9 @@ def get_totals_dict():
 		)
 
 	return _dict(
-		total=get_debit_credit_dict(("Total")),
-		opening=get_debit_credit_dict(("Opening")),
-		closing=get_debit_credit_dict(("Closing (Opening + Total)")),
+		total=_get_debit_credit_dict(_("Total")),
+		opening=_get_debit_credit_dict(_("Opening")),
+		closing=_get_debit_credit_dict(_("Closing (Opening + Total)")),
 	)
 
 
@@ -581,7 +581,7 @@ def get_result_as_list(data, filters):
 def get_supplier_invoice_details():
 	inv_details = {}
 	for d in frappe.db.sql(
-		""" select name, bill_no from tabPurchase Invoice
+		""" select name, bill_no from `tabPurchase Invoice`
 		where docstatus = 1 and bill_no is not null and bill_no != '' """,
 		as_dict=1,
 	):
