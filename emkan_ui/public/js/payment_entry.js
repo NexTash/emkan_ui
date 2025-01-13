@@ -1,4 +1,20 @@
 frappe.ui.form.on("Payment Entry", {
+    onload(frm, dt, dn){
+		if(frm.doc.custom_department == "EMKAN-4 (BSI) - EECS"){
+			frappe.model.set_value(dt, dn, "custom_prefix", "BSI-")
+		}
+		else{
+			frappe.model.set_value(dt, dn, "custom_prefix", "EE-S-")
+		}
+    },
+    custom_department(frm, dt, dn){
+        if(frm.doc.custom_department == "EMKAN-4 (BSI) - EECS"){
+            frappe.model.set_value(dt, dn, "custom_prefix", "BSI-")
+        }
+        else{
+            frappe.model.set_value(dt, dn, "custom_prefix", "EE-S-")
+        }
+    },
     payment_type(frm, dt, dn){
         get_account(frm, dt, dn)
     },
