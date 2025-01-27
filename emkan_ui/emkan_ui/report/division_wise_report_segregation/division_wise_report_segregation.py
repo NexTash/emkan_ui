@@ -18,15 +18,13 @@ def get_columns():
 def get_data(filters):
     conditions = "1=1"
     
-    # Add conditions based on the filters provided
     if filters.get("from_date") and filters.get("to_date"):
         conditions += " AND gle.posting_date BETWEEN %(from_date)s AND %(to_date)s"
     if filters.get("cost_center"):
         conditions += " AND gle.cost_center = %(cost_center)s"
     if filters.get("project"):
-        conditions += " AND gle.project = %(project)s"  # This line is now guarded by a check for "project"
+        conditions += " AND gle.project = %(project)s"
     
-    # Construct the query
     query = f"""
         SELECT 
             gle.cost_center AS division,
@@ -58,7 +56,11 @@ def get_data(filters):
             gle.cost_center, gle.project
     """
     
-    # Execute the query
     result = frappe.db.sql(query, filters, as_dict=True)
-
-    return result
+    
+    filtered_result = [
+        row for row in result 
+        if not (flt(row["total_income"]) == 0 and flt(row["total_expense"]) == 0 and flt(row["net_income_loss"]) == 0)
+    ]
+    
+    return filtered_result
