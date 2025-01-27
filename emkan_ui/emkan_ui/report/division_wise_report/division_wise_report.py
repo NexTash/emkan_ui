@@ -8,7 +8,7 @@ def execute(filters=None):
 
 def get_columns():
     return [
-        {"label": "Division", "fieldname": "division", "fieldtype": "Data", "width": 200},
+        {"label": "Division", "fieldname": "division", "fieldtype": "Data", "width": 350},
         {"label": "Income", "fieldname": "total_income", "fieldtype": "Currency", "width": 200},
         {"label": "Expense", "fieldname": "total_expense", "fieldtype": "Currency", "width": 200},
         {"label": "Profit", "fieldname": "net_income_loss", "fieldtype": "Currency", "width": 200},
@@ -49,7 +49,7 @@ def get_data(filters):
             acc.report_type = 'Profit and Loss'
             AND {conditions}
         GROUP BY
-            gle.cost_center,
+            gle.cost_center
     """
     
     result = frappe.db.sql(query, filters, as_dict=True)
@@ -59,4 +59,4 @@ def get_data(filters):
         if not (flt(row["total_income"]) == 0 and flt(row["total_expense"]) == 0 and flt(row["net_income_loss"]) == 0)
     ]
     
-    return filtered_result
+    return filtered_result 
