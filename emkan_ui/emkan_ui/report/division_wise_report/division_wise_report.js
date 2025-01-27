@@ -49,12 +49,5 @@ frappe.query_reports["Division-wise Report"] = {
             "options": "Cost Center",
             "reqd": 0
         },
-        {
-            "fieldname": "project",
-            "label": __("Project"),
-            "fieldtype": "Link",
-            "options": "Project",
-            "reqd": 0
-        },
         ]
 };
