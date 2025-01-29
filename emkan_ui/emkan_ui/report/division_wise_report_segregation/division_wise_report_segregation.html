@@ -1,103 +1,110 @@
-<!-- <style>
-    .report-table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-    }
-
-    .report-table th, .report-table td {
-        border: 1px solid #000;
-        padding: 8px;
-        text-align: center;
-    }
-
-    .report-table th {
-        background-color: #cfe2f3;
-        font-weight: bold;
-    }
-
-    .report-table .section-header {
-        background-color: #0a81ab;
-        color: #fff;
-        font-weight: bold;
-    }
-
-    .report-table .project-row {
-        background-color: #d9edf7;
-    }
-
-    .report-table .totals-row {
-        background-color: #b0c4de;
-        font-weight: bold;
-    }
-
-    .report-table .highlighted-text {
-        color: red;
-        font-style: italic;
-    }
-</style>
-
-<table class="report-table">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit and Loss Statement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+        }
+        .th{
+            border: 1px solid #000;
+            font-size: bold; 
+            background-color: #cce5ff;
+        }
+        td {
+            border: 1px solid #000;
+        }
+        tr:nth-child(even) {
+            background-color: #e6f2ff;
+        }
+        .header {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .sub-header {
+            margin-bottom: 10px;
+        }
+        td:first-child, td:nth-child(2) {
+            text-align: start;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        .print-format td, .print-format th {
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Profit and Loss Statement By Division</div>
+    <div class="sub-header">From Date:{{
+        new Date(JSON.parse(localStorage.getItem("from_date"))?.from_date || "").toLocaleDateString("en-GB", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+    }} To Date: {{
+        new Date(JSON.parse(localStorage.getItem("to_date"))?.to_date || "").toLocaleDateString("en-GB", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+    }}</div>
+    
+<table>
     <thead>
         <tr>
-            <th colspan="9">DIVISION WISE SEGREGATION</th>
-        </tr>
-        <tr>
-            <th colspan="8"></th>
-            <th class="highlighted-text">FILTER OPTION: PROJECT WISE</th>
-        </tr>
-        <tr>
-            <th>REVENUE</th>
-            <th>EMKAN-1</th>
-            <th>EMKAN-2</th>
-            <th>EMKAN-3</th>
-            <th>EMKAN-4</th>
-            <th>EMKAN-5</th>
-            <th>PROJECTS COMMON</th>
-            <th>OTHER OH</th>
-            <th>TOTAL</th>
+            {% for col in columns %}
+            {% if col.name && col._id !== "_check" && col.fieldname !== "currency" %}
+            <td class="th" {% if col.minWidth %} style="min-width: {{ col.minWidth }}px" {% endif %} 
+                {% if col.docfield && frappe.model.is_numeric_field(col.docfield) %} {% endif %}>
+                {{ __(col.name) }}
+            </td>
+            {% endif %}
+            {% endfor %}
         </tr>
     </thead>
     <tbody>
-        <tr class="section-header">
-            <td>REVENUE</td>
-            <td colspan="8"></td>
+        {% for row in data %}
+        <tr style="height: 30px;" {% if row.is_total_row %} class="total-row" {% endif %}>
+            {% for col in columns %}
+            {% if col.name && col._id !== "_check" && col.fieldname !== "currency" %}
+            {% var value = col.fieldname ? row[col.fieldname] : row[col.id] %}
+            {% var longest_word = cstr(value).split(' ').reduce((longest, word) => word.length > longest.length ? word : longest, ''); %}
+            <td {% if row.bold == 1 %} {% endif %} {% if longest_word.length > 45 %} {% endif %}>
+                <span {% if col._index == 0 %} {%= cint(row.indent) * 2 %}em" {% endif %}>
+                    {% format_data = row.is_total_row && ["Currency", "Float"].includes(col.fieldtype) ? data[0] : row %}
+                    {% if (row.is_total_row && col._index == 0) { %}
+                    {{ __("Total") }}
+                    {% } else { %}
+                    {{
+                        col.formatter 
+                        ? col.formatter(row._index, col._index, value, col, format_data, true)
+                        : col.format 
+                        ? col.format(value, row, col, format_data)
+                        : col.docfield 
+                        ? frappe.format(value, col.docfield)
+                        : value
+                    }}
+                    {% } %}
+                </span>
+            </td>
+            {% endif %}
+            {% endfor %}
         </tr>
-        <tr class="project-row">
-            <td>Project - A</td>
-            <td>xxxx</td><td></td><td></td><td></td><td></td><td></td><td></td><td>xxxx</td>
-        </tr>
-        <tr class="project-row">
-            <td>Project - B</td>
-            <td></td><td>xxxx</td><td></td><td></td><td></td><td></td><td></td><td>xxxx</td>
-        </tr>
-        
-        <tr class="section-header">
-            <td>(DIRECT EXP.)</td>
-            <td colspan="8"></td>
-        </tr>
-        <tr class="project-row">
-            <td>Project - A</td>
-            <td>(xxx)</td><td></td><td></td><td></td><td></td><td></td><td></td><td>(xxx)</td>
-        </tr>
-        <tr class="project-row">
-            <td>Project - B</td>
-            <td></td><td>(xxx)</td><td></td><td></td><td></td><td></td><td></td><td>(xxx)</td>
-        </tr>
-        
-        <tr class="section-header">
-            <td>GP</td>
-            <td>xxx</td><td>xxx</td><td></td><td></td><td></td><td></td><td></td><td>xxx</td>
-        </tr>
-        
-        <tr class="section-header">
-            <td>OTHER OH</td>
-            <td colspan="8"></td>
-        </tr>
-        
-        <tr class="totals-row">
-            <td>NET TOTAL</td>
-            <td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td><td>xxx</td>
-        </tr>
+        {% endfor %}
     </tbody>
-</table> -->
+</table>
+
+</body>
+</html>

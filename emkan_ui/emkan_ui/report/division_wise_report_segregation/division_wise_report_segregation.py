@@ -15,7 +15,7 @@ def get_columns():
         {"label": "InDirect Expense", "fieldname": "indirect_expense", "fieldtype": "Currency", "width": 200},
         {"label": "Other Expense", "fieldname": "other_expense", "fieldtype": "Currency", "width": 200},
         {"label": "Total Expense", "fieldname": "total_expense", "fieldtype": "Currency", "width": 200},
-        {"label": "Profit", "fieldname": "net_income_loss", "fieldtype": "Currency", "width": 200},
+        {"label": "Profit/Loss", "fieldname": "net_income_loss", "fieldtype": "Currency", "width": 200},
     ]
 
 def get_data(filters):
