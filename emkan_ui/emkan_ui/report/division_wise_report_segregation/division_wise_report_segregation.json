@@ -1,37 +1,37 @@
 {
- "add_total_row": 1,
- "columns": [],
- "creation": "2024-11-05 15:57:39.731620",
- "disabled": 0,
- "docstatus": 0,
- "doctype": "Report",
- "filters": [],
- "idx": 0,
- "is_standard": "Yes",
- "letter_head": "Emkan",
- "letterhead": null,
- "modified": "2025-01-27 13:31:19.956106",
- "modified_by": "Administrator",
- "module": "Emkan Ui",
- "name": "Division-wise Report Segregation",
- "owner": "Administrator",
- "prepared_report": 0,
- "ref_doctype": "GL Entry",
- "report_name": "Division-wise Report Segregation",
- "report_type": "Script Report",
- "roles": [
-  {
-   "role": "Accounts User"
-  },
-  {
-   "role": "Accounts Manager"
-  },
-  {
-   "role": "Auditor"
-  },
-  {
-   "role": "Manager View"
-  }
- ],
- "timeout": 0
-}
+    "add_total_row": 1,
+    "columns": [],
+    "creation": "2025-01-29 12:58:55.425958",
+    "disabled": 0,
+    "docstatus": 0,
+    "doctype": "Report",
+    "filters": [],
+    "idx": 0,
+    "is_standard": "Yes",
+    "letter_head": "Emkan",
+    "letterhead": null,
+    "modified": "2025-01-29 12:58:55.425958",
+    "modified_by": "Administrator",
+    "module": "Emkan Ui",
+    "name": "Division-wise Report Segregation",
+    "owner": "Administrator",
+    "prepared_report": 0,
+    "ref_doctype": "GL Entry",
+    "report_name": "Division-wise Report Segregation",
+    "report_type": "Script Report",
+    "roles": [
+     {
+      "role": "Accounts User"
+     },
+     {
+      "role": "Accounts Manager"
+     },
+     {
+      "role": "Auditor"
+     },
+     {
+      "role": "Manager View"
+     }
+    ],
+    "timeout": 0
+   }
