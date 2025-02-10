@@ -215,6 +215,13 @@ def get_gl_entries(filters, accounting_dimensions):
         if gle.get("is_canceled") == 1:
             continue
 
+        if gle.get("voucher_type") == "Payment Entry":
+            voucher_no = gle.get("voucher_no")
+            if voucher_no in processed_payment_entries:
+                continue
+			
+            processed_payment_entries.add(voucher_no)
+
         filtered_gl_entries.append(gle)
 
     if filters.get("presentation_currency"):
