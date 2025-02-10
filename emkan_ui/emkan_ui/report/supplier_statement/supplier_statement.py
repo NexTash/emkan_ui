@@ -214,8 +214,9 @@ def get_gl_entries(filters, accounting_dimensions):
     for gle in gl_entries:
         if gle.get("is_canceled") == 1:
             continue
+		
 
-        if gle.get("voucher_type") == "Payment Entry":
+        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") == "S000166":
             voucher_no = gle.get("voucher_no")
             if voucher_no in processed_payment_entries:
                 continue
