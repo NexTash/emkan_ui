@@ -12,15 +12,19 @@ def execute(filters=None):
 
 def get_columns():
     return [
-        {"label": "Employee ID", "fieldname": "employee", "fieldtype": "Link", "options": "Employee", "width": 120},
-        {"label": "Employee Name", "fieldname": "employee_name", "fieldtype": "Data", "width": 150},
+        {"label": "Employee ID", "fieldname": "employee", "fieldtype": "Link", "options": "Employee", "width": 200},
+        {"label": "Employee Name", "fieldname": "employee_name", "fieldtype": "Data", "width": 200},
         {"label": "Date of Joining", "fieldname": "date_of_joining", "fieldtype": "Date", "width": 120},
-        {"label": "Accrual Basis (BASIC + HRA)", "fieldname": "accrual_basis", "fieldtype": "Currency", "width": 150},
-        {"label": "Accrued Days (Per Month)", "fieldname": "accrued_days", "fieldtype": "Float", "width": 120},
-        {"label": "Accrued Amount (Per Month)", "fieldname": "accrued_amount", "fieldtype": "Currency", "width": 150},
-        {"label": "Leave Taken", "fieldname": "leave_taken", "fieldtype": "Float", "width": 120},
-        {"label": "Total Accrued Days", "fieldname": "total_accrued_days", "fieldtype": "Float", "width": 120},
-        {"label": "Total Accrued Amount", "fieldname": "total_accrued_amount", "fieldtype": "Currency", "width": 150},
+        {"label": "Accrual Basis (BASIC + HRA)", "fieldname": "accrual_basis", "fieldtype": "Currency", "width": 85},
+        {"label": "Opening Days", "fieldname": "opening_days", "fieldtype": "Float", "width": 85},
+        {"label": "Opening Amount", "fieldname": "opening_amount", "fieldtype": "Currency", "width": 85},
+        {"label": "New Leave Allocated", "fieldname": "new_leave_allocated", "fieldtype": "Float", "width": 85},
+        {"label": "Leave Taken Days", "fieldname": "leave_taken", "fieldtype": "Float", "width": 85},
+        {"label": "Leave Taken Amount", "fieldname": "leave_taken_amount", "fieldtype": "Currency", "width": 85},
+        {"label": "Monthly Accrual Days", "fieldname": "monthly_accrual_days", "fieldtype": "Float", "width": 85},
+        {"label": "Monthly Accrual Amount", "fieldname": "monthly_accrual_amount", "fieldtype": "Currency", "width": 85},
+        {"label": "Closing Balance Days", "fieldname": "closing_balance_days", "fieldtype": "Float", "width": 85},
+        {"label": "Closing Balance Amount", "fieldname": "closing_balance_amount", "fieldtype": "Currency", "width": 85},
     ]
 
 def get_data(filters):
@@ -51,12 +55,14 @@ def get_data(filters):
 
     for emp in employees:
         accrual_basis = flt(emp.base) + flt(emp.custom_hra)
+        amount_per_day = flt(accrual_basis) / 30 if accrual_basis else 0
+
         leave_alloc = frappe.get_value("Leave Allocation", 
                                        {"employee": emp.name, "leave_type": "Annual Leave"}, 
                                        "total_leaves_allocated") or 0
         accrued_days_per_month = flt(leave_alloc) / 12 if leave_alloc else 0
-        amount_per_day = flt(accrual_basis) / 30 if accrual_basis else 0
-        accrued_amount_per_month = accrued_days_per_month * amount_per_day
+        new_leave_allocated = accrued_days_per_month if accrued_days_per_month < 2.5 else 2.5
+        accrued_amount_per_month = new_leave_allocated * amount_per_day
 
         total_accrued_days = accrued_days_per_month * months_elapsed
 
@@ -68,9 +74,13 @@ def get_data(filters):
               AND status = 'Approved'
               AND from_date BETWEEN '{filters.get("from_date")}' AND '{filters.get("to_date")}'
         """, as_dict=True)[0].get("leave_taken", 0) or 0
+        leave_taken_amount = leave_taken * amount_per_day
 
-        total_accrued_days -= leave_taken
-        total_accrued_amount = total_accrued_days * amount_per_day
+        opening_days = total_accrued_days
+        opening_amount = amount_per_day * opening_days
+
+        closing_balance_days = opening_days + new_leave_allocated - leave_taken
+        closing_balance_amount = closing_balance_days * amount_per_day
 
         data.append({
             "employee": emp.name,
@@ -78,11 +88,15 @@ def get_data(filters):
             "department": emp.department,
             "date_of_joining": emp.date_of_joining,
             "accrual_basis": accrual_basis,
-            "accrued_days": accrued_days_per_month,
-            "accrued_amount": accrued_amount_per_month,
-            "total_accrued_days": total_accrued_days,
+            "opening_days": opening_days,
+            "opening_amount": opening_amount,
+            "new_leave_allocated": new_leave_allocated,
             "leave_taken": leave_taken,
-            "total_accrued_amount": total_accrued_amount,
+            "leave_taken_amount": leave_taken_amount,
+            "monthly_accrual_days": new_leave_allocated,
+            "monthly_accrual_amount": accrued_amount_per_month,
+            "closing_balance_days": closing_balance_days,
+            "closing_balance_amount": closing_balance_amount,
         })
     
     return data
