@@ -14,7 +14,6 @@
  "module": "Emkan Ui",
  "name": "Supplier Statement",
  "owner": "Administrator",
- "prepared_report": 0,
  "ref_doctype": "GL Entry",
  "report_name": "Supplier Statement",
  "report_type": "Script Report",
