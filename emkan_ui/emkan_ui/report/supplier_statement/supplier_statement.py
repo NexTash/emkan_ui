@@ -214,15 +214,40 @@ def get_gl_entries(filters, accounting_dimensions):
     for gle in gl_entries:
         if gle.get("is_canceled") == 1:
             continue
-		
 
-        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") == "S000166" or "S000173":
-            voucher_no = gle.get("voucher_no")
+        voucher_no = gle.get("voucher_no")
+
+        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") in ["S000166", "S000173"]:
             if voucher_no in processed_payment_entries:
                 continue
-			
-            processed_payment_entries.add(voucher_no)
 
+        if gle.get("voucher_type") == "Purchase Invoice":
+            pi_doc = frappe.get_doc("Purchase Invoice", gle['voucher_no'])
+            if pi_doc.docstatus == 2:
+                continue
+
+            is_return = pi_doc.is_return
+            transactions = f"{gle['voucher_type']} (Debit MEMO)" if is_return else gle['voucher_type']
+            details = f"{gle['voucher_no']}"
+
+        elif gle.get("voucher_type") == "Payment Entry":
+            pe_doc = frappe.get_doc("Payment Entry", gle['voucher_no'])
+            if pe_doc.docstatus == 2:
+                continue
+
+            transactions = gle['voucher_type']
+            check_no = pe_doc.reference_no or ""
+            details = f"{gle['voucher_no']}"
+
+        elif gle.get("voucher_type") == "Journal Entry":
+            je_doc = frappe.get_doc("Journal Entry", gle['voucher_no'])
+            if je_doc.docstatus == 2:
+                continue
+
+            transactions = gle['voucher_type']
+            details = f"{gle['voucher_no']}"
+
+        processed_payment_entries.add(voucher_no)
         filtered_gl_entries.append(gle)
 
     if filters.get("presentation_currency"):
