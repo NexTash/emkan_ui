@@ -136,6 +136,7 @@ def get_employees(filters: Filters) -> list[dict]:
 		Employee.name,
 		Employee.employee_name,
 		Employee.department,
+		Employee.date_of_joining,
 	)
 
 	for field in ["company", "department"]:
