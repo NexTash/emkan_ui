@@ -217,7 +217,7 @@ def get_gl_entries(filters, accounting_dimensions):
 
         voucher_no = gle.get("voucher_no")
 
-        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") in ["S000166", "S000173"]:
+        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") in ["S000166", "S000173", "S000406"]:
             if voucher_no in processed_payment_entries:
                 continue
 
