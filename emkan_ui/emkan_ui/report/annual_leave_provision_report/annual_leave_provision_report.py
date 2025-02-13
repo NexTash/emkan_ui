@@ -61,7 +61,7 @@ def get_data(filters):
                                        {"employee": emp.name, "leave_type": "Annual Leave"}, 
                                        "total_leaves_allocated") or 0
         accrued_days_per_month = flt(leave_alloc) / 12 if leave_alloc else 0
-        new_leave_allocated = accrued_days_per_month if accrued_days_per_month < 2.5 else 2.5
+        new_leave_allocated = accrued_days_per_month if accrued_days_per_month > 2.5 else 2.5
         accrued_amount_per_month = new_leave_allocated * amount_per_day
 
         total_accrued_days = accrued_days_per_month * months_elapsed
