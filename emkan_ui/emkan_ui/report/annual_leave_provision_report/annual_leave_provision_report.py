@@ -90,7 +90,7 @@ def get_data(filters: Filters) -> list:
         accrued_days_per_month = flt(leave_alloc) / 12 if leave_alloc else 0
         new_leave_allocated = min(accrued_days_per_month, 2.5)
 
-        monthly_accural_days = min(accrued_days_per_month, 2.5)
+        monthly_accural_days = leave_alloc if leave_alloc < 2.5 else 2.5
         monthly_accural_amount = amount_per_day * monthly_accural_days
 
         leave_taken_amount = amount_per_day * leave_taken
