@@ -50,11 +50,12 @@ def get_data(filters):
     """, filters, as_dict=True)
 
     data = []
-    
+    to_date = getdate(filters.get("to_date")) if filters.get("to_date") else getdate(frappe.utils.today())
+
     for emp in employees:
         base_salary = emp.base_salary or 0
         joining_date = getdate(emp.date_of_joining) if emp.date_of_joining else today()
-        working_days = date_diff(today(), joining_date)
+        working_days = date_diff(to_date, joining_date)
         monthly_days = (360 / 12) * (0.7) / 12
         monthly_amount = ((base_salary * 0.7) / 21) * monthly_days
         accrued_days = working_days
