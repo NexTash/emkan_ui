@@ -1,41 +1,67 @@
-
 import frappe
 from frappe.utils import flt
+
 
 def execute(filters=None):
     columns = get_columns()
     data = get_data(filters)
     return columns, data
 
+
 def get_columns():
     return [
-        
-        {"label": "REVENUE", "fieldname": "revenue", "fieldtype": "Data", "width": 150},
-        {"label": "EMKAN-1 - EECS", "fieldname": "emkan_1_income", "fieldtype": "Data", "width": 150},
-        {"label": "EMKAN-2 - EECS", "fieldname": "emkan_2_income", "fieldtype": "Data", "width": 150},
-        {"label": "EMKAN-3 (SSSF) - EECS", "fieldname": "emkan_3_income", "fieldtype": "Data", "width": 150},
-        {"label": "EMKAN-4 (BSI) - EECS", "fieldname": "emkan_4_income", "fieldtype": "Data", "width": 150},
-        {"label": "EMKAN -5 - EECS", "fieldname": "emkan_5_income", "fieldtype": "Data", "width": 150},
-        
-        
-        {"label": "Expense", "fieldname": "direct_expense", "fieldtype": "Currency", "width": 150},
-        {"label": "Common Projects", "fieldname": "project", "fieldtype": "Data", "width": 150},
-        # {"label": "Total", "fieldname": "total", "fieldtype": "Currency", "width": 150},
-        {"label": "Income", "fieldname": "total_income", "fieldtype": "Currency", "width": 150},
-        # {"label": "InDirect Expense", "fieldname": "indirect_expense", "fieldtype": "Currency", "width": 150},
+        {"label": "REVENUE", "fieldname": "project", "fieldtype": "Data", "width": 170},
+        {
+            "label": "EMKAN-1 - EECS",
+            "fieldname": "emkan_1_income",
+            "fieldtype": "Data",
+            "width": 145,
+        },
+        {
+            "label": "EMKAN-2 - EECS",
+            "fieldname": "emkan_2_income",
+            "fieldtype": "Data",
+            "width": 145,
+        },
+        {
+            "label": "EMKAN-3 (SSSF) - EECS",
+            "fieldname": "emkan_3_income",
+            "fieldtype": "Data",
+            "width": 145,
+        },
+        {
+            "label": "EMKAN-4 (BSI) - EECS",
+            "fieldname": "emkan_4_income",
+            "fieldtype": "Data",
+            "width": 145,
+        },
+        {
+            "label": "EMKAN -5 - EECS",
+            "fieldname": "emkan_5_income",
+            "fieldtype": "Data",
+            "width": 145,
+        },
+        {
+            "label": "InDirect Expense",
+            "fieldname": "indirect_expense",
+            "fieldtype": "Currency",
+            "width": 150,
+        },
+        {"label": "Total", "fieldname": "total", "fieldtype": "Currency", "width": 140},
+        # {"label": "Direct Expense", "fieldname": "direct_expense", "fieldtype": "Currency", "width": 150},
+        # {"label": "Division", "fieldname": "division", "fieldtype": "Data", "width":150},
+        # {"label": "Project", "fieldname": "project", "fieldtype": "Data", "width": 300},
+        # {"label": "Income", "fieldname": "total_income", "fieldtype": "Currency", "width": 150},
+        # {"label": "Other Expense", "fieldname": "other_expense", "fieldtype": "Currency", "width": 150},
+        # {"label": "Profit/Loss", "fieldname": "net_income_loss", "fieldtype": "Currency", "width": 150},
     ]
 
-def get_data(filters):
-    conditions = """
-        gle.cost_center IN (
-            'EMKAN-1 - EECS', 
-            'EMKAN-2 - EECS', 
-            'EMKAN-3 (SSSF) - EECS', 
-            'EMKAN-4 (BSI) - EECS', 
-            'EMKAN -5 - EECS'
-        )
-    """
 
+def get_data(filters):
+    # Base condition
+    conditions = "1=1"
+
+    # Add conditions for filters
     if filters.get("from_date") and filters.get("to_date"):
         conditions += " AND gle.posting_date BETWEEN %(from_date)s AND %(to_date)s"
     if filters.get("cost_center"):
@@ -44,184 +70,150 @@ def get_data(filters):
         conditions += " AND gle.cost_center = %(division)s"
     if filters.get("account"):
         conditions += " AND gle.account = %(account)s"
-    
+
+    # SQL Query with conditions
     query = f"""
-    SELECT 
-            CASE 
-                WHEN gle.cost_center = 'EMKAN-1 - EECS' THEN gle.project 
-                ELSE NULL 
-            END AS emkan_1,
-
-            CASE 
-                WHEN gle.cost_center = 'EMKAN-2 - EECS' THEN gle.project 
-                ELSE NULL 
-            END AS emkan_2,
-
-            CASE 
-                WHEN gle.cost_center = 'EMKAN-3 (SSSF) - EECS' THEN gle.project 
-                ELSE NULL 
-            END AS emkan_3,
-
-            CASE 
-                WHEN gle.cost_center = 'EMKAN-4 (BSI) - EECS' THEN gle.project 
-                ELSE NULL 
-            END AS emkan_4,
-
-            CASE 
-                WHEN gle.cost_center = 'EMKAN -5 - EECS' THEN gle.project 
-                ELSE NULL 
-            END AS emkan_5,
-
+        SELECT 
+            gle.cost_center AS division,
             gle.project AS project,
-
-            -- Fixing COALESCE usage
-            COALESCE(
-                CASE 
-                    WHEN gle.cost_center IN ('EMKAN-1 - EECS', 'EMKAN-2 - EECS', 'EMKAN-3 (SSSF) - EECS', 
-                                            'EMKAN-4 (BSI) - EECS', 'EMKAN -5 - EECS') 
-                    THEN gle.project
-                    ELSE NULL
-                END, gle.cost_center
-            ) AS revenue,
-
-            -- Income, Direct Expense, Indirect Expense, and Total Expense calculations
+            
+            -- Total Income
             SUM(CASE 
                     WHEN acc.root_type = 'Income' THEN gle.credit - gle.debit
                     ELSE 0
                 END) AS total_income,
-
+            
+            -- Direct Expense
             SUM(CASE 
                     WHEN acc.parent_account = '5001 - DIRECT EXPENSES - EECS' THEN gle.debit - gle.credit
                     ELSE 0
                 END) AS direct_expense,
-
+            
+            -- Indirect Expense
             SUM(CASE 
                     WHEN acc.parent_account = '5002 - INDIRECT EXPENSES - EECS' THEN gle.debit - gle.credit
                     ELSE 0
                 END) AS indirect_expense,
-
+            
+            -- Other Expense
+            SUM(CASE 
+                    WHEN acc.root_type = 'Expense' 
+                        AND acc.parent_account NOT IN ('5001 - DIRECT EXPENSES - EECS', '5002 - INDIRECT EXPENSES - EECS')
+                    THEN gle.debit - gle.credit
+                    ELSE 0
+                END) AS other_expense,
+            
+            -- Total Expense
             SUM(CASE 
                     WHEN acc.root_type = 'Expense' THEN gle.debit - gle.credit
                     ELSE 0
                 END) AS total_expense,
-
-            (SUM(CASE 
+            
+            -- Net Income/Loss
+            SUM(CASE 
                     WHEN acc.root_type = 'Income' THEN gle.credit - gle.debit
                     ELSE 0
                 END) - 
             SUM(CASE 
                     WHEN acc.root_type = 'Expense' THEN gle.debit - gle.credit
                     ELSE 0
-                END)) AS net_income_loss
-
+                END) AS net_income_loss
+            
         FROM 
             `tabGL Entry` AS gle
         INNER JOIN 
             `tabAccount` AS acc ON gle.account = acc.name
         WHERE 
             acc.report_type = 'Profit and Loss'
-            AND gle.cost_center IN (
-                'EMKAN-1 - EECS', 
-                'EMKAN-2 - EECS', 
-                'EMKAN-3 (SSSF) - EECS', 
-                'EMKAN-4 (BSI) - EECS', 
-                'EMKAN -5 - EECS'
-            )
-            AND gle.posting_date BETWEEN %(from_date)s AND %(to_date)s
+            AND {conditions}
         GROUP BY 
-            gle.cost_center, gle.project;
-
+            gle.cost_center, gle.project
     """
-    # frappe.msgprint(f"{query}")
+
+    # Execute the query
     result = frappe.db.sql(query, filters, as_dict=True)
-    # frappe.msgprint(f"results          :        {result}")
 
-    # Initializing variables to store sums
-    emkan_1_income = 0
-    emkan_2_income = 0
-    emkan_3_income = 0
-    emkan_4_income = 0
-    emkan_5_income = 0
-    emkan_1_direct_expense = 0
-    emkan_2_direct_expense = 0
-    emkan_3_direct_expense = 0
-    emkan_4_direct_expense = 0
-    emkan_5_direct_expense = 0
+    emkan_divisions = [
+        "EMKAN-1 - EECS", "EMKAN-2 - EECS", "EMKAN-3 (SSSF) - EECS",
+        "EMKAN-4 (BSI) - EECS", "EMKAN -5 - EECS"
+    ]
     
-    total_income_sum = 0
-    indirect_expense_sum = 0
-    total_expense_sum = 0
-
-    # Sum the values for each column
-    for entry in result:
-        if entry['emkan_1'] is not None:
-            emkan_1_income += flt(entry['total_income'])
-            emkan_1_direct_expense += flt(entry['direct_expense'])
-            
-        if entry['emkan_2'] is not None:
-            emkan_2_income += flt(entry['total_income'])
-            emkan_2_direct_expense += flt(entry['direct_expense'])
-        if entry['emkan_3'] is not None:
-            emkan_3_income += flt(entry['total_income'])
-            emkan_3_direct_expense += flt(entry['direct_expense'])
-        if entry['emkan_4'] is not None:
-            emkan_4_income += flt(entry['total_income'])
-            emkan_4_direct_expense += flt(entry['direct_expense'])
-        if entry['total_income'] and entry['emkan_5'] is None:
-            emkan_5_income += flt(entry['total_income'])
-            emkan_5_direct_expense += flt(entry['direct_expense'])
-
-        total_income_sum += flt(entry.get('total_income', 0))
-        indirect_expense_sum += flt(entry.get('indirect_expense', 0))
-        total_expense_sum += flt(entry.get('total_expense', 0))
-
-    direct_expense = {
-        "revenue": "Direct Exp",
-        "emkan_1": emkan_1_direct_expense,
-        "emkan_2": emkan_2_direct_expense,
-        "emkan_3": emkan_3_direct_expense,
-        "emkan_4": emkan_4_direct_expense,
-        "emkan_5": emkan_5_direct_expense,
-        "project": "Total",
-        "indirect_expense": indirect_expense_sum,
-        "total_expense": total_expense_sum,
-        "total" : emkan_1_direct_expense+emkan_2_direct_expense+emkan_3_direct_expense+emkan_4_direct_expense+emkan_5_direct_expense
-    }
-
-
-    # Adding the summed values as a row
-    income = {
-        "revenue": "REVENUE",
-        "emkan_1": "rniweubruib" ,
-        "emkan_2": "rniweubruib ",
-        "emkan_3": emkan_3_income,
-        "emkan_4": emkan_4_income,
-        "emkan_5": emkan_5_income,
-        "project": "Total",
-        "indirect_expense": indirect_expense_sum,
-        "total_expense": total_expense_sum,
-        "total" : emkan_1_income+emkan_2_income+emkan_3_income+emkan_4_income+emkan_5_income
-    }
-
-    frappe.msgprint(f"direct_expense :{result}")
-    
-    result.append( income)
-    result.append(direct_expense) 
-
+    data, division_totals, division_direct_exp, division_indirect_exp = [], {}, {}, {}
 
     for entry in result:
+        division = entry.get("division", "")
         total_income = entry.get("total_income", 0)
+        direct_expense = entry.get("direct_expense", 0)
+        indirect_expense = entry.get("indirect_expense", 0)  
 
-        for i in range(1, 6):
-            key = f"emkan_{i}"
-            if entry.get(key):
-                entry[f"{key}_income"] = total_income
-            else:
-                entry[f"{key}_income"] = None
+        if division in emkan_divisions:
+            index = emkan_divisions.index(division) + 1
+            key = f"emkan_{index}"
+
+            modified_entry = entry.copy()
+            for i in range(1, 6):
+                modified_entry[f"emkan_{i}"] = None
+                modified_entry[f"emkan_{i}_income"] = None
+
+            modified_entry[key] = division
+            modified_entry[f"{key}_income"] = total_income
+
+            data.append(modified_entry)
+            division_totals[division] = division_totals.get(division, 0) + total_income
+            division_direct_exp[division] = (division_direct_exp.get(division, 0) + direct_expense)
+            division_indirect_exp[division] = (division_indirect_exp.get(division, 0) + indirect_expense)
 
 
-    frappe.msgprint(f"# Explicitly set to None : {result}")
+    static_income = {"project": "Total Income"}
+    static_exp = {"project": "Total Direct Exp"}
+    static_gp = {"project": "GP", "total": "0"}
+    static_indirect = {"project": "Indirect Expense", "total": "0"}
+    net_total = {"project": "Net Total", "total": "0"}
 
+    for i, (division, total_income) in enumerate(division_totals.items(), start=1):
 
-    return result
+        if division in emkan_divisions:
+            index = emkan_divisions.index(division) + 1
 
+        static_income[f"emkan_{index}_income"] = total_income
+
+    for division, total_expense in division_direct_exp.items():
+        if division in emkan_divisions:
+            index = emkan_divisions.index(division) + 1
+            static_exp[f"emkan_{index}_income"] = total_expense
+
+    for division, total_expense in division_indirect_exp.items():
+        # frappe.msgprint(f"{total_expense}")
+        if division in emkan_divisions:
+            index = emkan_divisions.index(division) + 1
+            static_indirect[f"emkan_{index}_income"] = total_expense
+
+    total_income = 0
+    total_expense = 0
+    total_indirect = 0
+
+    for i in range(1, 6):
+        income = static_income.get(f"emkan_{i}_income", 0)
+        expense = static_exp.get(f"emkan_{i}_income", 0)
+        indirect_expense = static_indirect.get(f"emkan_{i}_income", 0)
+
+        static_gp[f"emkan_{i}_income"] = income - expense
+        net_total[f"emkan_{i}_income"] = income - expense - indirect_expense
+        total_income += income
+        total_expense += expense
+        total_indirect += indirect_expense
+
+    # frappe.msgprint(f"division_indirect_exp: {total_indirect}")
+    static_income["total"] = total_income
+    static_exp["total"] = total_expense
+    static_indirect["total"] = total_indirect
+
+    data.append(static_exp)
+    data.insert(0, static_income)
+    data.append(static_gp)
+    data.append(static_indirect)
+    data.append(net_total)
+
+    # frappe.msgprint(f"net_total : {net_total}")
+    # frappe.msgprint(f"data : {data}")
+    return data
