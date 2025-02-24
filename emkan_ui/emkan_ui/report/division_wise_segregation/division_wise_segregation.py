@@ -163,34 +163,28 @@ def get_data(filters):
             division_direct_exp[division] = (division_direct_exp.get(division, 0) + direct_expense)
             division_indirect_exp[division] = (division_indirect_exp.get(division, 0) + indirect_expense)
 
+    static_income = {"project": "Total Income", "total": 0}
+    static_exp = {"project": "Total Direct Exp", "total": 0}
+    static_indirect = {"project": "Indirect Expense", "total": 0}
+    static_gp = {"project": "GP", "total": 0}
+    net_total = {"project": "Net Total", "total": 0}
 
-    static_income = {"project": "Total Income"}
-    static_exp = {"project": "Total Direct Exp"}
-    static_gp = {"project": "GP", "total": "0"}
-    static_indirect = {"project": "Indirect Expense", "total": "0"}
-    net_total = {"project": "Net Total", "total": "0"}
-
-    for i, (division, total_income) in enumerate(division_totals.items(), start=1):
-
+    for division, total_income in division_totals.items():
         if division in emkan_divisions:
             index = emkan_divisions.index(division) + 1
-
-        static_income[f"emkan_{index}_income"] = total_income
+            static_income[f"emkan_{index}_income"] = total_income
 
     for division, total_expense in division_direct_exp.items():
         if division in emkan_divisions:
             index = emkan_divisions.index(division) + 1
-            static_exp[f"emkan_{index}_income"] = total_expense
+            static_exp[f"emkan_{index}_income"] = total_expense  
 
     for division, total_expense in division_indirect_exp.items():
-        # frappe.msgprint(f"{total_expense}")
         if division in emkan_divisions:
             index = emkan_divisions.index(division) + 1
             static_indirect[f"emkan_{index}_income"] = total_expense
 
-    total_income = 0
-    total_expense = 0
-    total_indirect = 0
+    total_income = total_expense = total_indirect = 0
 
     for i in range(1, 6):
         income = static_income.get(f"emkan_{i}_income", 0)
@@ -199,14 +193,16 @@ def get_data(filters):
 
         static_gp[f"emkan_{i}_income"] = income - expense
         net_total[f"emkan_{i}_income"] = income - expense - indirect_expense
+
         total_income += income
         total_expense += expense
         total_indirect += indirect_expense
 
-    # frappe.msgprint(f"division_indirect_exp: {total_indirect}")
     static_income["total"] = total_income
     static_exp["total"] = total_expense
     static_indirect["total"] = total_indirect
+    static_gp["total"] = total_income - total_expense
+    net_total["total"] = total_income - total_expense - total_indirect
 
     data.append(static_exp)
     data.insert(0, static_income)
@@ -215,5 +211,4 @@ def get_data(filters):
     data.append(net_total)
 
     # frappe.msgprint(f"net_total : {net_total}")
-    # frappe.msgprint(f"data : {data}")
     return data
