@@ -40,5 +40,20 @@ frappe.ui.form.on("Purchase Order", {
 			},
 			__("Get Items From")
 		);
+
+
+		let mr = [];
+
+		frm.doc.items.forEach(function(item) {
+			if (item.material_request) {
+				mr.push(item.material_request);
+			}
+		});
+					
+		if (mr.length > 0) {
+			frm.doc.custom_linked_mr = mr.join(', ');
+		} else {
+			frm.doc.custom_linked_mr = '';
+		}
     },
 });
