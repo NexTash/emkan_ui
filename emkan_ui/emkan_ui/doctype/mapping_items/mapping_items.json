@@ -15,7 +15,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Division",
-   "options": "EMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON\nEMKAN - DYNAM ( 7 &8)"
+   "options": "EMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON"
   },
   {
    "fieldname": "cost_center",
@@ -28,7 +28,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-03-03 09:47:44.746841",
+ "modified": "2025-03-03 13:44:25.001479",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Mapping Items",

@@ -365,7 +365,7 @@
    "name": "Material Request-custom_department",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON\nEMKAN - DYNAM ( 7 &8)",
+   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,
