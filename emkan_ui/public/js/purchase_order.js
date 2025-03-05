@@ -42,18 +42,14 @@ frappe.ui.form.on("Purchase Order", {
 		);
 
 
-		let mr = [];
+		let mr = new Set();
 
-		frm.doc.items.forEach(function(item) {
-			if (item.material_request) {
-				mr.push(item.material_request);
-			}
-		});
-					
-		if (mr.length > 0) {
-			frm.doc.custom_linked_mr = mr.join(', ');
-		} else {
-			frm.doc.custom_linked_mr = '';
-		}
+                frm.doc.items.forEach(function(item) {
+                    if (item.material_request) {
+                        mr.add(item.material_request);
+                    }
+                });
+
+                frm.doc.custom_linked_mr = mr.size > 0 ? Array.from(mr).join(', ') : '';
     },
 });
