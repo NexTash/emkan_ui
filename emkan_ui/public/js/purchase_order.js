@@ -42,7 +42,7 @@ frappe.ui.form.on("Purchase Order", {
 		);
 
 
-		 let mrSet = new Set();
+		//  let mrSet = new Set();
 
 		//  frm.doc.items.forEach(function(item) {
 		//  	if (item.material_request) {
@@ -50,6 +50,6 @@ frappe.ui.form.on("Purchase Order", {
 		//  	}
 		//  });
 
-		 frm.doc.custom_linked_mr = Array.from(mrSet).join(', ');
+		//  frm.doc.custom_linked_mr = Array.from(mrSet).join(', ');
     },
 });
