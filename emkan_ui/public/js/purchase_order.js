@@ -44,11 +44,11 @@ frappe.ui.form.on("Purchase Order", {
 
 		 let mrSet = new Set();
 
-		 frm.doc.items.forEach(function(item) {
-		 	if (item.material_request) {
-		 		mrSet.add(item.material_request);
-		 	}
-		 });
+		//  frm.doc.items.forEach(function(item) {
+		//  	if (item.material_request) {
+		//  		mrSet.add(item.material_request);
+		//  	}
+		//  });
 
 		 frm.doc.custom_linked_mr = Array.from(mrSet).join(', ');
     },
