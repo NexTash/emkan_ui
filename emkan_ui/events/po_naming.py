@@ -20,3 +20,30 @@ def autoname(doc, method=None):
 
 def format_with_leading_zeros(number, digits):
     return str(number).zfill(digits)
+
+
+
+@frappe.whitelist()
+def rate(purchase_order_name):
+    # Fetch the minimum rate from the Purchase Order Items
+    min_price = frappe.db.sql("""
+        SELECT MIN(rate) 
+        FROM `tabPurchase Order Item` 
+        WHERE parent=%s
+    """, (purchase_order_name,))[0][0]
+
+    if min_price:
+        # Update all items in the Purchase Order with the minimum price
+        frappe.db.sql("""
+            UPDATE `tabPurchase Order Item` 
+            SET custom_minimum_purchases_price = %s 
+            WHERE parent = %s
+        """, (min_price, purchase_order_name))
+
+        frappe.db.commit()
+        # frappe.msgprint(f"Updated custom_minimum_purchases_price to {min_price}")
+
+# Example usage: Fetch last PO and update
+last_doc = frappe.get_last_doc("Purchase Order")
+rate(last_doc.name)
+0
