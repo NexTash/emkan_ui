@@ -84,7 +84,6 @@ frappe.ui.form.on("Purchase Order Item", {
             },
             callback: function(r) {
                 if (r.message) {
-                    frappe.model.set_value(cdt, cdn, "custom_last_purchases_price", r.message.last_price);
                     frappe.model.set_value(cdt, cdn, "custom_minimum_purchases_price", r.message.min_price);
                 }
             }
