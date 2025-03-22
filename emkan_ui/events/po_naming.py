@@ -21,34 +21,21 @@ def autoname(doc, method=None):
 def format_with_leading_zeros(number, digits):
     return str(number).zfill(digits)
 
-
 @frappe.whitelist()
 def get_purchase_prices(item_code):
     if not item_code:
-        return {"last_price": 0, "min_price": 0}
+        return {"min_price": 0}
 
     # Get all purchase invoice items for this item
     purchase_items = frappe.db.get_all("Purchase Invoice Item",
         filters={"item_code": item_code},
-        fields=["rate", "parent"],
-        order_by="creation ASC"
+        fields=["rate"]
     )
 
     if not purchase_items:
-        return {"last_price": 0, "min_price": 0}
-
-    # Get last price (latest purchase)
-    last_purchase = frappe.db.get_all("Purchase Invoice Item",
-        filters={"item_code": item_code},
-        fields=["rate"],
-        order_by="creation DESC",
-        limit=1
-    )
-
-    last_price = last_purchase[0].rate if last_purchase else 0
+        return {"min_price": 0}
 
     # Get minimum price
     min_price = min(item.rate for item in purchase_items) if purchase_items else 0
 
-    return {"last_price": last_price, "min_price": min_price}
-
+    return {"min_price": min_price}
