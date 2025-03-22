@@ -22,28 +22,33 @@ def format_with_leading_zeros(number, digits):
     return str(number).zfill(digits)
 
 
-
 @frappe.whitelist()
-def rate(purchase_order_name):
-    # Fetch the minimum rate from the Purchase Order Items
-    min_price = frappe.db.sql("""
-        SELECT MIN(rate) 
-        FROM `tabPurchase Order Item` 
-        WHERE parent=%s
-    """, (purchase_order_name,))[0][0]
+def get_purchase_prices(item_code):
+    if not item_code:
+        return {"last_price": 0, "min_price": 0}
 
-    if min_price:
-        # Update all items in the Purchase Order with the minimum price
-        frappe.db.sql("""
-            UPDATE `tabPurchase Order Item` 
-            SET custom_minimum_purchases_price = %s 
-            WHERE parent = %s
-        """, (min_price, purchase_order_name))
+    # Get all purchase invoice items for this item
+    purchase_items = frappe.db.get_all("Purchase Invoice Item",
+        filters={"item_code": item_code},
+        fields=["rate", "parent"],
+        order_by="creation ASC"
+    )
 
-        frappe.db.commit()
-        # frappe.msgprint(f"Updated custom_minimum_purchases_price to {min_price}")
+    if not purchase_items:
+        return {"last_price": 0, "min_price": 0}
 
-# Example usage: Fetch last PO and update
-last_doc = frappe.get_last_doc("Purchase Order")
-rate(last_doc.name)
-0
+    # Get last price (latest purchase)
+    last_purchase = frappe.db.get_all("Purchase Invoice Item",
+        filters={"item_code": item_code},
+        fields=["rate"],
+        order_by="creation DESC",
+        limit=1
+    )
+
+    last_price = last_purchase[0].rate if last_purchase else 0
+
+    # Get minimum price
+    min_price = min(item.rate for item in purchase_items) if purchase_items else 0
+
+    return {"last_price": last_price, "min_price": min_price}
+
