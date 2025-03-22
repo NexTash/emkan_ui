@@ -72,23 +72,22 @@ function get_qty(frm, dt, dn){
 
 
 
-
 frappe.ui.form.on("Purchase Order Item", {
     item_code: function(frm, cdt, cdn) {
-    	let row = locals[cdt][cdn];
-		console.log("dddd");
-		frappe.call({
-			method: "emkan_ui.events.po_naming.rate",
-			args: {
-				item:row.item_code
-				},
-			callback: function(response) {
-				if (response.message.length > 0) {
-					console.log( response.message[0].rate);
-					
-					frappe.model.set_value(cdt, cdn, "custom_minimum_purchases_price", response.message[0].rate);
-				}
-			}
-		});
-	}
+        let row = locals[cdt][cdn];
+        if (!row.item_code) return;
+
+        frappe.call({
+            method: "emkan_ui.events.po_naming.get_purchase_prices",
+            args: {
+                item_code: row.item_code
+            },
+            callback: function(r) {
+                if (r.message) {
+                    frappe.model.set_value(cdt, cdn, "custom_last_purchases_price", r.message.last_price);
+                    frappe.model.set_value(cdt, cdn, "custom_minimum_purchases_price", r.message.min_price);
+                }
+            }
+        });
+    }
 });
