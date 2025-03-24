@@ -133,6 +133,7 @@ doctype_list_js = {"Payment Entry": "public/js/payment_entry_list.js"}
 doc_events = {
 	"Purchase Order": {
 		"autoname": "emkan_ui.events.po_naming.autoname",
+        "before_save": "emkan_ui.events.po_naming.set_purchase_prices",
 	},
     "DocShare": {
 		"after_insert": "emkan_ui.events.share_emkan.after_insert",

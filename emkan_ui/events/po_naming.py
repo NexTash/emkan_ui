@@ -21,21 +21,30 @@ def autoname(doc, method=None):
 def format_with_leading_zeros(number, digits):
     return str(number).zfill(digits)
 
-@frappe.whitelist()
-def get_purchase_prices(item_code):
-    if not item_code:
-        return {"min_price": 0}
+def set_purchase_prices(doc, method):
+    for item in doc.items:
+        if not item.item_code or not item.item_name:
+            continue
 
-    # Get all purchase invoice items for this item
-    purchase_items = frappe.db.get_all("Purchase Invoice Item",
-        filters={"item_code": item_code},
-        fields=["rate"]
-    )
+        past_purchases = frappe.get_all(
+            "Purchase Order Item",
+            filters={
+                "item_code": item.item_code,
+                "item_name": item.item_name,
+                "docstatus": 1
+            },
+            fields=["rate", "uom", "parent", "creation"],
+            order_by="creation desc",
+            limit_page_length=100
+        )
 
-    if not purchase_items:
-        return {"min_price": 0}
+        if past_purchases:
+            last_purchase = past_purchases[0]
+            item.custom_last_pp = last_purchase["rate"]
+            item.custom_last_uom = last_purchase["uom"]
+            item.custom_last_po_doc = last_purchase["parent"]
 
-    # Get minimum price
-    min_price = min(item.rate for item in purchase_items) if purchase_items else 0
-
-    return {"min_price": min_price}
+            min_purchase = min(past_purchases, key=lambda x: x["rate"])
+            item.custom_min_pp = min_purchase["rate"]
+            item.custom_min_uom = min_purchase["uom"]
+            item.custom_min_po_doc = min_purchase["parent"]
