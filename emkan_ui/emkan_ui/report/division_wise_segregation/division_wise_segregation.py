@@ -8,50 +8,13 @@ def execute(filters=None):
 
 def get_columns():
     return [
-        {"label": "REVENUE", "fieldname": "project", "fieldtype": "Data", "width": 170},
-        {
-            "label": "EMKAN-1 - EECS",
-            "fieldname": "emkan_1_income",
-            "fieldtype": "Data",
-            "width": 145,
-        },
-        {
-            "label": "EMKAN-2 - EECS",
-            "fieldname": "emkan_2_income",
-            "fieldtype": "Data",
-            "width": 145,
-        },
-        {
-            "label": "EMKAN-3 (SSSF) - EECS",
-            "fieldname": "emkan_3_income",
-            "fieldtype": "Data",
-            "width": 145,
-        },
-        {
-            "label": "EMKAN-4 (BSI) - EECS",
-            "fieldname": "emkan_4_income",
-            "fieldtype": "Data",
-            "width": 145,
-        },
-        {
-            "label": "EMKAN -5 - EECS",
-            "fieldname": "emkan_5_income",
-            "fieldtype": "Data",
-            "width": 145,
-        },
-        # {
-        #     "label": "InDirect Expense",
-        #     "fieldname": "indirect_expense",
-        #     "fieldtype": "Currency",
-        #     "width": 150,
-        # },
+        {"label": "PROJECTS", "fieldname": "project", "fieldtype": "Data", "width": 170},
+        {"label": "EMKAN-1 - EECS", "fieldname": "emkan_1_income", "fieldtype": "Data", "width": 145,},
+        {"label": "EMKAN-2 - EECS", "fieldname": "emkan_2_income", "fieldtype": "Data", "width": 145,},
+        {"label": "EMKAN-3 (SSSF) - EECS", "fieldname": "emkan_3_income", "fieldtype": "Data", "width": 145,},
+        {"label": "EMKAN-4 (BSI) - EECS", "fieldname": "emkan_4_income", "fieldtype": "Data","width": 145,},
+        {"label": "EMKAN -5 - EECS", "fieldname": "emkan_5_income", "fieldtype": "Data","width": 145,},
         {"label": "Total", "fieldname": "total", "fieldtype": "Currency", "width": 140},
-        # {"label": "Direct Expense", "fieldname": "direct_expense", "fieldtype": "Currency", "width": 150},
-        # {"label": "Division", "fieldname": "division", "fieldtype": "Data", "width":150},
-        # {"label": "Project", "fieldname": "project", "fieldtype": "Data", "width": 300},
-        # {"label": "Income", "fieldname": "total_income", "fieldtype": "Currency", "width": 150},
-        # {"label": "Other Expense", "fieldname": "other_expense", "fieldtype": "Currency", "width": 150},
-        # {"label": "Profit/Loss", "fieldname": "net_income_loss", "fieldtype": "Currency", "width": 150},
     ]
 
 
@@ -127,57 +90,21 @@ def get_data(filters):
         GROUP BY 
             gle.cost_center, gle.project
     """
-    # Execute the query
     result = frappe.db.sql(query, filters, as_dict=True)
-    # emkan_divisions = [
-    #     "EMKAN-1 - EECS", "EMKAN-2 - EECS", "EMKAN-3 (SSSF) - EECS",
-    #     "EMKAN-4 (BSI) - EECS", "EMKAN -5 - EECS"
-    # ]
     
-    # data = []
-    # division_totals = {}
-    
-    # for entry in result:
-    #     division = entry.get("division", "")
-    #     project = entry.get("project", "")
-    #     total_income = entry.get("total_income", 0)
-    #     direct_expense = entry.get("direct_expense", 0)
-    #     indirect_expense = entry.get("indirect_expense", 0)
-    #     net_total = total_income - direct_expense - indirect_expense
-
-    #     if division in emkan_divisions:
-    #         key = (division, project)
-    #         if key not in division_totals:
-    #             division_totals[key] = {
-    #                 "division": division,
-    #                 "project": project,
-    #                 "total_income": 0,
-    #                 "direct_expense": 0,
-    #                 "indirect_expense": 0,
-    #                 "net_total": 0,
-    #             }
-            
-    #         division_totals[key]["total_income"] += total_income
-    #         division_totals[key]["direct_expense"] += direct_expense
-    #         division_totals[key]["indirect_expense"] += indirect_expense
-    #         division_totals[key]["net_total"] += net_total
-    
-    # data.extend(division_totals.values())
-    # return data
-
     emkan_divisions = [
-        "EMKAN-1 - EECS", "EMKAN-2 - EECS", "EMKAN-3 (SSSF) - EECS",
-        "EMKAN-4 (BSI) - EECS", "EMKAN -5 - EECS"
+    "EMKAN-1 - EECS", "EMKAN-2 - EECS", "EMKAN-3 (SSSF) - EECS",
+    "EMKAN-4 (BSI) - EECS", "EMKAN -5 - EECS"
     ]
-    
-    data, division_totals, division_direct_exp, division_indirect_exp = [], {}, {}, {}
+
+    data, division_totals, division_direct_exp, division_indirect_exp, project_expenses = [], {}, {}, {}, {}
 
     for entry in result:
         division = entry.get("division", "")
         total_income = entry.get("total_income", 0)
         direct_expense = entry.get("direct_expense", 0)
-        indirect_expense = entry.get("indirect_expense", 0) 
-
+        indirect_expense = entry.get("indirect_expense", 0)
+        project = entry.get("project", "No Project Selected")
 
         if division in emkan_divisions:
             index = emkan_divisions.index(division) + 1
@@ -193,14 +120,23 @@ def get_data(filters):
 
             data.append(modified_entry)
             division_totals[division] = division_totals.get(division, 0) + total_income
-            division_direct_exp[division] = (division_direct_exp.get(division, 0) + direct_expense)
-            division_indirect_exp[division] = (division_indirect_exp.get(division, 0) + indirect_expense)
+            division_direct_exp[division] = division_direct_exp.get(division, 0) + direct_expense
+            division_indirect_exp[division] = division_indirect_exp.get(division, 0) + indirect_expense
+            
+            # Store indirect expenses for each project
+            if project not in project_expenses:
+                project_expenses[project] = {"direct": {}, "indirect": {}}
+            project_expenses[project]["direct"][division] = project_expenses[project]["direct"].get(division, 0) + direct_expense
+            project_expenses[project]["indirect"][division] = project_expenses[project]["indirect"].get(division, 0) + indirect_expense
 
-    static_income = {"project": "Total Income", "total": 0}
-    static_exp = {"project": "Total Direct Exp", "total": 0}
-    static_indirect = {"project": "Indirect Expense", "total": 0}
-    static_gp = {"project": "GP", "total": 0}
-    net_total = {"project": "Net Total", "total": 0}
+    static_revenue = {"project": "<b>REVENUE</b>", "total": 0}
+    static_direct_expense = {"project": "<b>DIRECT EXPENSE</b>", "total": 0}
+    static_indirect_expense = {"project": "<b>INDIRECT EXPENSE</b>", "total": 0}
+    static_income = {"project": "<b>Total Income</b>", "total": 0}
+    static_exp = {"project": "<b>Total Direct Exp</b>", "total": 0}
+    static_indirect = {"project": "<b>Total Indirect Expense</b>", "total": 0}
+    static_gp = {"project": "<b>GP</b>", "total": 0}
+    net_total = {"project": "<b>Net Total</b>", "total": 0}
 
     for division, total_income in division_totals.items():
         if division in emkan_divisions:
@@ -218,12 +154,10 @@ def get_data(filters):
             static_indirect[f"emkan_{index}_income"] = total_expense
 
     total_income = total_expense = total_indirect = 0
-
     for i in range(1, 6):
         income = static_income.get(f"emkan_{i}_income", 0)
         expense = static_exp.get(f"emkan_{i}_income", 0)
         indirect_expense = static_indirect.get(f"emkan_{i}_income", 0)
-
 
         static_gp[f"emkan_{i}_income"] = income - expense
         net_total[f"emkan_{i}_income"] = income - expense - indirect_expense
@@ -238,56 +172,64 @@ def get_data(filters):
     static_gp["total"] = total_income - total_expense
     net_total["total"] = total_income - total_expense - total_indirect
 
-    final_data = []
+    final_data = [static_revenue]
     project_to_entry_map = {}
 
     for entry in data:
-        project_name = entry["project"] if entry["project"] else "No Project Selected"
-        division_project_key = (entry["division"], project_name)
-
+        project_name = entry.get("project", "No Project Selected")  # Ensuring default value
+        division = entry["division"]
+        
         if project_name in project_to_entry_map:
             existing_entry = project_to_entry_map[project_name]
-
-            income_keys = ["emkan_1_income", "emkan_2_income", "emkan_3_income", "emkan_4_income", "emkan_5_income"]
-            for key in income_keys:
+            for key in [f"emkan_{i}_income" for i in range(1, 6)]:
                 if existing_entry[key] is None and entry[key] is not None:
                     existing_entry[key] = entry[key]
-
         else:
-            new_entry = {
-                "division": entry["division"],
-                "project": project_name,
-                "total_income": entry["total_income"],
-                "direct_expense": entry["direct_expense"],
-                "indirect_expense": entry["indirect_expense"],
-                "other_expense": entry["other_expense"],
-                "total_expense": entry["total_expense"],
-                "net_income_loss": entry["net_income_loss"],
-                "emkan_1": entry["emkan_1"],
-                "emkan_1_income": entry["emkan_1_income"],
-                "emkan_2": entry["emkan_2"],
-                "emkan_2_income": entry["emkan_2_income"],
-                "emkan_3": entry["emkan_3"],
-                "emkan_3_income": entry["emkan_3_income"],
-                "emkan_4": entry["emkan_4"],
-                "emkan_4_income": entry["emkan_4_income"],
-                "emkan_5": entry["emkan_5"],
-                "emkan_5_income": entry["emkan_5_income"],
-            }
+            new_entry = entry.copy()
             final_data.append(new_entry)
             project_to_entry_map[project_name] = new_entry
 
-    # frappe.msgprint(f"  final_data :{final_data}")
-
-    # frappe.msgprint(f"new one ic : {new_entry}")
-
-    # # for row in data:
-
     final_data.append(static_income)
+
+    final_data.append({"project": "", "total": ""})
+    final_data.append({"project": "<b>Direct Expenses</b>", "total": ""})
+    final_data.append({"project": "", "total": ""})
+
+    # Insert project-wise Direct Expenses after Total Income
+    for project, expenses in project_expenses.items():
+        project_name = project if project else "No Project Selected"
+        project_entry = {"project": project_name, "total": ""}
+        
+        for division, amount in expenses["direct"].items():
+            index = emkan_divisions.index(division) + 1 if division in emkan_divisions else None
+            if index:
+                project_entry[f"emkan_{index}_income"] = amount
+        
+        final_data.append(project_entry)
+
+    # Insert Total Direct Expenses after project-wise expenses
     final_data.append(static_exp)
-    # data.insert(0, static_income)
     final_data.append(static_gp)
+    final_data.append({"project": "", "total": ""})
+    final_data.append({"project": "<b>InDirect Expense</b>", "total": ""})
+    final_data.append({"project": "", "total": ""})
+
+    # Insert project-wise Indirect Expenses after GP
+    for project, expenses in project_expenses.items():
+        project_name = project if project else "No Project Selected"
+        project_entry = {"project": project_name, "total": ""}
+        
+        for division, amount in expenses["indirect"].items():
+            index = emkan_divisions.index(division) + 1 if division in emkan_divisions else None
+            if index:
+                project_entry[f"emkan_{index}_income"] = amount
+        
+        final_data.append(project_entry)
+
+    # Insert Total Indirect Expenses
     final_data.append(static_indirect)
+    # final_data.append({"project": "", "total": ""})
+    
     final_data.append(net_total)
 
     return final_data
