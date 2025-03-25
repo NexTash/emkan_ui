@@ -21,3 +21,31 @@ def autoname(doc, method=None):
 
 def format_with_leading_zeros(number, digits):
     return str(number).zfill(digits)
+
+def set_purchase_prices(doc, method):
+    for item in doc.items:
+        if not item.item_code or not item.item_name:
+            continue
+
+        past_purchases = frappe.get_all(
+            "Purchase Order Item",
+            filters={
+                "item_code": item.item_code,
+                "item_name": item.item_name,
+                "docstatus": 1
+            },
+            fields=["rate", "uom", "parent", "creation"],
+            order_by="creation desc",
+            limit_page_length=100
+        )
+
+        if past_purchases:
+            last_purchase = past_purchases[0]
+            item.custom_last_pp = last_purchase["rate"]
+            item.custom_last_uom = last_purchase["uom"]
+            item.custom_last_po_doc = last_purchase["parent"]
+
+            min_purchase = min(past_purchases, key=lambda x: x["rate"])
+            item.custom_min_pp = min_purchase["rate"]
+            item.custom_min_uom = min_purchase["uom"]
+            item.custom_min_po_doc = min_purchase["parent"]
