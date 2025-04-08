@@ -36,7 +36,7 @@ def assign_user(doc=None, method=None):
                     share_doc.share = child.share
                     share_doc.flags.ignore_share_permission = True
                
-                share_doc.save(ignore_permissions=True)
+                    share_doc.save(ignore_permissions=True)
                 if(frappe.db.exists("ToDo", {"status" : ["!=", "Cancelled"], "allocated_to": child.user, "reference_name" : doc.name, "reference_type" : doc.doctype})):
                     continue
                 add(
