@@ -4,6 +4,8 @@
 
 import copy
 from collections import OrderedDict
+from collections import defaultdict
+
 
 import frappe
 from frappe import _, _dict
@@ -208,52 +210,51 @@ def get_gl_entries(filters, accounting_dimensions):
         as_dict=1,
     )
 
-    processed_payment_entries = set()
     filtered_gl_entries = []
+
+    aggregated_entries = defaultdict(lambda: {"debit": 0, "credit": 0, "entries": []})
+
+    filtered_parties = ["S000166", "S000173", "S000054", "S000143"]
 
     for gle in gl_entries:
         if gle.get("is_canceled") == 1:
             continue
 
         voucher_no = gle.get("voucher_no")
+        voucher_type = gle.get("voucher_type")
+        party = gle.get("party")
+        unique_key = (voucher_type, voucher_no, party)
 
-        if gle.get("voucher_type") == "Payment Entry" and gle.get("party") in ["S000166", "S000173", "S000054", "S000143"]:
-            if voucher_no in processed_payment_entries:
-                continue
+        if party in filtered_parties:
+            aggregated_entries[unique_key]["debit"] += gle.get("debit", 0) or 0
+            aggregated_entries[unique_key]["credit"] += gle.get("credit", 0) or 0
+            aggregated_entries[unique_key]["entries"].append(gle)
+        else:
+            filtered_gl_entries.append(gle)
 
-        if gle.get("voucher_type") == "Purchase Invoice":
-            pi_doc = frappe.get_doc("Purchase Invoice", gle['voucher_no'])
-            if pi_doc.docstatus == 2:
-                continue
+    for unique_key, data in aggregated_entries.items():
+        first_row = copy.deepcopy(data["entries"][0])
 
-            is_return = pi_doc.is_return
-            transactions = f"{gle['voucher_type']} (Debit MEMO)" if is_return else gle['voucher_type']
-            details = f"{gle['voucher_no']}"
+        total_debit = data["debit"]
+        total_credit = data["credit"]
 
-        elif gle.get("voucher_type") == "Payment Entry":
-            pe_doc = frappe.get_doc("Payment Entry", gle['voucher_no'])
-            if pe_doc.docstatus == 2:
-                continue
+        if total_debit > total_credit:
+            first_row["debit"] = total_debit - total_credit
+            first_row["credit"] = 0
+        elif total_credit > total_debit:
+            first_row["credit"] = total_credit - total_debit
+            first_row["debit"] = 0
+        else:
+            first_row["debit"] = 0
+            first_row["credit"] = 0
 
-            transactions = gle['voucher_type']
-            check_no = pe_doc.reference_no or ""
-            details = f"{gle['voucher_no']}"
-
-        elif gle.get("voucher_type") == "Journal Entry":
-            je_doc = frappe.get_doc("Journal Entry", gle['voucher_no'])
-            if je_doc.docstatus == 2:
-                continue
-
-            transactions = gle['voucher_type']
-            details = f"{gle['voucher_no']}"
-
-        processed_payment_entries.add(voucher_no)
-        filtered_gl_entries.append(gle)
+        filtered_gl_entries.append(first_row)
 
     if filters.get("presentation_currency"):
         return convert_to_presentation_currency(filtered_gl_entries, currency_map)
     else:
         return filtered_gl_entries
+
 
 
 
