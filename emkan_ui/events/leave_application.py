@@ -4,7 +4,7 @@ from hrms.hr.doctype.leave_application.leave_application import get_leave_balanc
 
 # Custom validation function
 def custom_validate(doc, method):
-    end_date = getdate(doc.to_date)
+    end_date = getdate(doc.from_date)
     forecasted_balance = get_forecasted_leave_balance(doc, doc.employee, doc.employee_name, end_date)
     total_leave_days = doc.total_leave_days or date_diff(doc.to_date, doc.from_date) + 1
     if total_leave_days > forecasted_balance:
@@ -24,7 +24,7 @@ def get_forecasted_leave_balance(doc, employee, employee_name, future_date):
 
     allocation = allocations[0] if allocations else {}
     accrual_per_month = flt(allocation.get("total_leaves_allocated", 0))
-    leave_balance = flt(allocation.get("new_leaves_allocated", 0))
+    leave_balance = flt(2.5)
 
 
     if accrual_per_month:
