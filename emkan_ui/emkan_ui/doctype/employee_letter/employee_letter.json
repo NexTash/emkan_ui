@@ -10,10 +10,15 @@
   "employee",
   "employee_name",
   "designation",
+  "increment_percentage",
   "column_break_bdzn",
   "location",
   "date_of_warning",
   "letter_type",
+  "from_date",
+  "to_date",
+  "section_break_fmbd",
+  "salary_component",
   "section_break_xjqi",
   "nature_of_infraction",
   "other_infraction_if_any",
@@ -59,7 +64,7 @@
    "fieldname": "letter_type",
    "fieldtype": "Select",
    "label": "Letter Type",
-   "options": "Warning\nTermination\nAppreciation\netc.",
+   "options": "\nWarning\nSalary Increment\nSuspension\nTermination\nAppreciation\netc.",
    "reqd": 1
   },
   {
@@ -99,12 +104,40 @@
    "options": "HR-EMP-LET-",
    "reqd": 1,
    "set_only_once": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_fmbd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "salary_component",
+   "fieldtype": "Table",
+   "label": "Salary Component",
+   "options": "Employee Letter Salary Component"
+  },
+  {
+   "fieldname": "increment_percentage",
+   "fieldtype": "Float",
+   "label": "Increment Percentage",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-22 09:28:33.248304",
+ "modified": "2025-04-23 14:10:26.764310",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Employee Letter",
