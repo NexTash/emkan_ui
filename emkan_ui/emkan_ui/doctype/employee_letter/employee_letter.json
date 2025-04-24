@@ -83,8 +83,7 @@
    "fieldname": "nature_of_infraction",
    "fieldtype": "Select",
    "label": "Nature of Infraction",
-   "options": "\nPoor Work Performance\nAbsenteeism\nUnpunctuality\nInsubordination\nDisobedience\nFail to Comply with Company Policy\nImproper Behavior\nMisuse of Email or Telephone\nSafety Violation\nSubstance Use or Abuse\nExploitation of Leave\nProperty Damage\nExploitation of Leave",
-   "reqd": 1
+   "options": "\nPoor Work Performance\nAbsenteeism\nUnpunctuality\nInsubordination\nDisobedience\nFail to Comply with Company Policy\nImproper Behavior\nMisuse of Email or Telephone\nSafety Violation\nSubstance Use or Abuse\nExploitation of Leave\nProperty Damage\nExploitation of Leave"
   },
   {
    "fieldname": "other_infraction_if_any",
@@ -108,14 +107,12 @@
   {
    "fieldname": "from_date",
    "fieldtype": "Date",
-   "label": "From Date",
-   "reqd": 1
+   "label": "From Date"
   },
   {
    "fieldname": "to_date",
    "fieldtype": "Date",
-   "label": "To Date",
-   "reqd": 1
+   "label": "To Date"
   },
   {
    "fieldname": "section_break_fmbd",
@@ -137,7 +134,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-23 14:10:26.764310",
+ "modified": "2025-04-24 08:48:20.755363",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Employee Letter",
