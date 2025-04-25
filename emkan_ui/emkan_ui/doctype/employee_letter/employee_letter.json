@@ -1,0 +1,160 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2025-04-22 08:14:44.095749",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "employee",
+  "employee_name",
+  "designation",
+  "increment_percentage",
+  "column_break_bdzn",
+  "location",
+  "date_of_warning",
+  "letter_type",
+  "from_date",
+  "to_date",
+  "section_break_fmbd",
+  "salary_component",
+  "section_break_xjqi",
+  "nature_of_infraction",
+  "other_infraction_if_any",
+  "details_of_infraction"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.designation",
+   "fieldname": "designation",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Designation",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_bdzn",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "employee.branch",
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Location",
+   "reqd": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "date_of_warning",
+   "fieldtype": "Date",
+   "label": "Date of Warning",
+   "reqd": 1
+  },
+  {
+   "fieldname": "letter_type",
+   "fieldtype": "Select",
+   "label": "Letter Type",
+   "options": "\nWarning\nSalary Increment\nSuspension\nTermination\nAppreciation\netc.",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Employee Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_xjqi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "nature_of_infraction",
+   "fieldtype": "Select",
+   "label": "Nature of Infraction",
+   "options": "\nPoor Work Performance\nAbsenteeism\nUnpunctuality\nInsubordination\nDisobedience\nFail to Comply with Company Policy\nImproper Behavior\nMisuse of Email or Telephone\nSafety Violation\nSubstance Use or Abuse\nExploitation of Leave\nProperty Damage\nExploitation of Leave"
+  },
+  {
+   "fieldname": "other_infraction_if_any",
+   "fieldtype": "Data",
+   "label": "Other Infraction (if any)"
+  },
+  {
+   "fieldname": "details_of_infraction",
+   "fieldtype": "Small Text",
+   "label": "Details of Infraction"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "no_copy": 1,
+   "options": "HR-EMP-LET-",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "section_break_fmbd",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "salary_component",
+   "fieldtype": "Table",
+   "label": "Salary Component",
+   "options": "Employee Letter Salary Component"
+  },
+  {
+   "fieldname": "increment_percentage",
+   "fieldtype": "Float",
+   "label": "Increment Percentage"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-04-25 13:20:42.142951",
+ "modified_by": "Administrator",
+ "module": "Emkan Ui",
+ "name": "Employee Letter",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
