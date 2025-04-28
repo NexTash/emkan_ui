@@ -54,7 +54,7 @@
    "reqd": 1
   },
   {
-   "default": "Today",
+   "fetch_from": "employee.date_of_joining",
    "fieldname": "date_of_warning",
    "fieldtype": "Date",
    "label": "Date of Warning",
@@ -133,7 +133,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-25 13:20:42.142951",
+ "modified": "2025-04-28 08:18:05.197353",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Employee Letter",
