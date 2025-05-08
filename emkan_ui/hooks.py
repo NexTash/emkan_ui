@@ -161,7 +161,7 @@ doc_events = {
 	},
     "Leave Application": {
         "before_save": ["emkan_ui.events.leave_application.store_data"],
-        "validate": "emkan_ui.events.leave_application.custom_validate",
+        # "validate": "emkan_ui.events.leave_application.custom_validate",
         "before_submit": ["emkan_ui.events.leave_application.last_state"],
     },
 }
