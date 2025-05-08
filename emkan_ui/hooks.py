@@ -159,6 +159,11 @@ doc_events = {
         "validate": ["emkan_ui.events.payment_request.store_data"],
         "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
+    "Leave Application": {
+        "before_save": ["emkan_ui.events.leave_application.store_data"],
+        "validate": "emkan_ui.events.leave_application.custom_validate",
+        "before_submit": ["emkan_ui.events.leave_application.last_state"],
+    },
 }
 
 # Scheduled Tasks
