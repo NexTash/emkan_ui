@@ -13,7 +13,7 @@
   "increment_percentage",
   "column_break_bdzn",
   "location",
-  "date_of_warning",
+  "posting_date",
   "letter_type",
   "from_date",
   "to_date",
@@ -51,13 +51,6 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Location",
-   "reqd": 1
-  },
-  {
-   "fetch_from": "employee.date_of_joining",
-   "fieldname": "date_of_warning",
-   "fieldtype": "Date",
-   "label": "Date of Warning",
    "reqd": 1
   },
   {
@@ -128,12 +121,21 @@
    "fieldname": "increment_percentage",
    "fieldtype": "Float",
    "label": "Increment Percentage"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "no_copy": 1,
+   "reqd": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-28 08:18:05.197353",
+ "modified": "2025-05-15 13:29:10.065000",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Employee Letter",
