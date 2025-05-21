@@ -36,6 +36,8 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
               "Payroll Entry" : "public/js/payroll_entry.js",
               "Material Request" : "public/js/material_request.js",
               "Payment Request" : "public/js/payment_request.js",
+              "Payment Reconciliation" : "public/js/payment_reconciliation.js",
+
               }
 doctype_list_js = {"Payment Entry": "public/js/payment_entry_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -161,6 +163,7 @@ doc_events = {
         "validate": ["emkan_ui.events.payment_request.store_data"],
         "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
+
 }
 
 # Scheduled Tasks
