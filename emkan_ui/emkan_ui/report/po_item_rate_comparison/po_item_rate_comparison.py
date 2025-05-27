@@ -27,16 +27,25 @@ def execute(filters=None):
     data = []
 
     for item in items:
-        history = frappe.db.sql("""
+        maintain_stock = frappe.db.get_value("Item", item.item_code, "is_stock_item")
+
+        if maintain_stock:
+            condition_field = "poi.item_code"
+            condition_value = item.item_code
+        else:
+            condition_field = "poi.item_name"
+            condition_value = item.item_name
+
+        history = frappe.db.sql(f"""
             SELECT poi.parent, po.transaction_date, poi.rate, po.currency, poi.uom
             FROM `tabPurchase Order Item` poi
             JOIN `tabPurchase Order` po ON poi.parent = po.name
-            WHERE poi.item_code = %s
+            WHERE {condition_field} = %s
               AND po.docstatus = 1
               AND poi.parent != %s
             ORDER BY po.transaction_date DESC
             LIMIT 4
-        """, (item.item_code, filters.po_number), as_dict=True)
+        """, (condition_value, filters.po_number), as_dict=True)
 
         formatted = lambda row: f"{row.parent} / {row.transaction_date} / {row.rate:.2f} / {row.currency} / {row.uom}" if row else ""
 
@@ -53,3 +62,4 @@ def execute(filters=None):
         data.append(row)
 
     return columns, data
+
