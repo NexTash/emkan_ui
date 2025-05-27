@@ -2,7 +2,7 @@
 # For license information, please see license.txt
 
 import frappe
-
+from datetime import datetime
 
 def execute(filters=None):
     columns = [
@@ -47,12 +47,16 @@ def execute(filters=None):
             LIMIT 4
         """, (condition_value, filters.po_number), as_dict=True)
 
-        formatted = lambda row: f"{row.parent} / {row.transaction_date} / {row.rate:.2f} / {row.currency} / {row.uom}" if row else ""
+        def format_date(d):
+            return datetime.strptime(str(d), "%Y-%m-%d").strftime("%d-%m-%y") if d else ""
+
+        def formatted(row):
+            return f"{row.parent} / {format_date(row.transaction_date)} / {row.rate:.2f} / {row.currency} / {row.uom}" if row else ""
 
         row = {
             "item_code": item.item_code,
             "item_name": item.item_name,
-            "current_po": f"{item.parent} / {item.schedule_date} / {item.rate:.2f} / {frappe.db.get_value('Purchase Order', item.parent, 'currency')} / {item.uom}",
+            "current_po": f"{item.parent} / {format_date(item.schedule_date)} / {item.rate:.2f} / {frappe.db.get_value('Purchase Order', item.parent, 'currency')} / {item.uom}",
             "last_po": formatted(history[0]) if len(history) > 0 else "",
             "second_last_po": formatted(history[1]) if len(history) > 1 else "",
             "third_last_po": formatted(history[2]) if len(history) > 2 else "",
@@ -62,4 +66,3 @@ def execute(filters=None):
         data.append(row)
 
     return columns, data
-

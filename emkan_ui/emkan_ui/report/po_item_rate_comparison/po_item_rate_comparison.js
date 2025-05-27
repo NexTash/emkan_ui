@@ -9,6 +9,13 @@ frappe.query_reports["PO Item Rate Comparison"] = {
             "fieldtype": "Link",
             "options": "Purchase Order",
             "reqd": 1
+        },
+        {
+            "fieldname": "current_date",
+            "label": "Date",
+            "fieldtype": "Date",
+            "default": frappe.datetime.get_today(),
+            "hidden": 1
         }
     ]
 };
