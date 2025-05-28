@@ -7,12 +7,12 @@ from datetime import datetime
 def execute(filters=None):
     columns = [
         {"label": "Item Code", "fieldname": "item_code", "fieldtype": "Data"},
-        {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data"},
-        {"label": "Current PO", "fieldname": "current_po", "fieldtype": "Data"},
-        {"label": "Last PO", "fieldname": "last_po", "fieldtype": "Data"},
-        {"label": "2nd Last PO", "fieldname": "second_last_po", "fieldtype": "Data"},
-        {"label": "3rd Last PO", "fieldname": "third_last_po", "fieldtype": "Data"},
-        {"label": "4th Last PO", "fieldname": "fourth_last_po", "fieldtype": "Data"}
+        {"label": "Item Name", "fieldname": "item_name", "fieldtype": "Data", "width": 300},
+        {"label": "Current PO", "fieldname": "current_po", "fieldtype": "Data", "width": 400},
+        {"label": "Last PO", "fieldname": "last_po", "fieldtype": "Data", "width": 400},
+        {"label": "2nd Last PO", "fieldname": "second_last_po", "fieldtype": "Data", "width": 400},
+        {"label": "3rd Last PO", "fieldname": "third_last_po", "fieldtype": "Data", "width": 400},
+        {"label": "4th Last PO", "fieldname": "fourth_last_po", "fieldtype": "Data", "width": 400}
     ]
 
     if not filters.po_number:
