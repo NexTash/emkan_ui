@@ -11,7 +11,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/emkan_ui/css/emkan_ui.css"
-# app_include_js = "/assets/emkan_ui/js/emkan_ui.js"
+app_include_js = "/assets/emkan_ui/js/salary_slip.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/emkan_ui/css/emkan_ui.css"
@@ -31,7 +31,8 @@ app_license = "mit"
 doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
               "Payment Entry" : "public/js/payment_entry.js",
               "Purchase Order" : "public/js/purchase_order.js",
-              "Salary Slip" : "public/js/salary_slip.js"
+              "Salary Slip" : "public/js/salary_slip.js",
+              "Leave Application" : "public/js/leave_application.js"
               }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
