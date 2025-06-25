@@ -56,7 +56,7 @@ def apply_leave_adjustment(doc):
 
         doc.payment_days = adjusted_payment_days
 
-        frappe.msgprint(f"Adjusted payment days by {total_deduction} due to Leave Settlement Salary Slip.")
+        # frappe.msgprint(f"Adjusted payment days by {total_deduction} due to Leave Settlement Salary Slip.")
 
 
 @frappe.whitelist()
