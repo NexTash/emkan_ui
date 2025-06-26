@@ -164,7 +164,7 @@ doc_events = {
         "validate": "emkan_ui.events.leave_application.custom_validate"
     },
     "Salary Slip": {
-        "validate": "emkan_ui.events.salary_slip.set_leave_settlement_dates"
+        "before_save": "emkan_ui.events.salary_slip.set_leave_settlement_dates"
     }
 }
 
