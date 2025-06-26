@@ -93,19 +93,13 @@ def apply_dynamic_month_lwp(doc):
             rejoined = True
 
     if not rejoined:
-        today = getdate(nowdate())
-        salary_end = getdate(doc.end_date)
-
-        calculation_end_date = today if salary_end >= today else salary_end
-
-        if leave_end_plus_one <= calculation_end_date:
-            days_to_deduct = date_diff(calculation_end_date, leave_end_plus_one) + 1
+        if leave_end_plus_one <= getdate(doc.end_date):
+            days_to_deduct = date_diff(doc.end_date, leave_end_plus_one) + 1
 
             current_lwp = doc.leave_without_pay or 0
             current_payment_days = doc.payment_days or 0
 
             doc.leave_without_pay = current_lwp + days_to_deduct
-
             adjusted_payment_days = current_payment_days - days_to_deduct
             if adjusted_payment_days < 0:
                 adjusted_payment_days = 0
