@@ -160,7 +160,8 @@ doc_events = {
         "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
     "Leave Application": {
-        "before_save": ["emkan_ui.events.leave_application.store_data"],
+        "before_insert": ["emkan_ui.events.leave_application.clear_child_table_on_creation"],
+        "before_save": ["emkan_ui.events.leave_application.add_workflow_status"],
         # "validate": "emkan_ui.events.leave_application.custom_validate",
         "before_submit": ["emkan_ui.events.leave_application.last_state"],
     },
