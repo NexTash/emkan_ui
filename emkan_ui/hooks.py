@@ -161,7 +161,10 @@ doc_events = {
         "before_submit": ["emkan_ui.events.payment_request.last_state"],
 	},
     "Leave Application": {
-        "validate": "emkan_ui.events.leave_application.custom_validate"
+        "validate": "emkan_ui.events.leave_application.custom_validate",
+        "before_insert": ["emkan_ui.events.leave_application.clear_child_table_on_creation"],
+        "before_save": "emkan_ui.events.leave_application.add_workflow_status",
+        "before_submit": "emkan_ui.events.leave_application.last_state",
     },
     "Salary Slip": {
         "before_save": "emkan_ui.events.salary_slip.set_leave_settlement_dates"
