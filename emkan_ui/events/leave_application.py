@@ -59,20 +59,28 @@ def clear_child_table_on_creation(doc, method=None):
     if doc.__islocal:
         doc.custom_workflow_status = []
 
+
 def add_workflow_status(doc, method=None):
     old_doc = doc.get_doc_before_save()
-    
+
     if not old_doc:
         return
 
     if doc.workflow_state != old_doc.workflow_state:
         previous_state = old_doc.workflow_state
+        current_state = doc.workflow_state
 
-        doc.custom_current_workflow_state = doc.workflow_state
+        if current_state == "Draft":
+            doc.custom_workflow_status = []
+            return 
+
+        if current_state == "Rejected":
+            return
 
         user_doc = frappe.get_doc("User", frappe.session.user)
         current_date = datetime.now().date()
 
+        doc.custom_current_workflow_state = current_state
         doc.append("custom_workflow_status", {
             "workflow_states": previous_state,
             "approved_by": frappe.session.user,
