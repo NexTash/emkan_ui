@@ -32,7 +32,8 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
               "Payment Entry" : "public/js/payment_entry.js",
               "Purchase Order" : "public/js/purchase_order.js",
               "Salary Slip" : "public/js/salary_slip.js",
-              "Leave Application" : "public/js/leave_application.js"
+              "Leave Application" : "public/js/leave_application.js",
+              "Employee" : "public/js/employee.js",
               }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -168,6 +169,10 @@ doc_events = {
     },
     "Salary Slip": {
         "before_save": "emkan_ui.events.salary_slip.set_leave_settlement_dates"
+    },
+    "Employee": {
+        "after_insert": "emkan_ui.events.employee.assign_leave_policy_on_update",
+        "on_update": "emkan_ui.events.employee.assign_leave_policy_on_update"
     }
 }
 
@@ -190,6 +195,9 @@ scheduler_events = {
 	# "monthly": [
 	# 	"emkan_ui.tasks.monthly"
 	# ],
+    "daily": [
+        "emkan_ui.events.employee.assign_leave_policy_on_update"
+    ]
 }
 
 # Testing
