@@ -34,40 +34,26 @@ frappe.ui.form.on("Vehicle Service Log", {
         }
       }
     });
+  },
 
-    // const reason_options = [
-    //   "OIL FILTER", "FUEL FILTER", "A/C FILTER", "A/C COMPLAINT/GAS FILLING", "ENGINE OIL",
-    //   "TYRE PUNCTURE", "NEW TYRE PURCHASE", "PERIODICAL SERVICE", "HOSE ASSEMBLE",
-    //   "STICKER BRANDING", "ENGINE MOUNTING", "BREAK PAD", "BATTERY", "STARTER MOTOR",
-    //   "COMPRESSOR ASSEY", "ISTIMARA/INSPECTION", "WASHING", "O RING", "FAN BELT", "PEDEL ASSEY"
-    // ];
-
-    // // Hide original field
-    // frm.fields_dict.reason.$wrapper;
-
-    // // Create multiselect
-    // frm.reason = frappe.ui.form.make_control({
-    //   parent: frm.fields_dict.reason.$wrapper,
-    //   df: {
-    //     fieldtype: 'MultiSelect',
-    //     label: 'Reason',
-    //     fieldname: 'reason',
-    //     options: reason_options,
-    //   },
-    //   render_input: true
-    // });
-
-    // frm.reason.make_input();
-
-    // // Sync changes to original field
-    // frm.reason.$wrapper.on('change', () => {
-    //   const selected = frm.reason.get_value();
-
-    //   // Set the value in original hidden field
-    //   frappe.db.set_value("Vehicle Service Log", frm.doc.name, "reason", selected.join(","));
-
-    //   // Save the document immediately
-    //   frm.save(); // Optional: use only if you want auto-save
-    // }); 
+  vehicle: function(frm) {
+    if (frm.doc.vehicle) {
+      frappe.call({
+        method: 'frappe.client.get',
+        args: {
+          doctype: 'Vehicle',
+          name: frm.doc.vehicle
+        },
+        callback: function(r) {
+          if (r.message) {
+            frm.set_value('model', r.message.model || '');
+            frm.set_value('make', r.message.make || '');
+          }
+        }
+      });
+    } else {
+      frm.set_value('model', '');
+      frm.set_value('make', '');
+    }
   }
 });

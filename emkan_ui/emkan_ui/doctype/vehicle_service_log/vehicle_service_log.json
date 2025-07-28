@@ -16,6 +16,9 @@
   "kilometers",
   "repair_service_location",
   "remarks",
+  "column_break_edon",
+  "model",
+  "make",
   "amended_from"
  ],
  "fields": [
@@ -60,16 +63,6 @@
    "options": "VSL-.YYYY.-"
   },
   {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Vehicle Service Log",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
-  },
-  {
    "fieldname": "reason",
    "fieldtype": "Table",
    "label": "Reason",
@@ -79,13 +72,39 @@
    "fieldname": "subject",
    "fieldtype": "Data",
    "label": "Subject"
+  },
+  {
+   "fieldname": "column_break_edon",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model",
+   "read_only": 1
+  },
+  {
+   "fieldname": "make",
+   "fieldtype": "Data",
+   "label": "Make",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Vehicle Service Log",
+   "print_hide": 1,
+   "read_only": 1,
+   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 13:47:32.107728",
+ "modified": "2025-07-28 16:41:47.339083",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Vehicle Service Log",
