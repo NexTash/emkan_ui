@@ -57,6 +57,8 @@
             <td>61-90</td>
             <td>91-120</td>
             <td>121-Above</td>
+            <td>PDC Issued</td>
+            <td>Balance After PDC</td>
         </tr>
     </thead>
     <tbody>
@@ -92,6 +94,8 @@
             <td>{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["future_amount"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["remaining_balance"], {"fieldtype": "Currency"}) }}</td>
         </tr>
 
         {% }); %}

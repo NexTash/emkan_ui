@@ -1,0 +1,36 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "prompt",
+ "creation": "2025-07-28 12:56:31.235922",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "reason",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Reason",
+   "options": "\nOIL FILTER\nFUEL FILTER\nA/C FILTER\nA/C COMPLAINT/GAS FILLING\nENGINE OIL\nTYRE PUNCTURE\nNEW TYRE PURCHASE\nPERIODICAL SERVICE\nHOSE ASSEMBLE\nSTICKER BRANDING\nENGINE MOUNTING\nBREAK PAD\nBATTERY\nSTARTER MOTOR\nCOMPRESSOR ASSEY\nISTIMARA/INSPECTION\nWASHING\nO RING\nFAN BELT\nPEDEL ASSEY"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-07-28 13:04:59.107292",
+ "modified_by": "Administrator",
+ "module": "Emkan Ui",
+ "name": "Reason",
+ "naming_rule": "Set by user",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
