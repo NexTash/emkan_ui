@@ -11,6 +11,7 @@
   "employee_name",
   "designation",
   "increment_percentage",
+  "division",
   "column_break_bdzn",
   "location",
   "posting_date",
@@ -130,12 +131,19 @@
    "no_copy": 1,
    "reqd": 1,
    "search_index": 1
+  },
+  {
+   "fieldname": "division",
+   "fieldtype": "Select",
+   "label": "Division",
+   "options": "EMKAN-1\nEMKAN-2\nEMKAN-3(SSSF)\nEMKAN-4(BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON",
+   "reqd": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-05-15 13:29:10.065000",
+ "modified": "2025-07-28 10:17:40.469488",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Employee Letter",
