@@ -44,13 +44,15 @@
   },
   {
    "fieldname": "driver__staff",
-   "fieldtype": "Select",
-   "label": "Driver / Staff"
+   "fieldtype": "Link",
+   "label": "Driver / Staff",
+   "options": "Employee"
   },
   {
    "fieldname": "vehicle",
-   "fieldtype": "Select",
-   "label": "Vehicle"
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle"
   },
   {
    "fieldname": "reason",
@@ -83,12 +85,14 @@
    "fieldtype": "Column Break"
   },
   {
+   "fetch_from": "vehicle.model",
    "fieldname": "model",
    "fieldtype": "Data",
    "label": "Model",
    "read_only": 1
   },
   {
+   "fetch_from": "vehicle.make",
    "fieldname": "make",
    "fieldtype": "Data",
    "label": "Make",
@@ -109,7 +113,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-29 07:36:27.760453",
+ "modified": "2025-07-29 09:28:20.187183",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Vehicle Service Request",
