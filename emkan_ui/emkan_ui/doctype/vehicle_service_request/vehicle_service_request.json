@@ -2,7 +2,8 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "naming_series:",
- "creation": "2025-07-28 04:42:08.787612",
+ "creation": "2025-07-29 07:09:27.024442",
+ "default_view": "List",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -27,6 +28,21 @@
    "fieldtype": "Section Break"
   },
   {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Naming Series",
+   "no_copy": 1,
+   "options": "VSR-HR-.YYYY.-",
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "label": "Subject",
+   "unique": 1
+  },
+  {
    "fieldname": "driver__staff",
    "fieldtype": "Select",
    "label": "Driver / Staff"
@@ -35,6 +51,12 @@
    "fieldname": "vehicle",
    "fieldtype": "Select",
    "label": "Vehicle"
+  },
+  {
+   "fieldname": "reason",
+   "fieldtype": "Table",
+   "label": "Reason",
+   "options": "Reason"
   },
   {
    "fieldname": "description",
@@ -57,23 +79,6 @@
    "label": "Remarks"
   },
   {
-   "fieldname": "naming_series",
-   "fieldtype": "Select",
-   "label": "Naming Series",
-   "options": "VSL-.YYYY.-"
-  },
-  {
-   "fieldname": "reason",
-   "fieldtype": "Table",
-   "label": "Reason",
-   "options": "Reason"
-  },
-  {
-   "fieldname": "subject",
-   "fieldtype": "Data",
-   "label": "Subject"
-  },
-  {
    "fieldname": "column_break_edon",
    "fieldtype": "Column Break"
   },
@@ -94,7 +99,7 @@
    "fieldtype": "Link",
    "label": "Amended From",
    "no_copy": 1,
-   "options": "Vehicle Service Log",
+   "options": "Vehicle Service Request",
    "print_hide": 1,
    "read_only": 1,
    "search_index": 1
@@ -104,10 +109,10 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-28 16:41:47.339083",
+ "modified": "2025-07-29 07:36:27.760453",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
- "name": "Vehicle Service Log",
+ "name": "Vehicle Service Request",
  "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
