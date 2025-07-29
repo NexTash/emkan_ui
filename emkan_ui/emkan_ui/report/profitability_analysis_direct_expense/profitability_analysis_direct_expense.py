@@ -208,6 +208,15 @@ def set_gl_entries_by_account(
 		additional_conditions.append("and posting_date >= %(from_date)s")
 	if filters.get("account"):
 		additional_conditions.append("and account = %(account)s")
+	elif filters.get("parent_account"):
+		child_accounts = frappe.get_all(
+			"Account",
+			filters={"parent_account": filters.get("parent_account"), "is_group": 0},
+			fields=["name"]
+		)
+		child_account_names = [d.name for d in child_accounts]
+		if child_account_names:
+			additional_conditions.append("and account in %(child_accounts)s")
 
 	gl_entries = frappe.db.sql(
 		"""select posting_date, {based_on} as based_on, debit, credit,
@@ -226,6 +235,7 @@ def set_gl_entries_by_account(
 			"from_date": from_date,
 			"to_date": to_date,
 			"account": filters.get("account"),
+			"child_accounts": child_account_names if filters.get("parent_account") else [],
 		},
 		as_dict=True,
 	)

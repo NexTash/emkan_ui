@@ -66,18 +66,34 @@ frappe.query_reports["Profitability Analysis Direct Expense"] = {
 			default: erpnext.utils.get_fiscal_year(frappe.datetime.get_today(), true)[2],
 		},
 		{
+			fieldname: "parent_account",
+			label: __("Parent Account"),
+			fieldtype: "Link",
+			options: "Account",
+			get_query: () => ({
+				filters: {
+					is_group: 1,
+					root_type: "Expense"
+				}
+			}),
+			on_change: function (query_report) {
+				frappe.query_report.set_filter_value("account", "");
+			}
+		},
+		{
 			fieldname: "account",
 			label: __("Expense Account"),
 			fieldtype: "Link",
 			options: "Account",
-			get_query: () => {
-				return {
-					filters: {
-						root_type: "Expense",
-						is_group: 0,
-					},
-				};
-			},
+			get_query: () => ({
+				filters: {
+					root_type: "Expense",
+					is_group: 0,
+				}
+			}),
+			on_change: function (query_report) {
+				frappe.query_report.set_filter_value("parent_account", "");
+			}
 		},
 		{
 			fieldname: "show_zero_values",
@@ -88,7 +104,6 @@ frappe.query_reports["Profitability Analysis Direct Expense"] = {
 	formatter: function (value, row, column, data, default_formatter) {
 		if (column.fieldname == "account") {
 			value = data.account_name;
-
 			column.link_onclick =
 				"frappe.query_reports['Profitability Analysis'].open_profit_and_loss_statement(" +
 				JSON.stringify(data) +
