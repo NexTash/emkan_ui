@@ -60,6 +60,7 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			fieldtype: "Autocomplete",
 			options: get_party_type_options(),
 			default: "Supplier",
+			read_only: 1,
 			on_change: function () {
 				frappe.query_report.set_filter_value("party", "");
 				frappe.query_report.toggle_filter_display(
@@ -97,6 +98,13 @@ frappe.query_reports["Emkan Payable Summary"] = {
 			fieldname: "based_on_payment_terms",
 			label: __("Based On Payment Terms"),
 			fieldtype: "Check",
+		},
+		{
+			fieldname: "show_future_payments",
+			label: __("Show Future Payments"),
+			fieldtype: "Check",
+			default: 1,
+			read_only: 1,
 		},
 		{
 			fieldname: "for_revaluation_journals",

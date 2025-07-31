@@ -32,6 +32,8 @@
         <td>90 to 180 Days</td>
         <td>(> 180 Days)</td>
         <td>Outstanding Amount</td>
+        <td>PDC Issued</td>
+        <td>Balance After PDC</td>
     </tr>
   </thead>
   <tbody>
@@ -42,6 +44,8 @@
     {% var total_range4 = 0; %}
     {% var total_range5 = 0; %}
     {% var total_outstanding = 0; %}
+    {% var total_future_amount = 0; %}
+    {% var total_remaining_balance = 0; %}
     
     {% for (var i = 0; i < data.length - 1; i++) { %}
         {% var row = data[i]; %}
@@ -54,6 +58,8 @@
             <td>{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
             <td>{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["future_amount"], {"fieldtype": "Currency"}) }}</td>
+            <td>{{ frappe.format(row["remaining_balance"], {"fieldtype": "Currency"}) }}</td>
         </tr>
         {% total_range1 += row["range1"]; %}
         {% total_party_name += row["party_name"]; %}
@@ -62,6 +68,8 @@
         {% total_range4 += row["range4"]; %}
         {% total_range5 += row["range5"]; %}
         {% total_outstanding += row["outstanding"]; %}
+        {% total_future_amount += row["future_amount"]; %}
+        {% total_remaining_balance += row["remaining_balance"]; %}
     {% } %}
   </tbody>
   <tfoot>
@@ -74,7 +82,8 @@
         <td>{{ frappe.format(total_range4, {"fieldtype": "Currency"}) }}</td>
         <td>{{ frappe.format(total_range5, {"fieldtype": "Currency"}) }}</td>
         <td>{{ frappe.format(total_outstanding, {"fieldtype": "Currency"}) }}</td>
+        <td>{{ frappe.format(total_remaining_balance, {"fieldtype": "Currency"}) }}</td>
+        <td>{{ frappe.format(total_remaining_balance, {"fieldtype": "Currency"}) }}</td>
     </tr>
   </tfoot>
   </table>
-  
