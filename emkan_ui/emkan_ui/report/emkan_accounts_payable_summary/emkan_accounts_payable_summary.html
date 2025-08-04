@@ -1,0 +1,141 @@
+<style>
+    .table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+
+    .table thead tr {
+        background-color: #dcecf4;
+    }
+
+    .table th, .table td {
+        padding: 0 !important;
+        text-align: center;
+        width: 100%;
+        word-wrap: break-word;
+    }
+
+    @media print {
+        .table thead tr td {
+            background-color: #dcecf4 !important;
+        }
+    }
+
+    .party-header {
+        background-color: #f0f0f0;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .total-label {
+        font-weight: bold;
+    }
+
+    /* New style to ensure the total section is always at the bottom */
+    .total-section {
+        margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+
+<div style="display: flex; align-items: center;">
+    <div>
+        <p>EMKAN ACCOUNTS PAYABLE SUMMARY</p>
+        <p>Date: {{
+            new Date(JSON.parse(localStorage.getItem("report_date"))?.report_date || "").toLocaleDateString("en-GB", {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+            })
+            }}</p>
+    </div>
+    <img style="margin-left: 20%; width: 20%;" src="/assets/emkan_ui/images/logo.png" alt="Logo" />
+</div>
+
+<table class="table">
+    <thead>
+        <tr style="background-color: #dcecf4 !important;">
+            <td>Party Type</td>
+            <td>Party</td>
+            <!-- <td style="width:200px;">Party Name</td> -->
+            <!-- <td>Invoiced Amount</td>
+            <td>Paid Amount</td>
+            <td>Debit Note</td> -->
+            <td style="text-align: end;">Outstanding Amount</td>
+            <td style="text-align: end;">0-30</td>
+            <td style="text-align: end;">31-60</td>
+            <td style="text-align: end;">61-90</td>
+            <td style="text-align: end;">91-120</td>
+            <td style="text-align: end;">121-Above</td>
+            <!-- <td style="text-align: end;">Age (Days)</td> -->
+            <td style="text-align: center;">PDC Issued</td>
+            <td style="text-align: end;">Balance After PDC</td>
+        </tr>
+    </thead>
+<tbody>
+    {% 
+        var last_party = null;
+        var group_by_party_enabled = (localStorage.getItem('group_by_party') === 'enabled');
+    %}
+
+    {% data.forEach(function(row, index) { %}
+        {% if (row["party"] !== "Total" && row["p_name"] !== "Total") { %}
+            {% 
+                var is_last_row_for_party = false;
+
+                if (group_by_party_enabled) {
+                    is_last_row_for_party = (index === data.length - 1) || (data[index + 1]["party"] !== row["party"]);
+                }
+            %}
+
+            {% if (is_last_row_for_party) { %}
+                <!-- <tr class="party-header">
+                    <td colspan="15" style="text-align: left;">
+                        Party ID: {{ frappe.format(row["party"]) }} | Party Name: {{ frappe.format(row["p_name"]) }}
+                    </td>
+                </tr> -->
+
+                <tr class="total-label">
+                    <td style="text-align: center;">Total</td>
+                    <td style="text-align: center;">{{ frappe.format(row["party"], {"fieldtype": "Data"}) }}</td>
+                    <!-- <td style="text-align: start;">{{ frappe.format(row["p_name"], {"fieldtype": "Data"}) }}</td> -->
+                    <!-- <td style="text-align: end;">{{ frappe.format(row["invoiced"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["paid"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["credit_note"], {"fieldtype": "Currency"}) }}</td> -->
+                    <td style="text-align: end;">{{ frappe.format(row["outstanding"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["range1"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["range2"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["range3"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["range4"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["range5"], {"fieldtype": "Currency"}) }}</td>
+                    <!-- <td style="text-align: end;">{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td> -->
+                    <td style="text-align: center;">{{ frappe.format(row["future_amount"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["remaining_balance"], {"fieldtype": "Currency"}) }}</td>
+                </tr>
+            {% } %}
+        {% } %}
+    {% }); %}
+
+    {% var lastRow = data[data.length - 1]; %}
+    <tr class="total-label">
+        <td style="text-align: start;">{{ frappe.format(lastRow["party_type"], {"fieldtype": "Data"}) }}</td>
+        <td style="text-align: start;">{{ frappe.format(lastRow["party"], {"fieldtype": "Data"}) }}</td>
+        <!-- <td style="text-align: start;">{{ frappe.format(lastRow["p_name"], {"fieldtype": "Data"}) }}</td> -->
+        <!-- <td style="text-align: right;">{{ frappe.format(lastRow["invoiced"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["paid"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["credit_note"], {"fieldtype": "Currency"}) }}</td> -->
+        <td style="text-align: right;">{{ frappe.format(lastRow["outstanding"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["range1"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["range2"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["range3"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["range4"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["range5"], {"fieldtype": "Currency"}) }}</td>
+        <!-- <td style="text-align: right;">{{ frappe.format(lastRow["age"], {"fieldtype": "Int"}) }}</td> -->
+        <td style="text-align: right;">{{ frappe.format(lastRow["future_amount"], {"fieldtype": "Currency"}) }}</td>
+        <td style="text-align: right;">{{ frappe.format(lastRow["remaining_balance"], {"fieldtype": "Currency"}) }}</td>
+    </tr>
+</tbody>
+
+</table>

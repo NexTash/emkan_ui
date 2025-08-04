@@ -165,6 +165,12 @@ doc_events = {
         # "validate": "emkan_ui.events.leave_application.custom_validate",
         "before_submit": ["emkan_ui.events.leave_application.last_state"],
     },
+    "Employee Letter": {
+        "before_insert": ["emkan_ui.events.employee_letter.clear_child_table_on_creation"],
+        "before_save": ["emkan_ui.events.employee_letter.add_workflow_status"],
+        # "validate": "emkan_ui.events.employee_letter.custom_validate",
+        "before_submit": ["emkan_ui.events.employee_letter.last_state"],
+    },
 }
 
 # Scheduled Tasks
