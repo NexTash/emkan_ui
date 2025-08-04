@@ -19,8 +19,7 @@
   "remarks",
   "column_break_edon",
   "model",
-  "make",
-  "amended_from"
+  "make"
  ],
  "fields": [
   {
@@ -40,14 +39,13 @@
    "fieldname": "subject",
    "fieldtype": "Data",
    "label": "Subject",
-   "reqd": 1,
-   "unique": 1
+   "reqd": 1
   },
   {
    "fieldname": "driver__staff",
    "fieldtype": "Link",
    "label": "Driver / Staff",
-   "options": "Employee",
+   "options": "Driver",
    "reqd": 1
   },
   {
@@ -101,23 +99,13 @@
    "fieldtype": "Data",
    "label": "Make",
    "read_only": 1
-  },
-  {
-   "fieldname": "amended_from",
-   "fieldtype": "Link",
-   "label": "Amended From",
-   "no_copy": 1,
-   "options": "Vehicle Service Request",
-   "print_hide": 1,
-   "read_only": 1,
-   "search_index": 1
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-07-29 15:34:20.025907",
+ "modified": "2025-08-04 16:23:02.193526",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Vehicle Service Request",
