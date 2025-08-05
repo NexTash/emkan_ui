@@ -1116,13 +1116,13 @@ class ReceivablePayableReport:
 			if self.filters.sales_partner:
 				self.add_column(label=_("Sales Partner"), fieldname="default_sales_partner", fieldtype="Data")
 
-		# if self.filters.account_type == "Payable":
-		# 	self.add_column(
-		# 		label=_("Supplier Group"),
-		# 		fieldname="supplier_group",
-		# 		fieldtype="Link",
-		# 		options="Supplier Group",
-		# 	)
+		if self.filters.account_type == "Payable":
+			self.add_column(
+				label=_("Supplier Group"),
+				fieldname="supplier_group",
+				fieldtype="Link",
+				options="Supplier Group",
+			)
 
 		if self.filters.show_remarks:
 			self.add_column(label=_("Remarks"), fieldname="remarks", fieldtype="Text", width=200)
