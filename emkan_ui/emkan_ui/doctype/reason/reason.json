@@ -13,10 +13,10 @@
  "fields": [
   {
    "fieldname": "reason",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Reason",
-   "options": "\nOIL FILTER\nFUEL FILTER\nA/C FILTER\nA/C COMPLAINT/GAS FILLING\nENGINE OIL\nTYRE PUNCTURE\nNEW TYRE PURCHASE\nPERIODICAL SERVICE\nHOSE ASSEMBLE\nSTICKER BRANDING\nENGINE MOUNTING\nBREAK PAD\nBATTERY\nSTARTER MOTOR\nCOMPRESSOR ASSEY\nISTIMARA/INSPECTION\nWASHING\nO RING\nFAN BELT\nPEDEL ASSEY"
+   "options": "Reason Fields"
   },
   {
    "fieldname": "naming_series",
@@ -31,7 +31,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-07-29 15:32:35.239475",
+ "modified": "2025-08-05 09:49:20.855460",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Reason",
