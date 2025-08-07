@@ -428,11 +428,10 @@
   }
  ],
  "grid_page_length": 50,
- "in_create": 1,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-05 15:23:45.132822",
+ "modified": "2025-08-07 11:59:25.436347",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Custom Payment Request",
