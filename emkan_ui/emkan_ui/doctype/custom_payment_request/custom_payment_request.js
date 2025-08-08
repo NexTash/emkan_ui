@@ -15,7 +15,7 @@ frappe.ui.form.on("Custom Payment Request", {
 frappe.ui.form.on("Custom Payment Request", "onload", function (frm, dt, dn) {
 	if (frm.doc.reference_doctype) {
 		frappe.call({
-			method: "erpnext.accounts.doctype.payment_request.payment_request.get_print_format_list",
+			method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.get_print_format_list",
 			args: { ref_doctype: frm.doc.reference_doctype },
 			callback: function (r) {
 				set_field_options("print_format", r.message["print_format"]);
@@ -34,7 +34,7 @@ frappe.ui.form.on("Custom Payment Request", "refresh", function (frm) {
 	) {
 		frm.add_custom_button(__("Resend Payment Email"), function () {
 			frappe.call({
-				method: "erpnext.accounts.doctype.payment_request.payment_request.resend_payment_email",
+				method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.resend_payment_email",
 				args: { docname: frm.doc.name },
 				freeze: true,
 				freeze_message: __("Sending"),
@@ -53,7 +53,7 @@ frappe.ui.form.on("Custom Payment Request", "refresh", function (frm) {
 	) {
 		frm.add_custom_button(__("Create Payment Entry"), function () {
 			frappe.call({
-				method: "erpnext.accounts.doctype.payment_request.payment_request.make_payment_entry",
+				method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
 				args: { docname: frm.doc.name },
 				freeze: true,
 				callback: function (r) {
@@ -66,28 +66,13 @@ frappe.ui.form.on("Custom Payment Request", "refresh", function (frm) {
 		}).addClass("btn-primary");
 	}
 });
-// frappe.call({
-//     method: "bsi_ui.bsi_ui.doctype.custom_payment_request.custom_payment_request.make_multiple_payment_requests",
-//     args: {
-//         party_type: "Supplier",
-//         party: cur_frm.doc.party,
-//         company: cur_frm.doc.company,
-//         payment_request_type: cur_frm.doc.payment_request_type,
-//         references: cur_frm.doc.payment_references  // child table
-//     },
-//     callback: function(r) {
-//         if (r.message) {
-//             frappe.msgprint("Created Payment Requests: " + r.message.join(", "));
-//         }
-//     }
-// });
 frappe.ui.form.on("Custom Payment Request", "is_a_subscription", function (frm) {
 	frm.toggle_reqd("payment_gateway_account", frm.doc.is_a_subscription);
 	frm.toggle_reqd("subscription_plans", frm.doc.is_a_subscription);
 
 	if (frm.doc.is_a_subscription && frm.doc.reference_doctype && frm.doc.reference_name) {
 		frappe.call({
-			method: "erpnext.accounts.doctype.payment_request.payment_request.get_subscription_details",
+			method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.get_subscription_details",
 			args: { reference_doctype: frm.doc.reference_doctype, reference_name: frm.doc.reference_name },
 			freeze: true,
 			callback: function (data) {

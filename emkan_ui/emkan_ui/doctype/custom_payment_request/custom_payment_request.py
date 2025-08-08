@@ -98,7 +98,7 @@ class CustomPaymentRequest(Document):
 			# Example: Validate that referenced document is submitted
 			if ref_doc.docstatus != 1:
 				frappe.throw(
-					f"{ref.reference_doctype} '{ref.reference_name}' must be submitted before creating a payment request."
+					f"{ref.reference_doctype} '{ref.reference_name}' must be submitted before creating a Custom Payment Request."
 				)
 
 			# You can also validate amounts, statuses, etc.
@@ -122,7 +122,7 @@ class CustomPaymentRequest(Document):
 
 			if existing_payment_request_amount + flt(self.grand_total) > ref_amount:
 				frappe.throw(
-					_("Total Payment Request amount cannot be greater than {0} amount").format(
+					_("Total Custom Payment Request amount cannot be greater than {0} amount").format(
 						self.references
 					)
 				)
@@ -144,7 +144,7 @@ class CustomPaymentRequest(Document):
 				if payment_gateway != self.payment_gateway_account:
 					frappe.throw(
 						_(
-							"The payment gateway account in plan {0} is different from the payment gateway account in this payment request"
+							"The payment gateway account in plan {0} is different from the payment gateway account in this Custom Payment Request"
 						).format(subscription_plan.name)
 					)
 
@@ -155,7 +155,7 @@ class CustomPaymentRequest(Document):
 			if amount != self.grand_total:
 				frappe.msgprint(
 					_(
-						"The amount of {0} set in this payment request is different from the calculated amount of all payment plans: {1}. Make sure this is correct before submitting the document."
+						"The amount of {0} set in this Custom Payment Request is different from the calculated amount of all payment plans: {1}. Make sure this is correct before submitting the document."
 					).format(self.grand_total, amount)
 				)
 
@@ -189,10 +189,14 @@ class CustomPaymentRequest(Document):
 			self.db_set("status", "Requested")
 
 		send_mail = self.payment_gateway_validation() if self.payment_gateway else None
-		ref_doc = frappe.get_doc(self.references)
+
+		ref_doc = None
+		if self.references:
+			ref = self.references[0]
+			ref_doc = frappe.get_doc(ref.reference_doctype, ref.reference_name)
 
 		if (
-			hasattr(ref_doc, "order_type") and ref_doc.order_type == "Shopping Cart"
+			ref_doc and hasattr(ref_doc, "order_type") and ref_doc.order_type == "Shopping Cart"
 		) or self.flags.mute_email:
 			send_mail = False
 
@@ -200,16 +204,16 @@ class CustomPaymentRequest(Document):
 			self.set_payment_request_url()
 			self.send_email()
 			self.make_communication_entry()
-
 		elif self.payment_channel == "Phone":
 			self.request_phone_payment()
+
 
 	def request_phone_payment(self):
 		controller = _get_payment_gateway_controller(self.payment_gateway)
 		request_amount = self.get_request_amount()
 
 		payment_record = dict(
-			references="Payment Request",
+			references="Custom Payment Request",
 			reference_docname=self.name,
 			payment_reference=self,
 			request_amount=request_amount,
@@ -299,7 +303,7 @@ class CustomPaymentRequest(Document):
 				"amount": flt(self.grand_total, self.precision("grand_total")),
 				"title": data.company,
 				"description": self.subject,
-				"references": "Payment Request",
+				"references": "Custom Payment Request",
 				"reference_docname": self.name,
 				"payer_email": self.email_to or frappe.session.user,
 				"payer_name": data.customer_name,
@@ -323,11 +327,17 @@ class CustomPaymentRequest(Document):
 		"""create entry"""
 		frappe.flags.ignore_account_permission = True
 
-		ref_doc = frappe.get_doc(self.references,)
+		# ✅ Fix: Get the first reference from child table
+		if not self.references:
+			frappe.throw("No reference found to create Payment Entry.")
 
-		if self.references in ["Sales Invoice", "POS Invoice"]:
+		ref = self.references[0]  # assuming you only use one reference
+		ref_doc = frappe.get_doc(ref.reference_doctype, ref.reference_name)
+
+		# Determine party account
+		if ref.reference_doctype in ["Sales Invoice", "POS Invoice"]:
 			party_account = ref_doc.debit_to
-		elif self.references == "Purchase Invoice":
+		elif ref.reference_doctype == "Purchase Invoice":
 			party_account = ref_doc.credit_to
 		else:
 			party_account = get_party_account("Customer", ref_doc.get("customer"), ref_doc.company)
@@ -344,10 +354,10 @@ class CustomPaymentRequest(Document):
 			exchange_rate = ref_doc.get("conversion_rate")
 			bank_amount = flt(self.outstanding_amount / exchange_rate, self.precision("grand_total"))
 
-		# outstanding amount is already in Part's account currency
+		# ✅ Fix: use correct args for get_payment_entry
 		payment_entry = get_payment_entry(
-			self.references,
-			
+			ref.reference_doctype,
+			ref.reference_name,
 			party_amount=party_amount,
 			bank_account=self.payment_account,
 			bank_amount=bank_amount,
@@ -359,13 +369,13 @@ class CustomPaymentRequest(Document):
 				"mode_of_payment": self.mode_of_payment,
 				"reference_no": self.name,  # to prevent validation error
 				"reference_date": nowdate(),
-				"remarks": "Payment Entry against {} {} via Payment Request {}".format(
-					self.references, self.name
+				"remarks": "Payment Entry against {} {} via Custom Payment Request {}".format(
+					ref.reference_doctype, ref.reference_name, self.name
 				),
 			}
 		)
 
-		# Allocate payment_request for each reference in payment_entry (Payment Term can splits the row)
+		# Allocate payment_request for each reference in payment_entry
 		self._allocate_payment_request_to_pe_references(references=payment_entry.references)
 
 		# Update dimensions
@@ -396,35 +406,26 @@ class CustomPaymentRequest(Document):
 
 		return payment_entry
 
+
 	def send_email(self):
-		"""send email with payment link"""
-		email_args = {
-			"recipients": self.email_to,
-			"sender": None,
-			"subject": self.subject,
-			"message": self.get_message(),
-			"now": True,
-			"attachments": [
-				frappe.attach_print(
-					self.references,
-					
-					
-					print_format=self.print_format,
-				)
-			],
-		}
-		enqueue(method=frappe.sendmail, queue="short", timeout=300, is_async=True, **email_args)
+		"""Send payment request email to the recipient"""
+		frappe.sendmail(
+			recipients=self.email_to,
+			subject="Payment Request",
+			message=self.get_message()
+		)
 
 	def get_message(self):
 		"""return message with payment gateway link"""
 
 		context = {
-			"doc": frappe.get_doc(self.references),
+			"doc": frappe.get_doc(self.references[0]),
 			"payment_url": self.payment_url,
 		}
 
 		if self.message:
 			return frappe.render_template(self.message, context)
+
 
 	def set_failed(self):
 		pass
@@ -468,10 +469,10 @@ class CustomPaymentRequest(Document):
 
 	def _allocate_payment_request_to_pe_references(self, references):
 		"""
-		Allocate the Payment Request to the Payment Entry references based on\n
+		Allocate the Custom Payment Request to the Payment Entry references based on\n
 		    - Allocated Amount.
-		    - Outstanding Amount of Payment Request.\n
-		Payment Request is doc itself and references are the rows of Payment Entry.
+		    - Outstanding Amount of Custom Payment Request.\n
+		Custom Payment Request is doc itself and references are the rows of Payment Entry.
 		"""
 		if len(references) == 1:
 			references[0].payment_request = self.name
@@ -499,7 +500,7 @@ class CustomPaymentRequest(Document):
 				row_number += MOVE_TO_NEXT_ROW
 				continue
 
-			# allocate the payment request to the row
+			# allocate the Custom Payment Request to the row
 			row.payment_request = self.name
 
 			if row.allocated_amount <= outstanding_amount:
@@ -525,12 +526,12 @@ class CustomPaymentRequest(Document):
 
 @frappe.whitelist(allow_guest=True)
 def make_payment_request(**args):
-	"""Make payment request"""
+	"""Make Custom Payment Request"""
 
 	args = frappe._dict(args)
 
 	if args.dt not in ALLOWED_DOCTYPES_FOR_PAYMENT_REQUEST:
-		frappe.throw(_("Payment Requests cannot be created against: {0}").format(frappe.bold(args.dt)))
+		frappe.throw(_("Custom Payment Requests cannot be created against: {0}").format(frappe.bold(args.dt)))
 
 	ref_doc = frappe.get_doc(args.dt, args.dn)
 	gateway_account = get_gateway_details(args) or frappe._dict()
@@ -548,18 +549,18 @@ def make_payment_request(**args):
 		frappe.db.set_value("Sales Order", args.dn, "loyalty_amount", loyalty_amount, update_modified=False)
 		grand_total = grand_total - loyalty_amount
 
-	# fetches existing payment request `grand_total` amount
+	# fetches existing Custom Payment Request `grand_total` amount
 	existing_payment_request_amount = get_existing_payment_request_amount(ref_doc)
 
 	def validate_and_calculate_grand_total(grand_total, existing_payment_request_amount):
 		grand_total -= existing_payment_request_amount
 		if not grand_total:
-			frappe.throw(_("Payment Request is already created"))
+			frappe.throw(_("Custom Payment Request is already created"))
 		return grand_total
 
 	if existing_payment_request_amount:
 		if args.order_type == "Shopping Cart":
-			# If Payment Request is in an advanced stage, then create for remaining amount.
+			# If Custom Payment Request is in an advanced stage, then create for remaining amount.
 			if get_existing_payment_request_amount(
 				ref_doc, ["Initiated", "Partially Paid", "Payment Ordered", "Paid"]
 			):
@@ -571,22 +572,22 @@ def make_payment_request(**args):
 			grand_total = validate_and_calculate_grand_total(grand_total, existing_payment_request_amount)
 
 	draft_payment_request = frappe.db.get_value(
-		"Payment Request",
+		"Custom Payment Request",
 		{"references": ref_doc.doctype,},
 	)
 
 	if draft_payment_request:
 		frappe.db.set_value(
-			"Payment Request", draft_payment_request, "grand_total", grand_total, update_modified=False
+			"Custom Payment Request", draft_payment_request, "grand_total", grand_total, update_modified=False
 		)
-		pr = frappe.get_doc("Payment Request", draft_payment_request)
+		pr = frappe.get_doc("Custom Payment Request", draft_payment_request)
 	else:
 		bank_account = (
 			get_party_bank_account(args.get("party_type"), args.get("party"))
 			if args.get("party_type")
 			else ""
 		)
-		pr = frappe.new_doc("Payment Request")
+		pr = frappe.new_doc("Custom Payment Request")
 
 		if not args.get("payment_request_type"):
 			args["payment_request_type"] = (
@@ -612,7 +613,7 @@ def make_payment_request(**args):
 				"grand_total": grand_total,
 				"mode_of_payment": args.mode_of_payment,
 				"email_to": args.recipient_id or ref_doc.owner,
-				"subject": _("Payment Request for {0}").format(args.dn),
+				"subject": _("Custom Payment Request for {0}").format(args.dn),
 				"message": gateway_account.get("message") or get_dummy_message(ref_doc),
 				"references": args.dt,
 				
@@ -711,7 +712,7 @@ def get_irequest_status(payment_requests: None | list = None) -> list:
 		res = (
 			frappe.qb.from_(IR)
 			.select(IR.name)
-			.where(IR.references.eq("Payment Request"))
+			.where(IR.references.eq("Custom Payment Request"))
 			.where(IR.reference_docname.isin(payment_requests))
 			.where(IR.status.isin(["Authorized", "Completed"]))
 			.run(as_dict=True)
@@ -720,7 +721,7 @@ def get_irequest_status(payment_requests: None | list = None) -> list:
 
 
 def cancel_old_payment_requests(ref_dt, ref_dn):
-	PR = frappe.qb.DocType("Payment Request")
+	PR = frappe.qb.DocType("Custom Payment Request")
 
 	if res := (
 		frappe.qb.from_(PR)
@@ -732,10 +733,10 @@ def cancel_old_payment_requests(ref_dt, ref_dn):
 		.run(as_dict=True)
 	):
 		if get_irequest_status([x.name for x in res]):
-			frappe.throw(_("Another Payment Request is already processed"))
+			frappe.throw(_("Another Custom Payment Request is already processed"))
 		else:
 			for x in res:
-				doc = frappe.get_doc("Payment Request", x.name)
+				doc = frappe.get_doc("Custom Payment Request", x.name)
 				doc.flags.ignore_permissions = True
 				doc.cancel()
 
@@ -746,9 +747,9 @@ def cancel_old_payment_requests(ref_dt, ref_dn):
 
 def get_existing_payment_request_amount(ref_doc, statuses: list | None = None) -> list:
 	"""
-	Return the total amount of Payment Requests against a reference document.
+	Return the total amount of Custom Payment Requests against a reference document.
 	"""
-	PR = frappe.qb.DocType("Payment Request")
+	PR = frappe.qb.DocType("Custom Payment Request")
 
 	query = (
 		frappe.qb.from_(PR)
@@ -804,27 +805,28 @@ def get_print_format_list(ref_doctype):
 	return {"print_format": print_format_list}
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def resend_payment_email(docname):
-	return frappe.get_doc("Payment Request", docname).send_email()
+    """Called via API to resend the payment request email"""
+    return frappe.get_doc("Custom Payment Request", docname).send_email()
 
 
 @frappe.whitelist()
 def make_payment_entry(docname):
-	doc = frappe.get_doc("Payment Request", docname)
+	doc = frappe.get_doc("Custom Payment Request", docname)
 	return doc.create_payment_entry(submit=False).as_dict()
 
 
 def update_payment_requests_as_per_pe_references(references=None, cancel=False):
 	"""
-	Update Payment Request's `Status` and `Outstanding Amount` based on Payment Entry Reference's `Allocated Amount`.
+	Update Custom Payment Request's `Status` and `Outstanding Amount` based on Payment Entry Reference's `Allocated Amount`.
 	"""
 	if not references:
 		return
 
 	precision = frappe.get_precision("Payment Entry Reference", "allocated_amount")
 	referenced_payment_requests = frappe.get_all(
-		"Payment Request",
+		"Custom Payment Request",
 		filters={"name": ["in", {row.payment_request for row in references if row.payment_request}]},
 		fields=[
 			"name",
@@ -849,13 +851,13 @@ def update_payment_requests_as_per_pe_references(references=None, cancel=False):
 			precision,
 		)
 
-		# to handle same payment request for the multiple allocations
+		# to handle same Custom Payment Request for the multiple allocations
 		payment_request["outstanding_amount"] = new_outstanding_amount
 
 		if not cancel and new_outstanding_amount < 0:
 			frappe.throw(
 				msg=_(
-					"The allocated amount is greater than the outstanding amount of Payment Request {0}"
+					"The allocated amount is greater than the outstanding amount of Custom Payment Request {0}"
 				).format(ref.payment_request),
 				title=_("Invalid Allocated Amount"),
 			)
@@ -870,7 +872,7 @@ def update_payment_requests_as_per_pe_references(references=None, cancel=False):
 
 		# update database
 		frappe.db.set_value(
-			"Payment Request",
+			"Custom Payment Request",
 			ref.payment_request,
 			{"outstanding_amount": new_outstanding_amount, "status": status},
 		)
@@ -916,7 +918,7 @@ def make_payment_order(source_name, target_doc=None):
 	from frappe.model.mapper import get_mapped_doc
 
 	def set_missing_values(source, target):
-		target.payment_order_type = "Payment Request"
+		target.payment_order_type = "Custom Payment Request"
 		target.append(
 			"references",
 			{
@@ -932,10 +934,10 @@ def make_payment_order(source_name, target_doc=None):
 		)
 
 	doclist = get_mapped_doc(
-		"Payment Request",
+		"Custom Payment Request",
 		source_name,
 		{
-			"Payment Request": {
+			"Custom Payment Request": {
 				"doctype": "Payment Order",
 			}
 		},
@@ -947,13 +949,13 @@ def make_payment_order(source_name, target_doc=None):
 
 
 def validate_payment(doc, method=None):
-	if doc.references != "Payment Request" or (
+	if doc.references != "Custom Payment Request" or (
 		frappe.db.get_value(doc.references, doc.reference_docname, "status") != "Paid"
 	):
 		return
 
 	frappe.throw(
-		_("The Payment Request {0} is already paid, cannot process payment twice").format(
+		_("The Custom Payment Request {0} is already paid, cannot process payment twice").format(
 			doc.reference_docname
 		)
 	)
@@ -971,7 +973,7 @@ def get_open_payment_requests_query(doctype, txt, searchfield, start, page_len, 
 		filters.name = ["like", f"%{txt}%"]
 
 	open_payment_requests = frappe.get_list(
-		"Payment Request",
+		"Custom Payment Request",
 		filters=filters,
 		fields=["name", "grand_total", "outstanding_amount"],
 		order_by="transaction_date ASC,creation ASC",
@@ -993,7 +995,7 @@ def get_irequests_of_payment_request(doc: str | None = None) -> list:
 		res = frappe.db.get_all(
 			"Integration Request",
 			{
-				"references": "Payment Request",
+				"references": "Custom Payment Request",
 				"reference_docname": doc,
 				"status": "Queued",
 			},
