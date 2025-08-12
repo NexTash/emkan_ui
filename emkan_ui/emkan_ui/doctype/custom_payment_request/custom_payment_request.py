@@ -813,8 +813,113 @@ def resend_payment_email(docname):
 
 @frappe.whitelist()
 def make_payment_entry(docname):
-	doc = frappe.get_doc("Custom Payment Request", docname)
-	return doc.create_payment_entry(submit=False).as_dict()
+    from erpnext.accounts.party import get_party_account
+    from frappe.utils import nowdate
+    import frappe
+
+    def get_company_default_bank_account(company):
+        default_bank_account = frappe.db.get_value("Company", company, "default_bank_account")
+        if default_bank_account:
+            return default_bank_account
+
+        bank_account = frappe.db.sql("""
+            SELECT name FROM `tabAccount`
+            WHERE company=%s AND account_type='Bank' AND is_group=0 LIMIT 1
+        """, company)
+
+        if bank_account:
+            return bank_account[0][0]
+
+        frappe.throw(f"Please set a Default Bank Account for Company {company} or create a Bank account.")
+
+    doc = frappe.get_doc("Custom Payment Request", docname)
+
+    # Default payment account (bank/cash)
+    default_payment_account = doc.get("payment_account") or get_company_default_bank_account(doc.company)
+
+    pe = frappe.new_doc("Payment Entry")
+    pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
+    pe.party_type = doc.party_type
+    pe.party = doc.party
+    pe.paid_amount = doc.grand_total
+    pe.received_amount = doc.grand_total
+    pe.reference_no = doc.name
+    pe.reference_date = nowdate()
+    pe.company = doc.company
+    pe.posting_date = nowdate()
+
+    if not doc.references:
+        frappe.throw("No references found in this Custom Payment Request.")
+
+    # Initialize accounts
+    if pe.payment_type == "Pay":
+        pe.paid_from = default_payment_account
+        pe.paid_to = get_company_default_bank_account(doc.company)
+    else:
+        pe.paid_from = get_company_default_bank_account(doc.company)
+        pe.paid_to = default_payment_account
+
+    for ref in doc.references:
+        if not ref.reference_doctype or not ref.reference_name:
+            frappe.throw("Reference Doctype or Reference Name is missing in one of the child table rows.")
+
+        if ref.reference_doctype == "Purchase Invoice":
+            party_account = frappe.db.get_value("Purchase Invoice", ref.reference_name, "credit_to")
+            if party_account:
+                if pe.payment_type == "Pay":
+                    pe.paid_from = default_payment_account
+                    pe.paid_to = party_account
+                else:
+                    pe.paid_from = party_account
+                    pe.paid_to = default_payment_account
+
+        elif ref.reference_doctype == "Sales Invoice":
+            party_account = frappe.db.get_value("Sales Invoice", ref.reference_name, "debit_to")
+            if party_account:
+                if pe.payment_type == "Pay":
+                    pe.paid_from = default_payment_account
+                    pe.paid_to = party_account
+                else:
+                    pe.paid_from = party_account
+                    pe.paid_to = default_payment_account
+
+        pe.append("references", {
+            "reference_doctype": ref.reference_doctype,
+            "reference_name": ref.reference_name,
+            "total_amount": ref.amount or doc.grand_total,
+            "outstanding_amount": ref.amount or doc.grand_total,
+            "allocated_amount": ref.amount or doc.grand_total
+        })
+
+    if not pe.paid_from or not pe.paid_to:
+        frappe.throw("Paid From or Paid To account is missing.")
+
+    # Get currencies
+    company_currency = frappe.db.get_value("Company", doc.company, "default_currency")
+    paid_from_currency = frappe.db.get_value("Account", pe.paid_from, "account_currency")
+    paid_to_currency = frappe.db.get_value("Account", pe.paid_to, "account_currency")
+
+    if not paid_from_currency or not paid_to_currency:
+        frappe.throw("One of the accounts has no currency set.")
+
+    # Exchange rates
+    pe.source_exchange_rate = 1 if paid_from_currency == company_currency else frappe.db.get_value(
+        "Currency Exchange",
+        {"from_currency": paid_from_currency, "to_currency": company_currency},
+        "exchange_rate"
+    ) or 1
+
+    pe.target_exchange_rate = 1 if paid_to_currency == company_currency else frappe.db.get_value(
+        "Currency Exchange",
+        {"from_currency": company_currency, "to_currency": paid_to_currency},
+        "exchange_rate"
+    ) or 1
+
+    pe.insert(ignore_permissions=True)
+    pe.submit()
+
+    return [pe.as_dict()]
+
 
 
 def update_payment_requests_as_per_pe_references(references=None, cancel=False):

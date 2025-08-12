@@ -46,26 +46,57 @@ frappe.ui.form.on("Custom Payment Request", "refresh", function (frm) {
 			});
 		});
 	}
+	
+	
 
-	if (
-		frm.doc.payment_request_type == "Outward" &&
-		["Initiated", "Partially Paid"].includes(frm.doc.status)
-	) {
-		frm.add_custom_button(__("Create Payment Entry"), function () {
-			frappe.call({
-				method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
-				args: { docname: frm.doc.name },
-				freeze: true,
-				callback: function (r) {
-					if (!r.exc) {
-						var doc = frappe.model.sync(r.message);
-						frappe.set_route("Form", r.message.doctype, r.message.name);
-					}
-				},
-			});
-		}).addClass("btn-primary");
-	}
 });
+
+frappe.ui.form.on("Custom Payment Request", {
+    refresh: function (frm) {
+
+        // Outward + Draft -> Show Submit
+        if (frm.doc.payment_request_type === "Outward" && frm.doc.docstatus === 0 && !frm.doc.__islocal) {
+            frm.page.set_primary_action(__('Submit'), function () {
+                frappe.confirm(
+                    __("Are you sure you want to submit this document?"),
+                    function () {
+                        frappe.call({
+                            method: "frappe.client.submit",
+                            args: { doc: frm.doc },
+                            callback: function (r) {
+                                if (!r.exc) {
+                                    frappe.show_alert({ message: __("Document Submitted"), indicator: 'green' });
+                                    frm.reload_doc();
+                                }
+                            }
+                        });
+                    }
+                );
+            });
+        }
+
+        // Outward + Submitted + Status Check -> Show Create Payment Entry
+        if (frm.doc.payment_request_type === "Outward" &&
+            ["Initiated", "Partially Paid"].includes(frm.doc.status) &&
+            frm.doc.docstatus === 1) {
+
+            frm.add_custom_button(__("Create Payment Entries"), function () {
+                frappe.call({
+                    method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
+                    args: { docname: frm.doc.name },
+                    freeze: true,
+                    callback: function (r) {
+                        if (!r.exc && Array.isArray(r.message) && r.message.length) {
+                            frappe.set_route("Form", r.message[0].doctype, r.message[0].name);
+                            frappe.msgprint(__("{0} Payment Entries created.", [r.message.length]));
+                        }
+                    }
+                });
+            }).addClass("btn-primary");
+        }
+    }
+});
+
 frappe.ui.form.on("Custom Payment Request", "is_a_subscription", function (frm) {
 	frm.toggle_reqd("payment_gateway_account", frm.doc.is_a_subscription);
 	frm.toggle_reqd("subscription_plans", frm.doc.is_a_subscription);
