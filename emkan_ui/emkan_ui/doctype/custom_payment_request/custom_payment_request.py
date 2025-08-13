@@ -812,10 +812,15 @@ def resend_payment_email(docname):
 
 
 @frappe.whitelist()
-def make_payment_entry(docname):
-    from erpnext.accounts.party import get_party_account
-    from frappe.utils import nowdate
+def make_payment_entry(docname, submit='0'):
+    """
+    Create a Payment Entry from a Custom Payment Request.
+    By default it INSERTS (draft). To auto-submit, pass submit=1 or submit='true'.
+    """
+
     import frappe
+    from frappe.utils import nowdate, flt
+    from erpnext.accounts.party import get_party_account
 
     def get_company_default_bank_account(company):
         default_bank_account = frappe.db.get_value("Company", company, "default_bank_account")
@@ -841,8 +846,8 @@ def make_payment_entry(docname):
     pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
     pe.party_type = doc.party_type
     pe.party = doc.party
-    pe.paid_amount = doc.grand_total
-    pe.received_amount = doc.grand_total
+    pe.paid_amount = flt(doc.grand_total or 0)
+    pe.received_amount = flt(doc.grand_total or 0)
     pe.reference_no = doc.name
     pe.reference_date = nowdate()
     pe.company = doc.company
@@ -886,9 +891,9 @@ def make_payment_entry(docname):
         pe.append("references", {
             "reference_doctype": ref.reference_doctype,
             "reference_name": ref.reference_name,
-            "total_amount": ref.amount or doc.grand_total,
-            "outstanding_amount": ref.amount or doc.grand_total,
-            "allocated_amount": ref.amount or doc.grand_total
+            "total_amount": flt(ref.amount or doc.grand_total or 0),
+            "outstanding_amount": flt(ref.amount or doc.grand_total or 0),
+            "allocated_amount": flt(ref.amount or doc.grand_total or 0)
         })
 
     if not pe.paid_from or not pe.paid_to:
@@ -915,10 +920,16 @@ def make_payment_entry(docname):
         "exchange_rate"
     ) or 1
 
+    # insert (draft)
     pe.insert(ignore_permissions=True)
-    pe.submit()
 
-    return [pe.as_dict()]
+    # optional submit if caller explicitly requests it
+    if str(submit).lower() in ("1", "true", "yes"):
+        pe.submit()
+
+    # return minimal info (name) or full dict if you prefer
+    return {"name": pe.name, "doctype":pe.doctype, "docstatus": pe.docstatus}
+
 
 
 
