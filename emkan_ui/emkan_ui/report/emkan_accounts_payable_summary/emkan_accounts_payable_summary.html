@@ -12,7 +12,7 @@
     .table th, .table td {
         padding: 0 !important;
         text-align: center;
-        width: 100%;
+        width: 90px;
         word-wrap: break-word;
     }
 
@@ -72,6 +72,7 @@
             <!-- <td style="text-align: end;">Age (Days)</td> -->
             <td style="text-align: center;">PDC Issued</td>
             <td style="text-align: end;">Balance After PDC</td>
+            <td style="text-align: end;">Supplier Group</td>
         </tr>
     </thead>
 <tbody>
@@ -113,6 +114,8 @@
                     <!-- <td style="text-align: end;">{{ frappe.format(row["age"], {"fieldtype": "Int"}) }}</td> -->
                     <td style="text-align: center;">{{ frappe.format(row["future_amount"], {"fieldtype": "Currency"}) }}</td>
                     <td style="text-align: end;">{{ frappe.format(row["remaining_balance"], {"fieldtype": "Currency"}) }}</td>
+                    <td style="text-align: end;">{{ frappe.format(row["supplier_group"], {"fieldtype": "Data"}) }}</td>
+
                 </tr>
             {% } %}
         {% } %}
