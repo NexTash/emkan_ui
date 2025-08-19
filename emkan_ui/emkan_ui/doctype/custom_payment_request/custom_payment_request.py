@@ -891,6 +891,7 @@ def make_payment_entry(docname, submit='0'):
         pe.append("references", {
             "reference_doctype": ref.reference_doctype,
             "reference_name": ref.reference_name,
+			"supplier_invoice_number":ref.supplier_invoice_number,
             "total_amount": flt(ref.amount or doc.grand_total or 0),
             "outstanding_amount": flt(ref.amount or doc.grand_total or 0),
             "allocated_amount": flt(ref.amount or doc.grand_total or 0)

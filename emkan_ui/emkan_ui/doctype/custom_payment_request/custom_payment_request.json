@@ -16,6 +16,7 @@
   "mode_of_payment",
   "party_details",
   "party_type",
+  "division",
   "column_break_opet",
   "party",
   "party_name",
@@ -25,6 +26,7 @@
   "grand_total",
   "currency",
   "is_a_subscription",
+  "remarks",
   "column_break_18",
   "outstanding_amount",
   "party_account_currency",
@@ -448,13 +450,25 @@
    "label": "Reference Doctype",
    "options": "DocType",
    "read_only": 1
+  },
+  {
+   "fieldname": "division",
+   "fieldtype": "Select",
+   "label": "Division",
+   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON",
+   "reqd": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Data",
+   "label": "Remarks"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-13 16:18:33.702498",
+ "modified": "2025-08-18 15:19:31.081789",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Custom Payment Request",

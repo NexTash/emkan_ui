@@ -8,6 +8,7 @@
  "field_order": [
   "reference_doctype",
   "reference_name",
+  "supplier_invoice_number",
   "amount"
  ],
  "fields": [
@@ -30,13 +31,18 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount"
+  },
+  {
+   "fieldname": "supplier_invoice_number",
+   "fieldtype": "Data",
+   "label": "Supplier Invoice Number"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-08-13 16:14:38.817499",
+ "modified": "2025-08-18 14:35:00.304472",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Payment Request Reference",
