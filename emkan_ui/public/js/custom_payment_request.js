@@ -1,30 +1,65 @@
+// Child table: Payment Request Reference
 frappe.ui.form.on('Payment Request Reference', {
+    // When new row added
     references_add: function(frm, cdt, cdn) {
         frappe.model.set_value(cdt, cdn, 'reference_doctype', 'Purchase Invoice');
         recalc(frm);
     },
+
+    // When row deleted
+    references_remove: function(frm) {
+        recalc(frm);
+    },
+
+    // When reference_name is changed
     reference_name: function(frm, cdt, cdn) {
-        const row = locals[cdt][cdn];
+        const row = locals[cdt] && locals[cdt][cdn];
         if (!row) return;
 
         if (row.reference_doctype === 'Purchase Invoice' && row.reference_name) {
             frappe.call({
                 method: 'frappe.client.get',
-                args: { doctype: 'Purchase Invoice', name: row.reference_name, fields: ['bill_no'] },
+                args: {
+                    doctype: 'Purchase Invoice',
+                    name: row.reference_name,
+                    fields: ['bill_no', 'outstanding_amount']
+                },
                 callback: function(r) {
-                    const bill = r.message ? (r.message.bill_no || '') : '';
-                    frappe.model.set_value(cdt, cdn, 'bill_no', bill);
+                    if (r.message) {
+                        frappe.model.set_value(cdt, cdn, 'bill_no', r.message.bill_no || '');
+                        if (typeof r.message.outstanding_amount !== 'undefined') {
+                            frappe.model.set_value(cdt, cdn, 'amount', flt(r.message.outstanding_amount));
+                        }
+                    } else {
+                        frappe.model.set_value(cdt, cdn, 'bill_no', '');
+                    }
+                    recalc(frm);
                 }
             });
         } else {
             frappe.model.set_value(cdt, cdn, 'bill_no', '');
+            recalc(frm);
         }
+    },
+
+    // When amount changed
+    amount: function(frm) {
+        recalc(frm);
     }
 });
 
+
+// Parent doctype: Custom Payment Request
 frappe.ui.form.on('Custom Payment Request', {
+    onload: function(frm) {
+        recalc(frm);
+    },
+    refresh: function(frm) {
+        recalc(frm);
+    },
     party: function(frm) {
         if (!frm.doc.party) return;
+
         frappe.call({
             method: 'frappe.client.get_list',
             args: {
@@ -41,7 +76,7 @@ frappe.ui.form.on('Custom Payment Request', {
             },
             callback: function(r) {
                 frm.clear_table('references');
-                (r.message || []).forEach(inv => {
+                (r.message || []).forEach(function(inv) {
                     let row = frm.add_child('references');
                     row.reference_doctype = 'Purchase Invoice';
                     row.reference_name = inv.name;
@@ -55,8 +90,12 @@ frappe.ui.form.on('Custom Payment Request', {
     }
 });
 
+
+// Central calc function
 function recalc(frm) {
     let total = 0;
-    (frm.doc.references || []).forEach(r => total += flt(r.amount || 0));
-    frm.set_value('grand_total', total);
+    (frm.doc.references || []).forEach(r => {
+        total += flt(r.amount || 0);
+    });
+    frm.set_value('grand_total', parseFloat(total.toFixed(2)));
 }
