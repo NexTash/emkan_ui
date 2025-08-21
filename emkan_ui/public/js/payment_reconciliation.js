@@ -15,5 +15,32 @@ frappe.ui.form.on('Payment Reconciliation', {
             Promise.all(promises).then(() => {
                 frm.refresh_field("invoices");
             });
+        if (!frm.doc.payments || !frm.doc.payments.length) return;
+        frm.doc.payments.forEach(async (row) => {
+            try {
+                if ((row.reference_type || '').toString().trim() === 'Payment Entry' && row.reference_name) {
+                    const pe = await frappe.db.get_doc('Payment Entry', row.reference_name);
+
+                    const refs = Array.isArray(pe.references) ? pe.references : [];
+
+                    const poNames = refs
+                        .filter(r => ((r.reference_doctype || r.reference_type) === 'Purchase Order'))
+                        .map(r => (r.reference_name || r.reference || r.reference_no || '').toString().trim())
+                        .filter(Boolean);
+
+                    const unique = [...new Set(poNames)];
+                    const value = unique.length ? unique.join(', ') : '';
+
+                    frappe.model.set_value(row.doctype, row.name, 'custom_po_number', value);
+                } else {
+                    frappe.model.set_value(row.doctype, row.name, 'custom_po_number', '');
+                }
+            } catch (err) {
+                console.error('Error populating custom_po_number for row', row, err);
+                frappe.model.set_value(row.doctype, row.name, 'custom_po_number', '');
+            }
+        });
+
+        frm.refresh_field('payments');
         }
 });
