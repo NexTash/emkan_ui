@@ -1,5 +1,16 @@
 frappe.ui.form.on('Payment Reconciliation', {
     refresh:function(frm){
+        if (frm.doc.party_type === "Supplier" && frm.doc.invoices && frm.doc.invoices.length) {
+            frm.doc.invoices.forEach(async (row) => {
+                if (!row.supplier_invoice_number && row.invoice) {
+                    let invoiceDoc = await frappe.db.get_doc('Purchase Invoice', row.invoice);
+                    if (invoiceDoc && invoiceDoc.supplier_invoice_number) {
+                        frappe.model.set_value(row.doctype, row.name, 'supplier_invoice_number', invoiceDoc.supplier_invoice_number);
+                    }
+                }
+            });
+            frm.refresh_field('invoices');
+        }
         let promises = frm.doc.invoices.map((row, index) => {
                 if(row.invoice_type === "Purchase Invoice") {
                     return frappe.db.get_value("Purchase Invoice", row.invoice_number, 'bill_no')
