@@ -392,6 +392,16 @@ fixtures=[
             ]
         ]
     },
+       {
+        "dt": "Property Setter", 
+        "filters": { 
+            "name": ["in", [
+                "Delivery Trip-departure_time-fieldtype","Delivery Trip-departure_time-reqd"
+            ]]
+        },
+        
+        
+    },
     # {
     #     "dt" : "Letter Head",
     #     "filters": [
