@@ -27,11 +27,11 @@ frappe.ui.form.on('Delivery Trip', {
         fetch_and_set_model(frm);
     },
 
-    custom_end_time: function(frm) {
-        if (frm.doc.custom_end_time && frm.doc.departure_time) {
-            if (frm.doc.custom_end_time <= frm.doc.departure_time) {
+    custom_end_date: function(frm) {
+        if (frm.doc.custom_end_date && frm.doc.departure_time) {
+            if (frm.doc.custom_end_date <= frm.doc.departure_time) {
                 frappe.msgprint("End Time must be strictly greater than Departure Time.");
-                frm.set_value('custom_end_time', null);
+                frm.set_value('custom_end_date', null);
             }
         }
     },
