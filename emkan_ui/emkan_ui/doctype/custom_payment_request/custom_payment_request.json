@@ -69,7 +69,7 @@
  ],
  "fields": [
   {
-   "default": "Inward",
+   "default": "Outward",
    "fieldname": "payment_request_type",
    "fieldtype": "Select",
    "label": "Payment Request Type",
@@ -453,9 +453,9 @@
   },
   {
    "fieldname": "division",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Division",
-   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN-5\nEMK-ADMIN & PROJECT COMMON",
+   "options": "Reason Fields",
    "reqd": 1
   },
   {
@@ -468,7 +468,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2025-08-18 15:19:31.081789",
+ "modified": "2025-08-25 12:56:04.241904",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "Custom Payment Request",
