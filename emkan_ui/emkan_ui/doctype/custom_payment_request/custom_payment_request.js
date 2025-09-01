@@ -52,82 +52,98 @@ frappe.ui.form.on("Custom Payment Request", {
     refresh: function (frm) {
         if (
             frm.doc.payment_request_type === "Outward" &&
-            frm.doc.docstatus === 0 &&
-            !frm.doc.__islocal &&
-            frm.doc.workflow_state === "Approved"
-        ) {
-            frm.page.set_primary_action(__('Submit'), function () {
-                frappe.confirm(
-                    __("Are you sure you want to submit this document?"),
-                    function () {
-                        frappe.call({
-                            method: "frappe.client.submit",
-                            args: { doc: frm.doc },
-                            callback: function (r) {
-                                if (!r.exc) {
-                                    frappe.show_alert({ message: __("Document Submitted"), indicator: 'green' });
-                                    frm.reload_doc();
-                                }
-                            }
-                        });
-                    }
-                );
-            });
-        }
-
-        if (
-            frm.doc.payment_request_type === "Outward" &&
             ["Initiated", "Partially Paid"].includes(frm.doc.status) &&
-            frm.doc.docstatus === 1 && 
-            (!frm.doc.reference_doctype || !frm.doc.reference_name)
+            frm.doc.docstatus === 1
         ) {
-            frm.add_custom_button(__("Create Payment Entries"), function () {
-                frappe.call({
-                    method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
-                    args: { docname: frm.doc.name },
-                    freeze: true,
-                    callback: function (r) {
-                        if (r.exc) {
-                            frappe.msgprint(__('Error creating Payment Entry.'));
-                            return;
-                        }
+            frappe.db.get_list("Payment Entry Reference", {
+                filters: {
+                    custom_custom_payment_request: frm.doc.name
+                },
+                fields: ["parent", "allocated_amount"]
+            }).then(refs => {
+                let total_paid = 0;
+                if (refs && refs.length) {
+                    total_paid = refs.reduce((sum, row) => sum + (row.allocated_amount || 0), 0);
+                }
 
-                        let msg = r.message;
-                        console.log(msg);
+                let request_amount = frm.doc.grand_total || 0;
 
-                        frm.set_value("reference_doctype", msg.doctype);
-                        frm.set_value("reference_name", msg.name);
-                        frm.save('Update');
-
-                        if (Array.isArray(msg) && msg.length) {
-                            frappe.set_route("Form", msg[0].doctype, msg[0].name);
-                            frappe.msgprint(__("{0} Payment Entries created.", [msg.length]));
-                            return;
-                        }
-
-                        if (msg && typeof msg === "object" && msg.name) {
-                            frappe.set_route("Form", msg.doctype || "Payment Entry", msg.name);
-                            frappe.msgprint(__("Payment Entry {0} created (status: {1}).", [msg.name, msg.docstatus]));
-                            return;
-                        }
-
-                        frappe.msgprint(__("No Payment Entry created."));
-                    }
-                });
-            }).addClass("btn-primary");
-        }
-    },
-
-    party: function (frm) {
-        if (frm.doc.party_type === "Supplier" && frm.doc.party) {
-            frappe.db.get_value("Supplier", frm.doc.party, "supplier_name", function (r) {
-                if (r && r.supplier_name) {
-                    frm.set_value("party_name", r.supplier_name);
+                if (total_paid < request_amount) {
+                    frm.add_custom_button(__("Create Payment Entries"), function () {
+                        make_payment_entry(frm);
+                    }).addClass("btn-primary");
                 }
             });
         }
     }
 });
+
+function make_payment_entry(frm) {
+    frappe.call({
+        method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
+        args: { docname: frm.doc.name },
+        freeze: true,
+        callback: function (r) {
+            if (r.exc) {
+                frappe.msgprint(__('Error creating Payment Entry.'));
+                return;
+            }
+
+            let msg = r.message;
+            frm.set_value("reference_doctype", msg.doctype);
+            frm.set_value("reference_name", msg.name);
+            frm.save('Update');
+
+            if (Array.isArray(msg) && msg.length) {
+                frappe.set_route("Form", msg[0].doctype, msg[0].name);
+                frappe.msgprint(__("{0} Payment Entries created.", [msg.length]));
+                return;
+            }
+
+            if (msg && typeof msg === "object" && msg.name) {
+                frappe.set_route("Form", msg.doctype || "Payment Entry", msg.name);
+                frappe.msgprint(__("Payment Entry {0} created (status: {1}).", [msg.name, msg.docstatus]));
+                return;
+            }
+
+            frappe.msgprint(__("No Payment Entry created."));
+        }
+    });
+}
+
+
+function create_payment_entry(frm) {
+    frappe.call({
+        method: "emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.make_payment_entry",
+        args: { docname: frm.doc.name },
+        freeze: true,
+        callback: function (r) {
+            if (r.exc) {
+                frappe.msgprint(__('Error creating Payment Entry.'));
+                return;
+            }
+
+            let msg = r.message;
+            frm.set_value("reference_doctype", msg.doctype);
+            frm.set_value("reference_name", msg.name);
+            frm.save('Update');
+
+            if (Array.isArray(msg) && msg.length) {
+                frappe.set_route("Form", msg[0].doctype, msg[0].name);
+                frappe.msgprint(__("{0} Payment Entries created.", [msg.length]));
+                return;
+            }
+
+            if (msg && typeof msg === "object" && msg.name) {
+                frappe.set_route("Form", msg.doctype || "Payment Entry", msg.name);
+                frappe.msgprint(__("Payment Entry {0} created (status: {1}).", [msg.name, msg.docstatus]));
+                return;
+            }
+
+            frappe.msgprint(__("No Payment Entry created."));
+        }
+    });
+}
 
 
 frappe.ui.form.on("Custom Payment Request", "is_a_subscription", function (frm) {
