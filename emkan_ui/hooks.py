@@ -41,7 +41,10 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
               "Custom Payment Request" : "public/js/custom_payment_request.js",
 
               }
-doctype_list_js = {"Payment Entry": "public/js/payment_entry_list.js"}
+doctype_list_js = {
+    "Payment Entry": "public/js/payment_entry_list.js",
+    "Material Request": "public/js/material_request_list.js"
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
