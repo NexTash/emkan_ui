@@ -75,6 +75,15 @@ frappe.ui.form.on("Custom Payment Request", {
                 }
             });
         }
+    },
+    party: function (frm) {
+        if (frm.doc.party_type === "Supplier" && frm.doc.party) {
+            frappe.db.get_value("Supplier", frm.doc.party, "supplier_name", function (r) {
+                if (r && r.supplier_name) {
+                    frm.set_value("party_name", r.supplier_name);
+                }
+            });
+        }
     }
 });
 

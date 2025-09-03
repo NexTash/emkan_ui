@@ -601,6 +601,18 @@ def make_payment_request(**args):
 			party_account = get_party_account(party_type, ref_doc.get(party_type.lower()), ref_doc.company)
 			party_account_currency = get_account_currency(party_account)
 
+		# ✅ Fix: Party Name logic based on Dynamic Link
+		party_name = args.get("party_name")
+		if not party_name and args.get("party") and party_type:
+			if party_type == "Supplier":
+				party_name = frappe.db.get_value("Supplier", args.get("party"), "supplier_name")
+			elif party_type == "Customer":
+				party_name = frappe.db.get_value("Customer", args.get("party"), "customer_name")
+			elif party_type == "Employee":
+				party_name = frappe.db.get_value("Employee", args.get("party"), "employee_name")
+			else:
+				party_name = args.get("party")  # fallback: just use party code
+
 		pr.update(
 			{
 				"payment_gateway_account": gateway_account.get("name"),
@@ -616,12 +628,11 @@ def make_payment_request(**args):
 				"subject": _("Custom Payment Request for {0}").format(args.dn),
 				"message": gateway_account.get("message") or get_dummy_message(ref_doc),
 				"references": args.dt,
-				
 				"company": ref_doc.get("company"),
 				"party_type": party_type,
 				"party": args.get("party") or ref_doc.get("customer"),
 				"bank_account": bank_account,
-				"party_name": args.get("party_name") or ref_doc.get("customer_name"),
+				"party_name": party_name,
 				"phone_number": args.get("phone_number") if args.get("phone_number") else None,
 			}
 		)
@@ -656,6 +667,7 @@ def make_payment_request(**args):
 		return pr
 
 	return pr.as_dict()
+
 
 
 def get_amount(ref_doc, payment_account=None):
