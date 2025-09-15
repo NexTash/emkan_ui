@@ -22,22 +22,25 @@ frappe.ui.form.on('Payment Request Reference', {
                 args: {
                     doctype: 'Purchase Invoice',
                     name: row.reference_name,
-                    fields: ['bill_no', 'outstanding_amount']
+                    fields: ['bill_no', 'outstanding_amount', 'bill_date']   // ✅ added bill_date
                 },
                 callback: function(r) {
                     if (r.message) {
                         frappe.model.set_value(cdt, cdn, 'bill_no', r.message.bill_no || '');
+                        frappe.model.set_value(cdt, cdn, 'custom_supplier_invoice_date', r.message.bill_date || '');   // ✅ set date in child
                         if (typeof r.message.outstanding_amount !== 'undefined') {
                             frappe.model.set_value(cdt, cdn, 'amount', flt(r.message.outstanding_amount));
                         }
                     } else {
                         frappe.model.set_value(cdt, cdn, 'bill_no', '');
+                        frappe.model.set_value(cdt, cdn, 'custom_supplier_invoice_date', '');
                     }
                     recalc(frm);
                 }
             });
         } else {
             frappe.model.set_value(cdt, cdn, 'bill_no', '');
+            frappe.model.set_value(cdt, cdn, 'custom_supplier_invoice_date', '');
             recalc(frm);
         }
     },
@@ -71,7 +74,7 @@ frappe.ui.form.on('Custom Payment Request', {
                     status: ['!=', 'Paid'],
                     is_return: 0
                 },
-                fields: ['name', 'outstanding_amount', 'bill_no'],
+                fields: ['name', 'outstanding_amount', 'bill_no', 'bill_date'],   // ✅ fetch bill_date
                 limit_page_length: 100
             },
             callback: function(r) {
@@ -80,6 +83,7 @@ frappe.ui.form.on('Custom Payment Request', {
                     let row = frm.add_child('references');
                     row.reference_doctype = 'Purchase Invoice';
                     row.reference_name = inv.name;
+                    row.custom_supplier_invoice_date = inv.bill_date || '';   // ✅ set in child
                     row.amount = flt(inv.outstanding_amount);
                     row.supplier_invoice_number = inv.bill_no || '';
                 });
