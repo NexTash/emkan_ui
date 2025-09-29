@@ -55,23 +55,62 @@ frappe.ui.form.on("Custom Payment Request", {
             ["Initiated", "Partially Paid"].includes(frm.doc.status) &&
             frm.doc.docstatus === 1
         ) {
-            frappe.db.get_list("Payment Entry Reference", {
+            frappe.db.get_list("Payment Entry", {
                 filters: {
-                    custom_custom_payment_request: frm.doc.name
+                    reference_no: frm.doc.name
                 },
-                fields: ["parent", "allocated_amount"]
-            }).then(refs => {
-                let total_paid = 0;
-                if (refs && refs.length) {
-                    total_paid = refs.reduce((sum, row) => sum + (row.allocated_amount || 0), 0);
-                }
-
-                let request_amount = frm.doc.grand_total || 0;
-
-                if (total_paid < request_amount) {
+                fields: ["name", "docstatus"]
+            }).then(pes => {
+                if (!pes || !pes.length) {
                     frm.add_custom_button(__("Create Payment Entries"), function () {
                         make_payment_entry(frm);
                     }).addClass("btn-primary");
+                    return;
+                }
+                let total_paid = 0;
+                let promises = pes.map(pe =>
+                    frappe.db.get_doc("Payment Entry", pe.name).then(doc => {
+                        if (doc.references && doc.references.length) {
+                            total_paid += doc.references.reduce(
+                                (sum, row) => sum + (row.allocated_amount || 0),
+                                0
+                            );
+                        }
+                        return doc;
+                    })
+                );
+                Promise.all(promises).then(docs => {
+                    let request_amount = frm.doc.grand_total || 0;
+
+                    if (total_paid < request_amount) {
+                        frm.add_custom_button(__("Create Payment Entries"), function () {
+                            let matched_pe = docs.find(d => {
+                                let allocated = d.references.reduce(
+                                    (sum, row) => sum + (row.allocated_amount || 0),
+                                    0
+                                );
+                                return allocated === request_amount;
+                            });
+
+                            if (matched_pe) {
+                                frappe.msgprint(__("A Payment Entry already exists for this Custom Payment Request."));
+                                frappe.set_route("Form", "Payment Entry", matched_pe.name);
+                            } else {
+                                make_payment_entry(frm);
+                            }
+                        }).addClass("btn-primary");
+                    } else {
+                        frm.remove_custom_button(__("Create Payment Entries"));
+                    }
+                });
+            });
+        }
+    },
+    party: function (frm) {
+        if (frm.doc.party_type === "Supplier" && frm.doc.party) {
+            frappe.db.get_value("Supplier", frm.doc.party, "supplier_name", function (r) {
+                if (r && r.supplier_name) {
+                    frm.set_value("party_name", r.supplier_name);
                 }
             });
         }
