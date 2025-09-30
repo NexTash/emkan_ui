@@ -1,20 +1,15 @@
-// Child table: Payment Request Reference
 frappe.ui.form.on('Payment Request Reference', {
-    // When new row added
     references_add: function(frm, cdt, cdn) {
         frappe.model.set_value(cdt, cdn, 'reference_doctype', 'Purchase Invoice');
         recalc(frm);
     },
 
-    // When row deleted
     references_remove: function(frm) {
         recalc(frm);
     },
 
-    // When reference_name is changed
     reference_name: function(frm, cdt, cdn) {
-        const row = locals[cdt] && locals[cdt][cdn];
-        if (!row) return;
+        const row = locals[cdt][cdn];
 
         if (row.reference_doctype === 'Purchase Invoice' && row.reference_name) {
             frappe.call({
@@ -26,30 +21,68 @@ frappe.ui.form.on('Payment Request Reference', {
                 },
                 callback: function(r) {
                     if (r.message) {
-                        frappe.model.set_value(cdt, cdn, 'bill_no', r.message.bill_no || '');
-                        if (typeof r.message.outstanding_amount !== 'undefined') {
-                            frappe.model.set_value(cdt, cdn, 'amount', flt(r.message.outstanding_amount));
-                        }
+                        frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', r.message.bill_no || '');
+                        frappe.model.set_value(cdt, cdn, 'amount', flt(r.message.outstanding_amount) || 0);
                     } else {
-                        frappe.model.set_value(cdt, cdn, 'bill_no', '');
+                        frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', '');
+                        frappe.model.set_value(cdt, cdn, 'amount', 0);
                     }
                     recalc(frm);
                 }
             });
+        } else if (row.reference_doctype === 'Journal Entry' && row.reference_name) {
+            frappe.call({
+                method: 'frappe.client.get',
+                args: {
+                    doctype: 'Journal Entry',
+                    name: row.reference_name,
+                    fields: ['name', 'bill_no'],
+                },
+                callback: function(r) {
+                    if (r.message) {
+                        frappe.call({
+                            method: 'frappe.client.get_list',
+                            args: {
+                                doctype: 'Journal Entry Account',
+                                filters: { parent: r.message.name },
+                                fields: ['party_type', 'party', 'debit', 'credit']
+                            },
+                            callback: function(res) {
+                                if (res.message && res.message.length) {
+                                    let accounts = res.message;
+                                    let last_row = accounts[accounts.length - 1];
+
+                                    if (last_row.party_type === 'Supplier' && last_row.party === frm.doc.party) {
+                                        let total = (last_row.debit || 0) - (last_row.credit || 0);
+                                        frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', r.message.bill_no || '');
+                                        frappe.model.set_value(cdt, cdn, 'amount', flt(total));
+                                    } else {
+                                        frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', '');
+                                        frappe.model.set_value(cdt, cdn, 'amount', 0);
+                                    }
+                                }
+                                recalc(frm);
+                            }
+                        });
+                    } else {
+                        frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', '');
+                        frappe.model.set_value(cdt, cdn, 'amount', 0);
+                        recalc(frm);
+                    }
+                }
+            });
         } else {
-            frappe.model.set_value(cdt, cdn, 'bill_no', '');
+            frappe.model.set_value(cdt, cdn, 'supplier_invoice_number', '');
+            frappe.model.set_value(cdt, cdn, 'amount', 0);
             recalc(frm);
         }
     },
 
-    // When amount changed
     amount: function(frm) {
         recalc(frm);
     }
 });
 
-
-// Parent doctype: Custom Payment Request
 frappe.ui.form.on('Custom Payment Request', {
     onload: function(frm) {
         recalc(frm);
@@ -59,6 +92,8 @@ frappe.ui.form.on('Custom Payment Request', {
     },
     party: function(frm) {
         if (!frm.doc.party) return;
+
+        frm.clear_table("references");
 
         frappe.call({
             method: 'frappe.client.get_list',
@@ -71,27 +106,38 @@ frappe.ui.form.on('Custom Payment Request', {
                     status: ['!=', 'Paid'],
                     is_return: 0
                 },
-                fields: ['name', 'outstanding_amount', 'bill_no'],
-                limit_page_length: 100
+                fields: ['name', 'outstanding_amount', 'bill_no']
             },
             callback: function(r) {
-                frm.clear_table('references');
                 (r.message || []).forEach(function(inv) {
                     let row = frm.add_child('references');
                     row.reference_doctype = 'Purchase Invoice';
                     row.reference_name = inv.name;
-                    row.amount = flt(inv.outstanding_amount);
                     row.supplier_invoice_number = inv.bill_no || '';
+                    row.amount = flt(inv.outstanding_amount);
                 });
-                frm.refresh_field('references');
-                recalc(frm);
+
+                frappe.call({
+                    method: 'emkan_ui.emkan_ui.doctype.custom_payment_request.custom_payment_request.get_supplier_journal_entries',
+                    args: { supplier: frm.doc.party },
+                    callback: function(r2) {
+                        (r2.message || []).forEach(function(je) {
+                            let row = frm.add_child('references');
+                            row.reference_doctype = 'Journal Entry';
+                            row.reference_name = je.name;
+                            row.supplier_invoice_number = je.bill_no || '';
+                            row.amount = flt(je.amount);
+                        });
+
+                        frm.refresh_field('references');
+                        recalc(frm);
+                    }
+                });
             }
         });
     }
 });
 
-
-// Central calc function
 function recalc(frm) {
     let total = 0;
     (frm.doc.references || []).forEach(r => {

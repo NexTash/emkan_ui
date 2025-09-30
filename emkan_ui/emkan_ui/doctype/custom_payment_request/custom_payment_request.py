@@ -995,6 +995,56 @@ def make_payment_entry(docname, submit='0'):
 
     return {"name": pe.name, "doctype": pe.doctype, "docstatus": pe.docstatus}
 
+@frappe.whitelist()
+def get_supplier_journal_entries(supplier):
+    """Fetch ALL unpaid Journal Entries for the selected supplier"""
+
+    jes = frappe.db.sql("""
+        SELECT DISTINCT je.name, je.bill_no, je.posting_date
+        FROM `tabJournal Entry` je
+        INNER JOIN `tabJournal Entry Account` jea ON je.name = jea.parent
+        WHERE je.docstatus = 1
+          AND jea.party_type = 'Supplier'
+          AND jea.party = %s
+          AND ABS(jea.debit_in_account_currency - jea.credit_in_account_currency) > 0.001
+        ORDER BY je.posting_date ASC
+    """, (supplier,), as_dict=True)
+
+    if not jes:
+        return []
+
+    result = []
+
+    for je in jes:
+        accounts = frappe.get_all(
+            "Journal Entry Account",
+            filters={
+                "parent": je.name,
+                "party_type": "Supplier",
+                "party": supplier
+            },
+            fields=["debit_in_account_currency", "credit_in_account_currency"]
+        )
+
+        total = sum(
+            (acc.get("debit_in_account_currency", 0) or 0) -
+            (acc.get("credit_in_account_currency", 0) or 0)
+            for acc in accounts
+        )
+
+        if abs(total) > 0.001:
+            result.append({
+                "name": je.name,
+                "bill_no": je.bill_no or "",
+                "amount": total
+            })
+
+    return result
+
+
+
+
+
 
 def update_payment_requests_as_per_pe_references(references=None, cancel=False):
 	"""
