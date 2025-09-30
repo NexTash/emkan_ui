@@ -1027,8 +1027,8 @@ def get_supplier_journal_entries(supplier):
         )
 
         total = sum(
-            (acc.get("debit_in_account_currency", 0) or 0) -
-            (acc.get("credit_in_account_currency", 0) or 0)
+            (acc.get("credit_in_account_currency", 0) or 0) -
+            (acc.get("debit_in_account_currency", 0) or 0)
             for acc in accounts
         )
 
