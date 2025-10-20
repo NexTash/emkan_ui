@@ -74,7 +74,8 @@ frappe.ui.form.on('Custom Payment Request', {
                     status: ['!=', 'Paid'],
                     is_return: 0
                 },
-                fields: ['name', 'outstanding_amount', 'bill_no', 'bill_date'],   // ✅ fetch bill_date
+                fields: ['name', 'outstanding_amount', 'bill_no', 'bill_date'], // ✅ fetch bill_date
+                order_by: 'bill_date asc', // ✅ show old invoices first
                 limit_page_length: 100
             },
             callback: function(r) {
@@ -83,7 +84,7 @@ frappe.ui.form.on('Custom Payment Request', {
                     let row = frm.add_child('references');
                     row.reference_doctype = 'Purchase Invoice';
                     row.reference_name = inv.name;
-                    row.custom_supplier_invoice_date = inv.bill_date || '';   // ✅ set in child
+                    row.custom_supplier_invoice_date = inv.bill_date || '';
                     row.amount = flt(inv.outstanding_amount);
                     row.supplier_invoice_number = inv.bill_no || '';
                 });

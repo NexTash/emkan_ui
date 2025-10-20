@@ -214,7 +214,7 @@ def get_gl_entries(filters, accounting_dimensions):
 
     aggregated_entries = defaultdict(lambda: {"debit": 0, "credit": 0, "entries": []})
 
-    filtered_parties = ["S000166", "S000173", "S000054", "S000143"]
+    filtered_parties = ["S000166", "S000173", "S000054", "S000143", "S000048"]
 
     for gle in gl_entries:
         if gle.get("is_canceled") == 1:
