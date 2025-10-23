@@ -11,7 +11,9 @@ def execute(filters=None):
 
 def get_columns():
     return [
-        {"label": "Project", "fieldname": "project", "fieldtype": "Link", "options": "Project", "width": 350, "align": "left"},
+        {"label": "Project", "fieldname": "project", "fieldtype": "Link", "options": "Project", "width": 300, "align": "left"},
+        {"label": "Estimated Costing", "fieldname": "estimated_costing", "fieldtype": "Currency", "width": 200, "align": "right"},
+        {"label": "Project Value", "fieldname": "total_sales_amount", "fieldtype": "Currency", "width": 200, "align": "right"},
         {"label": "Income", "fieldname": "total_income", "fieldtype": "Currency", "width": 200, "align": "right"},
         {"label": "Direct Expense", "fieldname": "direct_expense", "fieldtype": "Currency", "width": 200, "align": "right"},
         {"label": "InDirect Expense", "fieldname": "indirect_expense", "fieldtype": "Currency", "width": 200, "align": "right"},
@@ -77,7 +79,23 @@ def get_data(filters):
     """
     
     result = frappe.db.sql(query, filters, as_dict=True)
-    
+
+    # --- Add Estimated Costing and Total Sales Amount from Project Doctype ---
+    for row in result:
+        if row.get("project"):
+            project = frappe.db.get_value(
+                "Project",
+                row["project"],
+                ["estimated_costing", "total_sales_amount"],
+                as_dict=True,
+            ) or {}
+            row["estimated_costing"] = flt(project.get("estimated_costing"))
+            row["total_sales_amount"] = flt(project.get("total_sales_amount"))
+        else:
+            row["estimated_costing"] = 0
+            row["total_sales_amount"] = 0
+
+    # --- Remove zero-value rows ---
     return [
         row for row in result 
         if not (
