@@ -80,7 +80,6 @@ def get_data(filters):
     
     result = frappe.db.sql(query, filters, as_dict=True)
 
-    # --- Add Estimated Costing and Total Sales Amount from Project Doctype ---
     for row in result:
         if row.get("project"):
             project = frappe.db.get_value(
@@ -95,7 +94,6 @@ def get_data(filters):
             row["estimated_costing"] = 0
             row["total_sales_amount"] = 0
 
-    # --- Remove zero-value rows ---
     return [
         row for row in result 
         if not (
