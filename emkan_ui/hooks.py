@@ -12,6 +12,13 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/emkan_ui/css/emkan_ui.css"
 app_include_js = "/assets/emkan_ui/js/salary_slip.js"
+app_include_js = "/assets/emkan_ui/js/leave_application.js"
+
+{
+  "js/leave_application.min.js": [
+    "public/js/leave_application.js"
+  ]
+}
 
 # include js, css files in header of web template
 # web_include_css = "/assets/emkan_ui/css/emkan_ui.css"
@@ -34,6 +41,7 @@ doctype_js = {"Stock Entry" : "public/js/stock_entry.js",
               "Salary Slip" : "public/js/salary_slip.js",
               "Leave Application" : "public/js/leave_application.js",
               "Employee" : "public/js/employee.js",
+              "Leave Application" : "public/js/leave_application.js",
               }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -166,6 +174,7 @@ doc_events = {
         "before_insert": ["emkan_ui.events.leave_application.clear_child_table_on_creation"],
         "before_save": "emkan_ui.events.leave_application.add_workflow_status",
         "before_submit": "emkan_ui.events.leave_application.last_state",
+        "on_update": "emkan_ui.events.leave_application.send_workflow_email"
     },
     "Salary Slip": {
         "before_save": "emkan_ui.events.salary_slip.set_leave_settlement_dates"
@@ -208,9 +217,9 @@ scheduler_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "emkan_ui.event.get_events"
-# }
+override_whitelisted_methods = {
+    "frappe.desk.form.assign_to.add": "emkan_ui.emkan_ui.events.leave_application.add",
+	}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
