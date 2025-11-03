@@ -216,7 +216,7 @@ def send_workflow_email(doc, method=None):
 
 @frappe.whitelist()
 def add(args=None, *, ignore_permissions=False):
-    """Add in someone's to-do list (customized to include role field)."""
+    """Add in someone's to-do list (fully disables assignment email notifications)."""
 
     if not args:
         args = frappe.local.form_dict
@@ -263,11 +263,13 @@ def add(args=None, *, ignore_permissions=False):
             "role": role_value,
         }).insert(ignore_permissions=True)
 
+        # Update assigned_to field on the document (if it exists)
         if frappe.get_meta(args["doctype"]).get_field("assigned_to"):
             frappe.db.set_value(args["doctype"], args["name"], "assigned_to", assign_to)
 
         doc = frappe.get_doc(args["doctype"], args["name"])
 
+        # Share document if the user doesn't have permission
         if not frappe.has_permission(doc=doc, user=assign_to):
             if frappe.get_system_settings("disable_document_sharing"):
                 msg = _("User {0} is not permitted to access this document.").format(frappe.bold(assign_to))
@@ -277,18 +279,13 @@ def add(args=None, *, ignore_permissions=False):
                 frappe.share.add(doc.doctype, doc.name, assign_to)
                 shared_with_users.append(assign_to)
 
+        # Auto-follow, but no email
         if frappe.get_cached_value("User", assign_to, "follow_assigned_documents"):
             follow_document(args["doctype"], args["name"], assign_to)
 
-        notify_assignment(
-            todo_doc.assigned_by,
-            todo_doc.allocated_to,
-            todo_doc.reference_type,
-            todo_doc.reference_name,
-            action="ASSIGN",
-            description=args.get("description"),
-        )
+        # 🚫 Removed notify_assignment() call — disables assignment email entirely
 
+    # Optional: messages for UI feedback
     if shared_with_users:
         user_list = format_message_for_assign_to(shared_with_users)
         frappe.msgprint(_("Shared with the following Users with Read access:{0}").format(user_list), alert=True)
