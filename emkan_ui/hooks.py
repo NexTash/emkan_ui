@@ -11,7 +11,13 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/emkan_ui/css/emkan_ui.css"
-# app_include_js = "/assets/emkan_ui/js/emkan_ui.js"
+app_include_js = "/assets/emkan_ui/js/leave_application.js"
+
+{
+  "js/leave_application.min.js": [
+    "public/js/leave_application.js"
+  ]
+}
 
 # include js, css files in header of web template
 # web_include_css = "/assets/emkan_ui/css/emkan_ui.css"
@@ -170,6 +176,7 @@ doc_events = {
         "before_save": ["emkan_ui.events.leave_application.add_workflow_status"],
         # "validate": "emkan_ui.events.leave_application.custom_validate",
         "before_submit": ["emkan_ui.events.leave_application.last_state"],
+        "on_update": "emkan_ui.events.leave_application.send_workflow_email"
     },
     "Employee Letter": {
         "before_insert": ["emkan_ui.events.employee_letter.clear_child_table_on_creation"],
@@ -209,6 +216,8 @@ scheduler_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
+    "frappe.desk.form.assign_to.add": "emkan_ui.events.leave_application.add",
+    "frappe.desk.form.assign_to.remove": "emkan_ui.events.leave_application.remove",
 	"erpnext.stock.doctype.material_request.material_request.make_purchase_order": "emkan_ui.events.purchase_order.make_purchase_order1",
     "erpnext.accounts.doctype.payment_request.payment_request.make_payment_request": "emkan_ui.events.payment_request.make_payment_request1"
 }
