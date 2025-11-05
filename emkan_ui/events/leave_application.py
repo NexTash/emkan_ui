@@ -60,8 +60,8 @@ def last_state(doc, method=None):
             "date": current_date
         })
 
-def send_workflow_email(doc, method=None):
 
+def send_workflow_email(doc, method=None):
     if not doc.has_value_changed("workflow_state"):
         return
 
@@ -89,16 +89,18 @@ def send_workflow_email(doc, method=None):
             return
 
         for recipient in recipients:
-            subject = f"{leave_type} Leave Application for Approval – {reference_no}"
+            recipient_full_name = frappe.db.get_value("User", recipient, "full_name") or "Reviewer"
+
+            subject = f"{leave_type} Application for Approval – {reference_no}"
             message = f"""
                 <p style='color:red;'><b>** Do Not Reply to This Email **</b></p>
-                <p>Dear Reviewer,</p>
+                <p>Dear {recipient_full_name},</p>
                 <p>
-                    You are requested to review the <b>{leave_type}</b> leave application 
+                    You are requested to review the <b>{leave_type}</b> Application 
                     (Reference No: <b>{reference_no}</b>) submitted by employee: 
                     <b>{employee_id} - {employee_name}</b>.
                 </p>
-                <p>Please use the link <a href="{doc_link}"></a> or log in to EMKAN ERP to take the necessary action.</p>
+                <p>Please use the link <a>{doc_link}</a> or log in to EMKAN ERP to take the necessary action.</p>
                 <p>This is an automated message. Please do not reply.</p>
                 <p style="font-size:12px;">#Sent from EMKAN ERP</p>
             """
@@ -149,16 +151,18 @@ def send_workflow_email(doc, method=None):
         return
 
     for recipient in recipients:
-        subject = f"{leave_type} Leave Application for Approval – {reference_no}"
+        recipient_full_name = frappe.db.get_value("User", recipient, "full_name") or required_role
+
+        subject = f"{leave_type} Application for Approval – {reference_no}"
         message = f"""
             <p style='color:red;'><b>** Do Not Reply to This Email **</b></p>
-            <p>Dear {required_role},</p>
+            <p>Dear {recipient_full_name},</p>
             <p>
-                You are requested to review the <b>{leave_type}</b> leave application 
+                You are requested to review the <b>{leave_type}</b> Application 
                 (Reference No: <b>{reference_no}</b>) submitted by employee: 
                 <b>{employee_id} - {employee_name}</b>.
             </p>
-            <p>Please use the link <a href="{doc_link}"></a> or log in to EMKAN ERP to take the necessary action.</p>
+            <p>Please use the link <a>{doc_link}</a> or log in to EMKAN ERP to take the necessary action.</p>
             <p>This is an automated message. Please do not reply.</p>
             <p style="font-size:12px;">#Sent from EMKAN ERP</p>
         """
