@@ -159,11 +159,12 @@ doc_events = {
 	},
     "Material Request": {
 		"on_update": [
-                # "emkan_ui.events.material_request.change_state",
                 "emkan_ui.events.material_request.assign_user",
                 "emkan_ui.events.workflow.role_assign_by_user",
                 ],
-        "validate": ["emkan_ui.events.workflow.store_data"],
+        "validate": ["emkan_ui.events.workflow.store_data",
+                     "emkan_ui.events.material_request.change_state"
+                     ],
         "before_submit": ["emkan_ui.events.workflow.last_state"],
         
 	},
@@ -174,14 +175,12 @@ doc_events = {
     "Leave Application": {
         "before_insert": ["emkan_ui.events.leave_application.clear_child_table_on_creation"],
         "before_save": ["emkan_ui.events.leave_application.add_workflow_status"],
-        # "validate": "emkan_ui.events.leave_application.custom_validate",
         "before_submit": ["emkan_ui.events.leave_application.last_state"],
         "on_update": "emkan_ui.events.leave_application.send_workflow_email"
     },
     "Employee Letter": {
         "before_insert": ["emkan_ui.events.employee_letter.clear_child_table_on_creation"],
         "before_save": ["emkan_ui.events.employee_letter.add_workflow_status"],
-        # "validate": "emkan_ui.events.employee_letter.custom_validate",
         "before_submit": ["emkan_ui.events.employee_letter.last_state"],
     },
 }

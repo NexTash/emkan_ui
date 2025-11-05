@@ -1,10 +1,14 @@
 import frappe
 from datetime import datetime
 import frappe
-from frappe.utils import strip_html, nowdate
 from frappe import _ 
 from frappe.desk.form.assign_to import get, format_message_for_assign_to
 from frappe.desk.form.document_follow import follow_document
+from frappe.utils import nowdate, strip_html, now_datetime
+from frappe.desk.form.assign_to import get
+from frappe.desk.form.utils import follow_document
+from frappe import _
+from frappe.share import add as share_add
 
 
 def clear_child_table_on_creation(doc, method=None):
@@ -55,27 +59,21 @@ def last_state(doc, method=None):
             "approved_by_name": user_doc.full_name,
             "date": current_date
         })
-import frappe
 
 def send_workflow_email(doc, method=None):
-    """
-    Sends workflow email based on workflow_state.
-    - For mapped workflow states, email assigned users whose ToDo.role matches.
-    - For workflow_state = 'Draft', email all reviewers from 'HR Leave Review' where enable=1.
-    - Skips when workflow_state = 'COO Approval'.
-    """
 
-    # --- 1️⃣ Only trigger when workflow_state changes ---
     if not doc.has_value_changed("workflow_state"):
         return
 
     current_state = doc.workflow_state
 
-    # --- 2️⃣ Handle special case: Draft ---
-    if current_state == "Draft":
-        frappe.logger().info(f"🟦 Workflow in Draft: sending to HR Leave Reviewers")
+    leave_type = getattr(doc, "leave_type", "")
+    reference_no = doc.name
+    employee_id = getattr(doc, "employee", "")
+    employee_name = frappe.db.get_value("Employee", employee_id, "employee_name") or ""
+    doc_link = frappe.utils.get_link_to_form(doc.doctype, doc.name)
 
-        # Fetch all enabled reviewers
+    if current_state == "Draft":
         reviewers = frappe.get_all(
             "HR Leave Review",
             filters={"enable": 1},
@@ -83,39 +81,41 @@ def send_workflow_email(doc, method=None):
         )
 
         if not reviewers:
-            frappe.logger().info("⚠️ No enabled reviewers found in HR Leave Review")
             return
 
         recipients = [r["reviewer"] for r in reviewers if r.get("reviewer")]
 
         if not recipients:
-            frappe.logger().info("⚠️ No reviewer emails found in enabled HR Leave Review records")
             return
 
-        subject = f"{doc.doctype} {doc.name} is now in Draft state"
-        message = f"""
-            <p>Dear Reviewer,</p>
-            <p>The document <b>{doc.name}</b> is currently in workflow state: <b>Draft</b>.</p>
-            <p>Please review the document as per your role.</p>
-        """
+        for recipient in recipients:
+            subject = f"{leave_type} Leave Application for Approval – {reference_no}"
+            message = f"""
+                <p style='color:red;'><b>** Do Not Reply to This Email **</b></p>
+                <p>Dear Reviewer,</p>
+                <p>
+                    You are requested to review the <b>{leave_type}</b> leave application 
+                    (Reference No: <b>{reference_no}</b>) submitted by employee: 
+                    <b>{employee_id} - {employee_name}</b>.
+                </p>
+                <p>Please use the link <a href="{doc_link}"></a> or log in to EMKAN ERP to take the necessary action.</p>
+                <p>This is an automated message. Please do not reply.</p>
+                <p style="font-size:12px;">#Sent from EMKAN ERP</p>
+            """
 
-        frappe.sendmail(
-            recipients=recipients,
-            subject=subject,
-            message=message,
-            send_after=None,
-            now=True
-        )
+            frappe.sendmail(
+                recipients=[recipient],
+                subject=subject,
+                message=message,
+                now=True
+            )
 
-        frappe.logger().info(f"📨 Draft state email sent to HR Leave Review reviewers: {recipients}")
-        return  # ✅ stop further workflow-specific processing
-
-    # --- 3️⃣ Skip if state is 'COO Approval' ---
-    if current_state == "COO Approval":
-        frappe.logger().info(f"🚫 Skipping email for COO Approval on {doc.name}")
+        frappe.logger().info(f"📨 Draft state email sent to HR reviewers: {recipients}")
         return
 
-    # --- 4️⃣ Map workflow state → required ToDo.role value ---
+    if current_state == "COO Approval":
+        return
+
     role_mapping = {
         "Line Manager Approval": "Line Manager",
         "Division Head Approval": "HR LEAVE DIVISION HD",
@@ -124,10 +124,8 @@ def send_workflow_email(doc, method=None):
 
     required_role = role_mapping.get(current_state)
     if not required_role:
-        frappe.logger().info(f"⚠️ No role mapping for workflow state '{current_state}'")
         return
 
-    # --- 5️⃣ Get assigned ToDo entries for this document ---
     todos = frappe.get_all(
         "ToDo",
         filters={
@@ -139,10 +137,8 @@ def send_workflow_email(doc, method=None):
     )
 
     if not todos:
-        frappe.logger().info(f"📭 No open ToDo found for {doc.name}")
         return
 
-    # --- 6️⃣ Filter recipients by matching role in ToDo ---
     recipients = [
         todo["allocated_to"]
         for todo in todos
@@ -150,40 +146,37 @@ def send_workflow_email(doc, method=None):
     ]
 
     if not recipients:
-        frappe.logger().info(
-            f"⚙️ No assigned user with ToDo.role='{required_role}' for {doc.name}"
-        )
         return
 
-    # --- 7️⃣ Compose and send email ---
-    subject = f"{doc.doctype} {doc.name} requires your action"
-    message = f"""
-        <p>Dear {required_role},</p>
-        <p>The document <b>{doc.name}</b> is now in workflow state: <b>{current_state}</b>.</p>
-        <p>Please review and take the required action.</p>
-    """
+    for recipient in recipients:
+        subject = f"{leave_type} Leave Application for Approval – {reference_no}"
+        message = f"""
+            <p style='color:red;'><b>** Do Not Reply to This Email **</b></p>
+            <p>Dear {required_role},</p>
+            <p>
+                You are requested to review the <b>{leave_type}</b> leave application 
+                (Reference No: <b>{reference_no}</b>) submitted by employee: 
+                <b>{employee_id} - {employee_name}</b>.
+            </p>
+            <p>Please use the link <a href="{doc_link}"></a> or log in to EMKAN ERP to take the necessary action.</p>
+            <p>This is an automated message. Please do not reply.</p>
+            <p style="font-size:12px;">#Sent from EMKAN ERP</p>
+        """
 
-    frappe.sendmail(
-        recipients=recipients,
-        subject=subject,
-        message=message,
-    )
+        frappe.sendmail(
+            recipients=[recipient],
+            subject=subject,
+            message=message,
+            now=True
+        )
 
     frappe.logger().info(
         f"✅ Workflow email sent to {recipients} for {doc.name} (role={required_role})"
     )
 
-import frappe
-from frappe.utils import nowdate, strip_html, now_datetime
-from frappe.desk.form.assign_to import get
-from frappe.desk.form.utils import follow_document
-from frappe import _
-from frappe.share import add as share_add
-
 
 @frappe.whitelist()
 def add(args=None, *, ignore_permissions=False):
-    """Add in someone's ToDo list — no assignment email."""
     if not args:
         args = frappe.local.form_dict
 
@@ -191,7 +184,6 @@ def add(args=None, *, ignore_permissions=False):
     shared_with_users = []
 
     role_value = args.get("role") or None
-    frappe.logger().info(f"🎯 Role received for assignment: {role_value}")
 
     assign_to_list = frappe.parse_json(args.get("assign_to")) or []
 
@@ -229,13 +221,11 @@ def add(args=None, *, ignore_permissions=False):
             "role": role_value,
         }).insert(ignore_permissions=True)
 
-        # Update assigned_to field
         if frappe.get_meta(args["doctype"]).get_field("assigned_to"):
             frappe.db.set_value(args["doctype"], args["name"], "assigned_to", assign_to)
 
         doc = frappe.get_doc(args["doctype"], args["name"])
 
-        # Share document if needed
         if not frappe.has_permission(doc=doc, user=assign_to):
             if frappe.get_system_settings("disable_document_sharing"):
                 frappe.throw(_("User {0} cannot access document").format(assign_to))
@@ -243,11 +233,9 @@ def add(args=None, *, ignore_permissions=False):
                 share_add(doc.doctype, doc.name, assign_to)
                 shared_with_users.append(assign_to)
 
-        # Follow document (no email)
         if frappe.get_cached_value("User", assign_to, "follow_assigned_documents"):
             follow_document(args["doctype"], args["name"], assign_to)
 
-        # 🚫 Removed notify_assignment()
 
     if shared_with_users:
         user_list = ", ".join(shared_with_users)
@@ -262,7 +250,6 @@ def add(args=None, *, ignore_permissions=False):
 
 @frappe.whitelist()
 def remove(doctype, name, assign_to):
-    """Remove assignment — no unassignment email."""
     todos = frappe.get_all(
         "ToDo",
         filters={
@@ -279,9 +266,7 @@ def remove(doctype, name, assign_to):
         todo_doc.completed_on = now_datetime()
         todo_doc.save(ignore_permissions=True)
 
-    # 🚫 Removed notify_assignment_removed()
 
-    frappe.msgprint(_("Assignment removed for user {0}").format(assign_to))
     return get({"doctype": doctype, "name": name})
 
 
