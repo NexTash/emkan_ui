@@ -1,0 +1,68 @@
+{
+ "add_total_row": 0,
+ "add_translate_data": 0,
+ "columns": [],
+ "creation": "2025-11-10 15:38:45.522724",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "Emkan",
+ "letterhead": null,
+ "modified": "2025-11-10 15:38:45.522724",
+ "modified_by": "Administrator",
+ "module": "Emkan Ui",
+ "name": "Purchase Order Analysis 2",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Purchase Order",
+ "report_name": "Purchase Order Analysis 2",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "Purchase User"
+  },
+  {
+   "role": "Stock User"
+  },
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "Manager View"
+  },
+  {
+   "role": "Lead Accountant"
+  },
+  {
+   "role": "Finance Director"
+  },
+  {
+   "role": "Bsi Account"
+  },
+  {
+   "role": "Bsi lead acc"
+  },
+  {
+   "role": "Account user"
+  },
+  {
+   "role": "POVIEW"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Account View"
+  },
+  {
+   "role": "Stock Drafts"
+  },
+  {
+   "role": "Stock Manager"
+  }
+ ],
+ "timeout": 0
+}
