@@ -71,7 +71,7 @@ def send_workflow_email(doc, method=None):
     reference_no = doc.name
     employee_id = getattr(doc, "employee", "")
     employee_name = frappe.db.get_value("Employee", employee_id, "employee_name") or ""
-    doc_link = frappe.utils.get_link_to_form(doc.doctype, doc.name, label="View Document")
+    doc_link = frappe.utils.get_link_to_form(doc.doctype, doc.name)
 
     if current_state == "Draft":
         reviewers = frappe.get_all(
@@ -84,6 +84,7 @@ def send_workflow_email(doc, method=None):
             return
 
         recipients = [r["reviewer"] for r in reviewers if r.get("reviewer")]
+
         if not recipients:
             return
 
@@ -124,34 +125,33 @@ def send_workflow_email(doc, method=None):
     }
 
     required_role = role_mapping.get(current_state)
-    recipients = []
+    if not required_role:
+        return
 
-    if current_state == "HR Manager Approval":
-        recipients = ["retheesh.k@emkanengineering.com"]
-    else:
-        todos = frappe.get_all(
-            "ToDo",
-            filters={
-                "reference_type": doc.doctype,
-                "reference_name": doc.name,
-                "status": "Open",
-            },
-            fields=["allocated_to", "role"],
-        )
+    todos = frappe.get_all(
+        "ToDo",
+        filters={
+            "reference_type": doc.doctype,
+            "reference_name": doc.name,
+            "status": "Open",
+        },
+        fields=["allocated_to", "role"],
+    )
 
-        if todos:
-            recipients = [
-                todo["allocated_to"]
-                for todo in todos
-                if todo.get("role") == required_role
-            ]
+    if not todos:
+        return
+
+    recipients = [
+        todo["allocated_to"]
+        for todo in todos
+        if todo.get("role") == required_role
+    ]
 
     if not recipients:
-        frappe.logger().warning(f"⚠️ No recipients found for workflow_state={current_state}, doc={doc.name}")
         return
 
     for recipient in recipients:
-        recipient_full_name = frappe.db.get_value("User", recipient, "full_name") or required_role or "Approver"
+        recipient_full_name = frappe.db.get_value("User", recipient, "full_name") or required_role
 
         subject = f"{leave_type} Application for Approval – {reference_no}"
         message = f"""
@@ -167,18 +167,16 @@ def send_workflow_email(doc, method=None):
             <p style="font-size:12px;">#Sent from EMKAN ERP</p>
         """
 
-        try:
-            frappe.sendmail(
-                recipients=[recipient],
-                subject=subject,
-                message=message,
-                now=True
-            )
-            frappe.logger().info(f"✅ Email sent to {recipient} for state={current_state}")
-        except Exception as e:
-            frappe.log_error(f"❌ Failed to send email to {recipient}: {e}")
+        frappe.sendmail(
+            recipients=[recipient],
+            subject=subject,
+            message=message,
+            now=True
+        )
 
-    frappe.logger().info(f"📧 Workflow email successfully sent for {doc.name} ({current_state})")
+    frappe.logger().info(
+        f"✅ Workflow email sent to {recipients} for {doc.name} (role={required_role})"
+    )
 
 
 @frappe.whitelist()
@@ -189,11 +187,8 @@ def add(args=None, *, ignore_permissions=False):
     users_with_duplicate_todo = []
     shared_with_users = []
 
-    if args.get("workflow_state") == "HR Manager Approval":
-        frappe.logger().info("🟡 Skipping ToDo creation for HR Manager Approval")
-        return get(args)
-
     role_value = args.get("role") or None
+
     assign_to_list = frappe.parse_json(args.get("assign_to")) or []
 
     for assign_to in assign_to_list:
@@ -216,7 +211,7 @@ def add(args=None, *, ignore_permissions=False):
         if not has_content:
             args["description"] = _("Assignment for {0} {1}").format(args["doctype"], args["name"])
 
-        frappe.get_doc({
+        todo_doc = frappe.get_doc({
             "doctype": "ToDo",
             "allocated_to": assign_to,
             "reference_type": args["doctype"],
@@ -245,11 +240,14 @@ def add(args=None, *, ignore_permissions=False):
         if frappe.get_cached_value("User", assign_to, "follow_assigned_documents"):
             follow_document(args["doctype"], args["name"], assign_to)
 
+
     if shared_with_users:
-        frappe.msgprint(_("Shared with: {0}").format(", ".join(shared_with_users)))
+        user_list = ", ".join(shared_with_users)
+        frappe.msgprint(_("Shared with: {0}").format(user_list))
 
     if users_with_duplicate_todo:
-        frappe.msgprint(_("Already in ToDo: {0}").format(", ".join(users_with_duplicate_todo)))
+        user_list = ", ".join(users_with_duplicate_todo)
+        frappe.msgprint(_("Already in ToDo: {0}").format(user_list))
 
     return get(args)
 
@@ -272,4 +270,7 @@ def remove(doctype, name, assign_to):
         todo_doc.completed_on = now_datetime()
         todo_doc.save(ignore_permissions=True)
 
+
     return get({"doctype": doctype, "name": name})
+
+
