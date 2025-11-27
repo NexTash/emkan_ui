@@ -76,7 +76,7 @@ frappe.ui.form.on('Custom Payment Request', {
                 },
                 fields: ['name', 'outstanding_amount', 'bill_no', 'bill_date'], // ✅ fetch bill_date
                 order_by: 'bill_date asc', // ✅ show old invoices first
-                limit_page_length: 100
+                limit_page_length: 500
             },
             callback: function(r) {
                 frm.clear_table('references');
