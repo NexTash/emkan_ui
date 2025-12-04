@@ -959,10 +959,13 @@ def make_payment_entry(docname, submit='0'):
         allocate_remaining -= allocated
 
     # Final Paid Amounts (based on what was allocated)
-    total_allocated = sum([d.allocated_amount for d in pe.references])
-    pe.paid_amount = total_allocated
-    pe.received_amount = total_allocated
+    # total_allocated = sum([d.allocated_amount for d in pe.references])
+    # pe.paid_amount = total_allocated
+    # pe.received_amount = total_allocated
+    pe.paid_amount = flt(doc.grand_total)
+    pe.received_amount = flt(doc.grand_total)
 
+	
     if not pe.paid_from or not pe.paid_to:
         frappe.throw("Paid From or Paid To account is missing.")
 
