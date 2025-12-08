@@ -542,149 +542,149 @@ class CustomPaymentRequest(Document):
 				row_number += TO_SKIP_NEW_ROW
 
 
-@frappe.whitelist(allow_guest=False)
-def make_payment_entry(docname, submit='0'):
-    """
-    Create Payment Entry from Custom Payment Request
-    Works even if all invoices are already paid (creates Advance/On Account payment)
-    """
-    import frappe
-    from frappe.utils import nowdate, flt, fmt_money
+@frappe.whitelist(allow_guest=True)
+def make_payment_request(**args):
+	"""Make Custom Payment Request"""
 
-    doc = frappe.get_doc("Custom Payment Request", docname)
+	args = frappe._dict(args)
 
-    # Check how much is already paid against this request
-    already_paid = flt(frappe.db.sql("""
-        SELECT COALESCE(SUM(per.allocated_amount), 0)
-        FROM `tabPayment Entry Reference` per
-        JOIN `tabPayment Entry` pe ON pe.name = per.parent
-        WHERE per.custom_custom_payment_request = %s AND pe.docstatus = 1
-    """, doc.name)[0][0])
+	if args.dt not in ALLOWED_DOCTYPES_FOR_PAYMENT_REQUEST:
+		frappe.throw(_("Custom Payment Requests cannot be created against: {0}").format(frappe.bold(args.dt)))
 
-    remaining = flt(doc.grand_total) - already_paid
-    if remaining <= 0:
-        frappe.throw("This Custom Payment Request is already fully paid.")
+	ref_doc = frappe.get_doc(args.dt, args.dn)
+	gateway_account = get_gateway_details(args) or frappe._dict()
 
-    # Get default bank account
-    bank_account = doc.payment_account
-    if not bank_account:
-        bank_account = frappe.db.get_value("Company", doc.company, "default_bank_account")
-    if not bank_account:
-        bank_account = frappe.db.get_value("Account", {
-            "company": doc.company,
-            "account_type": "Bank",
-            "is_group": 0
-        }, "name")
-    if not bank_account:
-        frappe.throw("Please set a default bank account in Company or Payment Request.")
+	grand_total = get_amount(ref_doc, gateway_account.get("payment_account"))
+	if not grand_total:
+		frappe.throw(_("Payment Entry is already created"))
+	if args.loyalty_points and args.dt == "Sales Order":
+		from erpnext.accounts.doctype.loyalty_program.loyalty_program import validate_loyalty_points
 
-    # Create Payment Entry
-    pe = frappe.new_doc("Payment Entry")
-    pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
-    pe.party_type = doc.party_type
-    pe.party = doc.party
-    pe.company = doc.company
-    pe.posting_date = nowdate()
-    pe.mode_of_payment = doc.mode_of_payment or ""
-    pe.reference_no = doc.name
-    pe.reference_date = nowdate()
+		loyalty_amount = validate_loyalty_points(ref_doc, int(args.loyalty_points))
+		frappe.db.set_value(
+			"Sales Order", args.dn, "loyalty_points", int(args.loyalty_points), update_modified=False
+		)
+		frappe.db.set_value("Sales Order", args.dn, "loyalty_amount", loyalty_amount, update_modified=False)
+		grand_total = grand_total - loyalty_amount
 
-    # Set default accounts
-    if pe.payment_type == "Pay":
-        pe.paid_from = bank_account
-    else:
-        pe.paid_to = bank_account
+	# fetches existing Custom Payment Request `grand_total` amount
+	existing_payment_request_amount = get_existing_payment_request_amount(ref_doc)
 
-    allocate_remaining = remaining
-    has_outstanding = False
-    added_rows = 0
+	def validate_and_calculate_grand_total(grand_total, existing_payment_request_amount):
+		grand_total -= existing_payment_request_amount
+		if not grand_total:
+			frappe.throw(_("Custom Payment Request is already created"))
+		return grand_total
 
-    for row in doc.references:
-        if not row.reference_doctype or not row.reference_name:
-            continue
+	if existing_payment_request_amount:
+		if args.order_type == "Shopping Cart":
+			# If Custom Payment Request is in an advanced stage, then create for remaining amount.
+			if get_existing_payment_request_amount(
+				ref_doc, ["Initiated", "Partially Paid", "Payment Ordered", "Paid"]
+			):
+				grand_total = validate_and_calculate_grand_total(grand_total, existing_payment_request_amount)
+			else:
+				# If PR's are processed, cancel all of them.
+				cancel_old_payment_requests(ref_doc.doctype, ref_doc.name)
+		else:
+			grand_total = validate_and_calculate_grand_total(grand_total, existing_payment_request_amount)
 
-        # Get fresh outstanding amount
-        outstanding = flt(frappe.get_value(row.reference_doctype, row.reference_name, "outstanding_amount") or 0)
+	draft_payment_request = frappe.db.get_value(
+		"Custom Payment Request",
+		{"references": ref_doc.doctype,},
+	)
 
-        # Fallback: agar ERPNext ka cache galat hai to manually calculate
-        if outstanding <= 0:
-            grand_total = flt(frappe.get_value(row.reference_doctype, row.reference_name, "grand_total"))
-            paid_amount = flt(frappe.db.sql("""
-                SELECT COALESCE(SUM(allocated_amount), 0)
-                FROM `tabPayment Entry Reference`
-                WHERE reference_doctype=%s AND reference_name=%s AND docstatus=1
-            """, (row.reference_doctype, row.reference_name))[0][0] or 0)
-            outstanding = grand_total - paid_amount
+	if draft_payment_request:
+		frappe.db.set_value(
+			"Custom Payment Request", draft_payment_request, "grand_total", grand_total, update_modified=False
+		)
+		pr = frappe.get_doc("Custom Payment Request", draft_payment_request)
+	else:
+		bank_account = (
+			get_party_bank_account(args.get("party_type"), args.get("party"))
+			if args.get("party_type")
+			else ""
+		)
+		pr = frappe.new_doc("Custom Payment Request")
 
-        allocated_amount = 0
-        if outstanding > 0 and allocate_remaining > 0:
-            allocated_amount = min(outstanding, allocate_remaining)
-            allocate_remaining -= allocated_amount
-            has_outstanding = True
+		if not args.get("payment_request_type"):
+			args["payment_request_type"] = (
+				"Outward" if args.get("dt") in ["Purchase Order", "Purchase Invoice"] else "Inward"
+			)
 
-        # Set correct party account (important for ledger posting)
-        if row.reference_doctype == "Purchase Invoice" and pe.payment_type == "Pay":
-            party_acc = frappe.db.get_value("Purchase Invoice", row.reference_name, "credit_to")
-            if party_acc:
-                pe.paid_to = party_acc
-        elif row.reference_doctype == "Sales Invoice" and pe.payment_type == "Receive":
-            party_acc = frappe.db.get_value("Sales Invoice", row.reference_name, "debit_to")
-            if party_acc:
-                pe.paid_from = party_acc
+		party_type = args.get("party_type") or "Customer"
+		party_account_currency = ref_doc.get("party_account_currency")
 
-        # Add reference row (even if allocated = 0 → for record)
-        pe.append("references", {
-            "reference_doctype": row.reference_doctype,
-            "reference_name": row.reference_name,
-            "supplier_invoice_number": row.supplier_invoice_number or "",
-            "total_amount": row.amount or outstanding or 0,
-            "outstanding_amount": outstanding,
-            "allocated_amount": allocated_amount,
-            "custom_custom_payment_request": doc.name
-        })
-        added_rows += 1
+		if not party_account_currency:
+			party_account = get_party_account(party_type, ref_doc.get(party_type.lower()), ref_doc.company)
+			party_account_currency = get_account_currency(party_account)
 
-    # Agar koi row nahi aayi to bhi error mat do
-    if added_rows == 0:
-        frappe.throw("No valid references found in this Custom Payment Request.")
+		# ✅ Fix: Party Name logic based on Dynamic Link
+		party_name = args.get("party_name")
+		if not party_name and args.get("party") and party_type:
+			if party_type == "Supplier":
+				party_name = frappe.db.get_value("Supplier", args.get("party"), "supplier_name")
+			elif party_type == "Customer":
+				party_name = frappe.db.get_value("Customer", args.get("party"), "customer_name")
+			elif party_type == "Employee":
+				party_name = frappe.db.get_value("Employee", args.get("party"), "employee_name")
+			else:
+				party_name = args.get("party")  # fallback: just use party code
 
-    # Agar sab invoices paid hain → advance payment banega
-    if not has_outstanding:
-        frappe.msgprint(
-            "All referenced invoices are already fully paid.<br>"
-            "Creating <b>Advance / On Account Payment</b> of {} {}.".format(
-                doc.currency, fmt_money(remaining)
-            ),
-            indicator="orange",
-            alert=True
-        )
+		pr.update(
+			{
+				"payment_gateway_account": gateway_account.get("name"),
+				"payment_gateway": gateway_account.get("payment_gateway"),
+				"payment_account": gateway_account.get("payment_account"),
+				"payment_channel": gateway_account.get("payment_channel"),
+				"payment_request_type": args.get("payment_request_type"),
+				"currency": ref_doc.currency,
+				"party_account_currency": party_account_currency,
+				"grand_total": grand_total,
+				"mode_of_payment": args.mode_of_payment,
+				"email_to": args.recipient_id or ref_doc.owner,
+				"subject": _("Custom Payment Request for {0}").format(args.dn),
+				"message": gateway_account.get("message") or get_dummy_message(ref_doc),
+				"references": args.dt,
+				"company": ref_doc.get("company"),
+				"party_type": party_type,
+				"party": args.get("party") or ref_doc.get("customer"),
+				"bank_account": bank_account,
+				"party_name": party_name,
+				"phone_number": args.get("phone_number") if args.get("phone_number") else None,
+			}
+		)
 
-    # Yeh do lines sabse zaroori hain — amount khud calculate hoga
-    pe.set_missing_values()
-    pe.set_amounts()
+		# Update dimensions
+		pr.update(
+			{
+				"cost_center": ref_doc.get("cost_center"),
+				"project": ref_doc.get("project"),
+			}
+		)
 
-    # Final check
-    if not pe.paid_from or not pe.paid_to:
-        frappe.throw("Paid From / Paid To account missing. Check bank & party accounts.")
+		for dimension in get_accounting_dimensions():
+			pr.update({dimension: ref_doc.get(dimension)})
 
-    # Save
-    pe.insert(ignore_permissions=True)
+		if args.order_type == "Shopping Cart" or args.mute_email:
+			pr.flags.mute_email = True
 
-    # Submit if requested
-    if str(submit).lower() in ["1", "true", "yes", "y"]:
-        pe.submit()
-        status = "Submitted"
-        frappe.msgprint(f"Payment Entry <b>{pe.name}</b> created and <b>Submitted</b> successfully!", indicator="green", alert=True)
-    else:
-        status = "Draft"
-        frappe.msgprint(f"Payment Entry <b>{pe.name}</b> created as <b>Draft</b>.", indicator="blue", alert=True)
+		if frappe.db.get_single_value("Accounts Settings", "create_pr_in_draft_status", cache=True):
+			pr.insert(ignore_permissions=True)
+		if args.submit_doc:
+			if pr.get("__unsaved"):
+				pr.insert(ignore_permissions=True)
+			pr.submit()
 
-    return {
-        "name": pe.name,
-        "docstatus": pe.docstatus,
-        "status": status,
-        "message": "Success"
-    }
+	if args.order_type == "Shopping Cart":
+		frappe.db.commit()
+		frappe.local.response["type"] = "redirect"
+		frappe.local.response["location"] = pr.get_payment_url()
+
+	if args.return_doc:
+		return pr
+
+	return pr.as_dict()
 
 def get_amount(ref_doc, payment_account=None):
 	"""get amount based on doctype"""
@@ -840,28 +840,38 @@ def resend_payment_email(docname):
 
 @frappe.whitelist(allow_guest=False)
 def make_payment_entry(docname, submit='0'):
-    import frappe
-    from frappe.utils import nowdate, flt, fmt_money
-
+    """
+    Create Payment Entry from Custom Payment Request
+    Handles multiple references and sets mandatory account currencies.
+    """
     doc = frappe.get_doc("Custom Payment Request", docname)
 
-    # Already paid check
+    if not doc.references:
+        frappe.throw("No references found in this Custom Payment Request.")
+
+    # Calculate already paid amount
     already_paid = flt(frappe.db.sql("""
         SELECT COALESCE(SUM(allocated_amount), 0)
         FROM `tabPayment Entry Reference`
-        WHERE custom_custom_payment_request = %s AND docstatus = 1
+        WHERE custom_custom_payment_request=%s AND docstatus=1
     """, doc.name)[0][0] or 0)
 
     remaining = flt(doc.grand_total) - already_paid
     if remaining <= 0:
         frappe.throw("This Custom Payment Request is already fully paid.")
 
-    # Bank
-    bank = doc.payment_account or frappe.db.get_value("Company", doc.company, "default_bank_account") or \
-           frappe.db.get_value("Account", {"company": doc.company, "account_type": "Bank", "is_group": 0}, "name")
+    # Determine bank / cash account
+    bank = doc.payment_account or frappe.db.get_value(
+        "Company", doc.company, "default_bank_account"
+    ) or frappe.db.get_value(
+        "Account", {"company": doc.company, "account_type": "Bank", "is_group": 0}, "name"
+    )
     if not bank:
         frappe.throw("Default Bank Account not found.")
 
+    bank_currency = frappe.get_cached_value("Account", bank, "account_currency")
+
+    # Create Payment Entry
     pe = frappe.new_doc("Payment Entry")
     pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
     pe.party_type = doc.party_type
@@ -872,55 +882,63 @@ def make_payment_entry(docname, submit='0'):
     pe.reference_no = doc.name
     pe.reference_date = nowdate()
 
+    # Mandatory account currencies
     if pe.payment_type == "Pay":
         pe.paid_from = bank
+        pe.paid_from_account_currency = bank_currency
+        pe.paid_to = None
     else:
         pe.paid_to = bank
+        pe.paid_to_account_currency = bank_currency
+        pe.paid_from = None
 
-    added = 0
+    # Add references and allocated amounts
+    total_allocated = 0
     for row in doc.references or []:
         if not row.reference_doctype or not row.reference_name:
             continue
 
-        outstanding = flt(frappe.get_value(row.reference_doctype, row.reference_name, "outstanding_amount") or 0)
-        allocated = min(outstanding, remaining) if outstanding > 0 and remaining > 0 else 0
-        if allocated > 0:
-            remaining -= allocated
+        # Get outstanding from doc.references (already pre-calculated)
+        outstanding = flt(row.amount or 0)
+        allocated = min(outstanding, remaining)
+        remaining -= allocated
+        total_allocated += allocated
 
-        # Party account update
-        if doc.party_type != "Employee":
-            if row.reference_doctype == "Purchase Invoice" and pe.payment_type == "Pay":
-                acc = frappe.db.get_value("Purchase Invoice", row.reference_name, "credit_to")
-                if acc: pe.paid_to = acc
-            elif row.reference_doctype == "Sales Invoice" and pe.payment_type == "Receive":
-                acc = frappe.db.get_value("Sales Invoice", row.reference_name, "debit_to")
-                if acc: pe.paid_from = acc
+        if allocated <= 0:
+            continue
 
-        # SIRF YE FIELDS DAALO — YE SAB Payment Entry Reference MEIN HAIN
         pe.append("references", {
             "reference_doctype": row.reference_doctype,
             "reference_name": row.reference_name,
             "outstanding_amount": outstanding,
             "allocated_amount": allocated,
-            "bill_no": getattr(row, "supplier_invoice_number", None),  # bill_no field hai Payment Entry Reference mein
+            "bill_no": getattr(row, "supplier_invoice_number", None),
             "due_date": getattr(row, "due_date", None),
             "custom_custom_payment_request": doc.name
         })
-        added += 1
 
-    # Agar koi reference nahi aayi → advance payment
-    if added == 0:
-        frappe.msgprint("No outstanding invoices. Creating Advance Payment.", indicator="orange")
+        # Adjust party account if needed
+        if doc.party_type != "Employee":
+            if row.reference_doctype == "Purchase Invoice" and pe.payment_type == "Pay":
+                acc = frappe.db.get_value("Purchase Invoice", row.reference_name, "credit_to")
+                if acc:
+                    pe.paid_to = acc
+                    pe.paid_to_account_currency = frappe.get_cached_value("Account", acc, "account_currency")
+            elif row.reference_doctype == "Sales Invoice" and pe.payment_type == "Receive":
+                acc = frappe.db.get_value("Sales Invoice", row.reference_name, "debit_to")
+                if acc:
+                    pe.paid_from = acc
+                    pe.paid_from_account_currency = frappe.get_cached_value("Account", acc, "account_currency")
 
-    # Amount set
-    amount = flt(doc.grand_total) - already_paid
-    pe.paid_amount = amount
-    pe.received_amount = amount
+    # Set paid / received amounts
+    pe.paid_amount = total_allocated
+    pe.received_amount = total_allocated
 
-    # Insert with full ignore
+    # Ignore validations for smoother creation
     pe.flags.ignore_validate = True
     pe.flags.ignore_mandatory = True
     pe.flags.ignore_links = True
+
     pe.insert(ignore_permissions=True, ignore_mandatory=True)
 
     if str(submit).lower() in ["1", "true", "yes", "y"]:
