@@ -876,6 +876,7 @@ def make_payment_entry(docname, submit='0'):
     pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
     pe.party_type = doc.party_type
     pe.party = doc.party
+    pe.party_name = doc.party_name
     pe.company = doc.company
     pe.posting_date = nowdate()
     pe.mode_of_payment = doc.mode_of_payment or ""
