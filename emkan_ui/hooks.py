@@ -344,6 +344,12 @@ fixtures=[
             ]
         ]
     },
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["name", "=", "custom_division"]
+        ]
+    },
     # {
     #     "dt" : "Workflow Action Master",
     #     "filters": [
