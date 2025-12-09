@@ -347,7 +347,7 @@ fixtures=[
     {
         "dt": "Custom Field",
         "filters": [
-            ["name", "=", "custom_division"]
+            ["name", "=", "Attendance-custom_division"]
         ]
     },
     # {
