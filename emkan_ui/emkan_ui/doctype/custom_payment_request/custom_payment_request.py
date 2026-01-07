@@ -838,117 +838,163 @@ def resend_payment_email(docname):
     """Called via API to resend the payment request email"""
     return frappe.get_doc("Custom Payment Request", docname).send_email()
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist()
 def make_payment_entry(docname, submit='0'):
     """
-    Create Payment Entry from Custom Payment Request
-    Handles multiple references and sets mandatory account currencies.
+    Create a Payment Entry from a Custom Payment Request.
+    By default it INSERTS (draft). To auto-submit, pass submit=1 or submit='true'.
     """
+
+    # import frappe
+    from frappe.utils import nowdate, flt
+    from erpnext.accounts.party import get_party_account
+
+    def get_company_default_bank_account(company):
+        default_bank_account = frappe.db.get_value("Company", company, "default_bank_account")
+        if default_bank_account:
+            return default_bank_account
+
+        bank_account = frappe.db.sql("""
+            SELECT name FROM `tabAccount`
+            WHERE company=%s AND account_type='Bank' AND is_group=0 LIMIT 1
+        """, company)
+
+        if bank_account:
+            return bank_account[0][0]
+
+        frappe.throw(f"Please set a Default Bank Account for Company {company} or create a Bank account.")
+
+    # Load Custom Payment Request
     doc = frappe.get_doc("Custom Payment Request", docname)
 
-    if not doc.references:
-        frappe.throw("No references found in this Custom Payment Request.")
+    # Check already paid against this request
+    already_paid = frappe.db.sql("""
+        SELECT SUM(per.allocated_amount)
+        FROM `tabPayment Entry Reference` per
+        INNER JOIN `tabPayment Entry` pe ON pe.name = per.parent
+        WHERE per.custom_custom_payment_request=%s
+          AND pe.docstatus=1
+    """, (doc.name,))[0][0] or 0
 
-    # Calculate already paid amount
-    already_paid = flt(frappe.db.sql("""
-        SELECT COALESCE(SUM(allocated_amount), 0)
-        FROM `tabPayment Entry Reference`
-        WHERE custom_custom_payment_request=%s AND docstatus=1
-    """, doc.name)[0][0] or 0)
+    remaining_amount = flt(doc.grand_total) - flt(already_paid)
 
-    remaining = flt(doc.grand_total) - already_paid
-    if remaining <= 0:
+    if remaining_amount <= 0:
         frappe.throw("This Custom Payment Request is already fully paid.")
 
-    # Determine bank / cash account
-    bank = doc.payment_account or frappe.db.get_value(
-        "Company", doc.company, "default_bank_account"
-    ) or frappe.db.get_value(
-        "Account", {"company": doc.company, "account_type": "Bank", "is_group": 0}, "name"
-    )
-    if not bank:
-        frappe.throw("Default Bank Account not found.")
-
-    bank_currency = frappe.get_cached_value("Account", bank, "account_currency")
+    # Default payment account
+    default_payment_account = doc.get("payment_account") or get_company_default_bank_account(doc.company)
 
     # Create Payment Entry
     pe = frappe.new_doc("Payment Entry")
     pe.payment_type = "Pay" if doc.payment_request_type == "Outward" else "Receive"
     pe.party_type = doc.party_type
     pe.party = doc.party
-    pe.party_name = doc.party_name
-    pe.company = doc.company
-    pe.posting_date = nowdate()
-    pe.mode_of_payment = doc.mode_of_payment or ""
     pe.reference_no = doc.name
     pe.reference_date = nowdate()
+    pe.company = doc.company
+    pe.posting_date = nowdate()
 
-    # Mandatory account currencies
+    if not doc.references:
+        frappe.throw("No references found in this Custom Payment Request.")
+
+    # Decide default Paid From / Paid To
     if pe.payment_type == "Pay":
-        pe.paid_from = bank
-        pe.paid_from_account_currency = bank_currency
-        pe.paid_to = None
+        pe.paid_from = default_payment_account
+        pe.paid_to = get_company_default_bank_account(doc.company)
     else:
-        pe.paid_to = bank
-        pe.paid_to_account_currency = bank_currency
-        pe.paid_from = None
+        pe.paid_from = get_company_default_bank_account(doc.company)
+        pe.paid_to = default_payment_account
 
-    # Add references and allocated amounts
-    total_allocated = 0
-    for row in doc.references or []:
-        if not row.reference_doctype or not row.reference_name:
+    # Allocate across all references
+    allocate_remaining = remaining_amount
+
+    for ref in doc.references:
+        if not ref.reference_doctype or not ref.reference_name:
+            frappe.throw("Reference Doctype or Reference Name is missing in one of the child table rows.")
+
+        # Get outstanding of reference doc
+        ref_outstanding = flt(frappe.db.get_value(ref.reference_doctype, ref.reference_name, "outstanding_amount")) or 0
+        if ref_outstanding <= 0 or allocate_remaining <= 0:
             continue
 
-        # Get outstanding from doc.references (already pre-calculated)
-        outstanding = flt(row.amount or 0)
-        allocated = min(outstanding, remaining)
-        remaining -= allocated
-        total_allocated += allocated
+        # Allocate safely
+        allocated = min(ref_outstanding, allocate_remaining)
 
-        if allocated <= 0:
-            continue
+        # Adjust Paid From / Paid To depending on doctype
+        if ref.reference_doctype == "Purchase Invoice":
+            party_account = frappe.db.get_value("Purchase Invoice", ref.reference_name, "credit_to")
+            if party_account:
+                if pe.payment_type == "Pay":
+                    pe.paid_from = default_payment_account
+                    pe.paid_to = party_account
+                else:
+                    pe.paid_from = party_account
+                    pe.paid_to = default_payment_account
 
+        elif ref.reference_doctype == "Sales Invoice":
+            party_account = frappe.db.get_value("Sales Invoice", ref.reference_name, "debit_to")
+            if party_account:
+                if pe.payment_type == "Pay":
+                    pe.paid_from = default_payment_account
+                    pe.paid_to = party_account
+                else:
+                    pe.paid_from = party_account
+                    pe.paid_to = default_payment_account
+
+        # Append row in PE references
         pe.append("references", {
-            "reference_doctype": row.reference_doctype,
-            "reference_name": row.reference_name,
-            "outstanding_amount": outstanding,
+            "reference_doctype": ref.reference_doctype,
+            "reference_name": ref.reference_name,
+            "supplier_invoice_number": ref.supplier_invoice_number,
+            "total_amount": flt(ref.amount or ref_outstanding or 0),
+            "outstanding_amount": ref_outstanding,
             "allocated_amount": allocated,
-            "bill_no": getattr(row, "supplier_invoice_number", None),
-            "due_date": getattr(row, "due_date", None),
             "custom_custom_payment_request": doc.name
         })
 
-        # Adjust party account if needed
-        if doc.party_type != "Employee":
-            if row.reference_doctype == "Purchase Invoice" and pe.payment_type == "Pay":
-                acc = frappe.db.get_value("Purchase Invoice", row.reference_name, "credit_to")
-                if acc:
-                    pe.paid_to = acc
-                    pe.paid_to_account_currency = frappe.get_cached_value("Account", acc, "account_currency")
-            elif row.reference_doctype == "Sales Invoice" and pe.payment_type == "Receive":
-                acc = frappe.db.get_value("Sales Invoice", row.reference_name, "debit_to")
-                if acc:
-                    pe.paid_from = acc
-                    pe.paid_from_account_currency = frappe.get_cached_value("Account", acc, "account_currency")
+        # Reduce remaining amount
+        allocate_remaining -= allocated
 
-    # Set paid / received amounts
+    # Final Paid Amounts (based on what was allocated)
+    total_allocated = sum([d.allocated_amount for d in pe.references])
     pe.paid_amount = total_allocated
     pe.received_amount = total_allocated
+    # pe.paid_amount = flt(doc.grand_total)
+    # pe.received_amount = flt(doc.grand_total)
 
-    # Ignore validations for smoother creation
-    pe.flags.ignore_validate = True
-    pe.flags.ignore_mandatory = True
-    pe.flags.ignore_links = True
+	
+    if not pe.paid_from or not pe.paid_to:
+        frappe.throw("Paid From or Paid To account is missing.")
 
-    pe.insert(ignore_permissions=True, ignore_mandatory=True)
+    # Handle currencies & exchange rates
+    company_currency = frappe.db.get_value("Company", doc.company, "default_currency")
+    paid_from_currency = frappe.db.get_value("Account", pe.paid_from, "account_currency")
+    paid_to_currency = frappe.db.get_value("Account", pe.paid_to, "account_currency")
 
-    if str(submit).lower() in ["1", "true", "yes", "y"]:
+    if not paid_from_currency or not paid_to_currency:
+        frappe.throw("One of the accounts has no currency set.")
+
+    pe.source_exchange_rate = 1 if paid_from_currency == company_currency else frappe.db.get_value(
+        "Currency Exchange",
+        {"from_currency": paid_from_currency, "to_currency": company_currency},
+        "exchange_rate"
+    ) or 1
+
+    pe.target_exchange_rate = 1 if paid_to_currency == company_currency else frappe.db.get_value(
+        "Currency Exchange",
+        {"from_currency": company_currency, "to_currency": paid_to_currency},
+        "exchange_rate"
+    ) or 1
+
+    # Insert & optionally submit
+    pe.insert(ignore_permissions=True)
+
+    if str(submit).lower() in ("1", "true", "yes"):
         pe.submit()
-        frappe.msgprint(f"Payment Entry <b>{pe.name}</b> Submitted!", indicator="green", alert=True)
-    else:
-        frappe.msgprint(f"Payment Entry <b>{pe.name}</b> Created as Draft", indicator="blue", alert=True)
 
-    return {"name": pe.name, "docstatus": pe.docstatus}
+    return {"name": pe.name, "doctype": pe.doctype, "docstatus": pe.docstatus}
+
+
 
 def update_payment_requests_as_per_pe_references(references=None, cancel=False):
 	"""
