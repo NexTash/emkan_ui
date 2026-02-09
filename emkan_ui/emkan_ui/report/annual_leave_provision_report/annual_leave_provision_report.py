@@ -73,7 +73,7 @@ def get_data(filters: Filters) -> list:
         new_allocation = 0
 
         for leave_type in leave_types:
-            if leave_type != "Annual Leave (Encashment)":
+            if leave_type != "Leave for Encashment (Days)":
                 continue
 
             if consolidate_leave_types:
@@ -92,10 +92,20 @@ def get_data(filters: Filters) -> list:
             leave_taken += flt(leaves_taken, precision)
             closing_balance += new_allocation + opening - (expired_leaves + leaves_taken)
 
-        accrued_days_per_month = flt(leave_alloc) / 12 if leave_alloc else 0
-        new_leave_allocated = min(accrued_days_per_month, 2.5)
+        latest_allocation = frappe.get_all(
+            "Leave Allocation",
+            filters={
+                "employee": employee.name,
+                "leave_type": "Leave for Encashment (Days)",
+                "docstatus": 1
+            },
+            fields=["to_date", "new_leaves_allocated"],
+            order_by="to_date desc",
+            limit=1
+        )
 
-        monthly_accural_days = leave_alloc if leave_alloc < 2.5 else 2.5
+        new_leaves_allocated = flt(latest_allocation[0].new_leaves_allocated) if latest_allocation else 0
+        monthly_accural_days = new_leaves_allocated / 12 if new_leaves_allocated else 0
         monthly_accural_amount = amount_per_day * monthly_accural_days
 
         leave_taken_amount = amount_per_day * leave_taken
@@ -103,16 +113,16 @@ def get_data(filters: Filters) -> list:
         closing_balance_amount = closing_balance * amount_per_day if closing_balance else 0
 
         data.append({
-			"leave_type": "Annual Leave",
-			"employee": employee.name,
-			"employee_name": employee.employee_name,
-		    "accural_basis": accural_basis,
-		    "date_of_joining": employee.date_of_joining,
-			"leaves_allocated": flt(new_allocation, precision),
-			"leaves_expired": flt(expired_leaves, precision),
-			"opening_balance": flt(opening, precision),
-			"leaves_taken": flt(leaves_taken, precision),
-			"closing_balance": flt(closing_balance, precision),
+            "leave_type": "Leave for Encashment (Days)",
+            "employee": employee.name,
+            "employee_name": employee.employee_name,
+            "accural_basis": accural_basis,
+            "date_of_joining": employee.date_of_joining,
+            "leaves_allocated": flt(new_allocation, precision),
+            "leaves_expired": flt(expired_leaves, precision),
+            "opening_balance": flt(opening, precision),
+            "leaves_taken": flt(leaves_taken, precision),
+            "closing_balance": flt(closing_balance, precision),
             "opening_days": opening,
             "opening_amount": opening_amount,
             "leave_taken": leave_taken,
@@ -123,7 +133,6 @@ def get_data(filters: Filters) -> list:
         })
 
     return data
-
 def get_leave_types() -> list[str]:
 	LeaveType = frappe.qb.DocType("Leave Type")
 	return (frappe.qb.from_(LeaveType).select(LeaveType.name).orderby(LeaveType.name)).run(pluck="name")
