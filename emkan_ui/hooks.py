@@ -427,6 +427,15 @@ fixtures=[
             ]
         ]
     },
+    {
+        "dt": "Custom Field",
+        "filters": [
+            ["name", "in", [
+                "Sales Invoice-custom_sca_no",
+                "Sales Invoice-custom_ref_no",
+            ]]
+        ]
+    },
     # {
     #     "dt" : "Letter Head",
     #     "filters": [
