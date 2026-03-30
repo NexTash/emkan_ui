@@ -424,6 +424,8 @@ fixtures=[
             ["name", "in", [
                 "Sales Invoice-custom_sca_no",
                 "Sales Invoice-custom_ref_no",
+                "Sales Invoice-custom_address",
+                "Sales Invoice-custom_attn",
             ]]
         ]
     },
