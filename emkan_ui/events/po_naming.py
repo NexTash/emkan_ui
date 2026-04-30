@@ -12,16 +12,14 @@ def autoname(doc, method=None):
     settings = frappe.get_single("PO Series counter")
 
     if prefix == "EMK-ALM-":
-        # EMKAN-8 case
-        if not settings.series_for_emkan_8:
+        if settings.series_for_emkan_8 is None:
             frappe.throw("Please set counter in PO Series counter for EMKAN-8")
 
         current_counter = settings.series_for_emkan_8 + 1
         settings.series_for_emkan_8 = current_counter
 
     else:
-        # Normal case
-        if not settings.lpo_series_counter:
+        if settings.lpo_series_counter is None:
             frappe.throw("Please set counter in PO Series counter")
 
         current_counter = settings.lpo_series_counter + 1
