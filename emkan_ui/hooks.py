@@ -143,7 +143,6 @@ doctype_list_js = {
 doc_events = {
 	"Purchase Order": {
 		"autoname": "emkan_ui.events.po_naming.autoname",
-        "autonameemkan": "emkan_ui.events.po_naming.autonameemkan",
         "before_save": "emkan_ui.events.po_naming.set_purchase_prices",
 	},
     "DocShare": {
