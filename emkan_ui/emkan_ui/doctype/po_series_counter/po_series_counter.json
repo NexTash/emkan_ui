@@ -5,19 +5,26 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "lpo_series_counter"
+  "lpo_series_counter",
+  "series_for_emkan_8"
  ],
  "fields": [
   {
    "fieldname": "lpo_series_counter",
    "fieldtype": "Int",
    "label": "LPO Series Counter"
+  },
+  {
+   "fieldname": "series_for_emkan_8",
+   "fieldtype": "Int",
+   "label": "Series for Emkan 8"
   }
  ],
+ "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2024-07-24 14:42:49.782295",
+ "modified": "2026-04-30 13:06:08.886092",
  "modified_by": "Administrator",
  "module": "Emkan Ui",
  "name": "PO Series counter",
@@ -34,6 +41,7 @@
    "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

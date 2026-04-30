@@ -3,6 +3,9 @@ frappe.ui.form.on("Payment Entry", {
 		if(frm.doc.custom_department == "EMKAN-4 (BSI) - EECS"){
 			frappe.model.set_value(dt, dn, "custom_prefix", "BSI-")
 		}
+        else if(frm.doc.custom_department == "EMKAN-8 (Al Maha)"){
+            frappe.model.set_value(dt, dn, "custom_prefix", "EMK-ALM-")
+        }
 		else{
 			frappe.model.set_value(dt, dn, "custom_prefix", "EE-S-")
 		}
@@ -10,6 +13,9 @@ frappe.ui.form.on("Payment Entry", {
     custom_department(frm, dt, dn){
         if(frm.doc.custom_department == "EMKAN-4 (BSI) - EECS"){
             frappe.model.set_value(dt, dn, "custom_prefix", "BSI-")
+        }
+        else if(frm.doc.custom_department == "EMKAN-8 (Al Maha)"){
+            frappe.model.set_value(dt, dn, "custom_prefix", "EMK-ALM-")
         }
         else{
             frappe.model.set_value(dt, dn, "custom_prefix", "EE-S-")
