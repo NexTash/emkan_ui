@@ -1,0 +1,88 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 2px solid black;
+    }
+    .company-details { text-align: left; }
+    .logo img { max-width: 200px !important; }
+    .right-section { text-align: right; }
+    .statement-title h2 { margin: 20px 0; text-decoration: underline; text-align: center; }
+    .info-bar { margin-bottom: 15px; display: flex; justify-content: space-between; }
+    .table-bordered thead { border-top: 2px solid black !important; border-bottom: 2px solid black !important; }
+    .table-bordered th { background-color: #f2f2f2 !important; color: black !important; }
+    .text-right { text-align: right; }
+    .row-bold { font-weight: bold; background-color: #f9f9f9; }
+</style>
+
+<div class="header">
+    <div class="company-details">
+        <b>{%= JSON.parse(localStorage.getItem('company') || '{}').name || "" %}</b><br>
+        {%= JSON.parse(localStorage.getItem('company_address') || '{}').address || "" %}<br>
+        Tel: {%= JSON.parse(localStorage.getItem('company') || '{}').phone || "" %}<br>
+        {%= JSON.parse(localStorage.getItem('company') || '{}').email || "" %}
+    </div>
+    <div class="logo">
+        <img src="/assets/emkan_ui/images/logo.png" alt="Logo">
+    </div>
+    <div class="right-section">
+        <p>Date: {%= localStorage.getItem("current_date") || "" %}</p>
+        <p>User: {%= localStorage.getItem("session_user") || "" %}</p>
+    </div>
+</div>
+
+<div class="statement-title">
+    <h2>SUPPLIER STATEMENT OF ACCOUNT</h2>
+</div>
+
+<div class="info-bar">
+    <div>
+        <b>From:</b> {%= filters.from_date %} &nbsp;&nbsp; <b>To:</b> {%= filters.to_date %}
+    </div>
+    <div>
+        <b>Supplier:</b> {%= filters.supplier || "All Suppliers" %} 
+        {% if (data.length > 0 && data[0].supplier_name) { %}
+            ({%= data[0].supplier_name %})
+        {% } %}
+    </div>
+</div>
+
+<table class="table table-bordered table-condensed">
+    <thead>
+        <tr>
+            <th style="width: 40px;">#</th>
+            <th>Date</th>
+            <th>Supplier ID</th>
+            <th>Inv No</th>
+            <th>Transaction Type</th>
+            <th>Document No</th>
+            <th class="text-right">Debit</th>
+            <th class="text-right">Credit</th>
+            <th class="text-right">Running Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for (var i=0, l=data.length; i<l; i++) { 
+            var row = data[i]; 
+        %}
+        <tr class="{%= (row.voucher_no == 'Opening' || (row.voucher_type && row.voucher_type.indexOf('Closing') !== -1)) ? 'row-bold' : '' %}">
+            <td>{%= i + 1 %}</td>
+            <td>{%= row.posting_date || '' %}</td>
+            <td>{%= row.supplier || '' %}</td>
+            <td>{%= row.supplier_invoice_no || '' %}</td>
+            <td>{%= row.voucher_type || '' %}</td>
+            <td>{%= row.voucher_no || '' %}</td>
+            <td class="text-right">{%= format_currency(row.debit) %}</td>
+            <td class="text-right">{%= format_currency(row.credit) %}</td>
+            <td class="text-right">{%= format_currency(row.running_balance) %}</td>
+        </tr>
+        {% } %}
+    </tbody>
+</table>
