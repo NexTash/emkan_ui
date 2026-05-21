@@ -365,7 +365,7 @@
    "name": "Material Request-custom_department",
    "no_copy": 0,
    "non_negative": 0,
-   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN -4 ( Sub Contract )\nEMKAN-5\nEMKAN-6 ( Cantech )\nEMKAN - 6 ( Sub Contract )\nBlue Steel Factory ( BSF)\nEMKAN 8 - STEEL FEB\nAl Maha\nEMK-ADMIN & PROJECT COMMON",
+   "options": "\nEMKAN-1\nEMKAN-2\nEMKAN-3 (SSSF)\nEMKAN-4 (BSI)\nEMKAN -4 ( Sub Contract )\nEMKAN-5\nEMKAN-6 ( Cantech )\nEMKAN - 6 ( Sub Contract )\nBlue Steel Factory ( BSF)\nEMKAN 8 - STEEL FAB\nAl Maha\nEMK-ADMIN & PROJECT COMMON",
    "owner": "Administrator",
    "permlevel": 0,
    "placeholder": null,
