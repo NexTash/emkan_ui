@@ -16,6 +16,14 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 )
 from erpnext.accounts.utils import get_currency_precision, get_party_types_from_account_type
 
+# field holding the display name for each party type, shown in "Party Name" column
+PARTY_NAME_FIELDS = {
+	"Customer": "customer_name",
+	"Supplier": "supplier_name",
+	"Employee": "employee_name",
+	"Shareholder": "title",
+}
+
 #  This report gives a summary of all Outstanding Invoices considering the following
 
 #  1. Invoice can be booked via Sales/Purchase Invoice or Journal Entry
@@ -153,7 +161,7 @@ class ReceivablePayableReport:
 			self.get_invoices(ple)
 
 			if self.filters.get("group_by_party"):
-				self.init_subtotal_row(ple.party)
+				self.init_subtotal_row(ple.party, ple.party_type)
 
 		if self.filters.get("group_by_party") and not self.filters.get("in_party_currency"):
 			self.init_subtotal_row("Total")
@@ -168,9 +176,13 @@ class ReceivablePayableReport:
 			else:
 				self.invoices.add(ple.voucher_no)
 
-	def init_subtotal_row(self, party):
+	def init_subtotal_row(self, party, party_type=None):
 		if not self.total_row_map.get(party):
 			self.total_row_map.setdefault(party, {"party": party, "bold": 1})
+			if party_type:
+				self.total_row_map[party].update(
+					{"party_type": party_type, "p_name": self.get_party_name(party, party_type)}
+				)
 
 			for field in self.get_currency_fields():
 				self.total_row_map[party][field] = 0.0
@@ -473,21 +485,15 @@ class ReceivablePayableReport:
 
 	def set_party_details(self, row):
 		# customer / supplier name
-		party_details = self.get_party_details(row.party) or {}
+		party_details = self.get_party_details(row.party, row.party_type) or {}
 		row.update(party_details)
-		p_name = ""
 
 		if self.filters.get("in_party_currency") or self.filters.get("party_account"):
 			row.currency = row.account_currency
 		else:
 			row.currency = self.company_currency
    
-		if row.party_type == "Customer":
-			p_name = party_details["customer_name"]
-		elif row.party_type == "Supplier":
-			p_name = party_details["supplier_name"]
-   
-		row.update({"p_name" : p_name})
+		row.update({"p_name": self.get_party_name(row.party, row.party_type)})
 
 	def allocate_outstanding_based_on_payment_terms(self, row):
 		self.get_payment_terms(row)
@@ -978,26 +984,38 @@ class ReceivablePayableReport:
 		if ple.voucher_type in ("Sales Invoice", "Purchase Invoice"):
 			return True
 
-	def get_party_details(self, party):
-		if party not in self.party_details:
-			if self.account_type == "Receivable":
+	def get_party_name(self, party, party_type):
+		party_details = self.get_party_details(party, party_type) or {}
+		return party_details.get(PARTY_NAME_FIELDS.get(party_type, "")) or ""
+
+	def get_party_details(self, party, party_type=None):
+		party_type = party_type or ("Customer" if self.account_type == "Receivable" else "Supplier")
+		key = (party_type, party)
+		if key not in self.party_details:
+			if party_type == "Customer":
 				fields = ["customer_name", "territory", "customer_group", "customer_primary_contact"]
 
 				if self.filters.get("sales_partner"):
 					fields.append("default_sales_partner")
 
-				self.party_details[party] = frappe.db.get_value(
+				self.party_details[key] = frappe.db.get_value(
 					"Customer",
 					party,
 					fields,
 					as_dict=True,
 				)
-			else:
-				self.party_details[party] = frappe.db.get_value(
+			elif party_type == "Supplier":
+				self.party_details[key] = frappe.db.get_value(
 					"Supplier", party, ["supplier_name", "supplier_group"], as_dict=True
 				)
-	
-		return self.party_details[party]
+			elif party_type in PARTY_NAME_FIELDS:
+				self.party_details[key] = frappe.db.get_value(
+					party_type, party, [PARTY_NAME_FIELDS[party_type]], as_dict=True
+				)
+			else:
+				self.party_details[key] = None
+
+		return self.party_details[key]
 
 	def get_columns(self):
 		self.columns = []
