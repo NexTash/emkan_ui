@@ -11,7 +11,10 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/emkan_ui/css/emkan_ui.css"
-app_include_js = "/assets/emkan_ui/js/leave_application.js"
+app_include_js = [
+    "/assets/emkan_ui/js/leave_application.js",
+    "/assets/emkan_ui/js/autocomplete_fix.js",
+]
 
 {
   "js/leave_application.min.js": [
